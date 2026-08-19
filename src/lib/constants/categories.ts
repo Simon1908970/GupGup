@@ -1,0 +1,106 @@
+import type { CategoryConfig, CategorySlug } from "@/lib/types";
+
+export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
+  news: {
+    slug: "news",
+    labelKey: "category.news",
+    boxStyle: "large",
+    mainCount: 10,
+    hasAuthorAvatar: false,
+    hasCountryTag: false,
+    hasMessageButton: false,
+    hasNicknamePopup: false,
+  },
+  community: {
+    slug: "community",
+    labelKey: "category.community",
+    boxStyle: "large",
+    mainCount: 10,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: false,
+    hasNicknamePopup: true,
+    subCategories: [
+      { slug: "free", labelKey: "sub.community.free" },
+      { slug: "qna", labelKey: "sub.community.qna" },
+      { slug: "travel", labelKey: "sub.community.travel" },
+    ],
+  },
+  housing: {
+    slug: "housing",
+    labelKey: "category.housing",
+    boxStyle: "grid",
+    mainCount: 5,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: false,
+    hasNicknamePopup: true,
+  },
+  life: {
+    slug: "life",
+    labelKey: "category.life",
+    boxStyle: "grid",
+    mainCount: 5,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: false,
+    hasNicknamePopup: true,
+    subCategories: [
+      { slug: "marriage-childcare", labelKey: "sub.life.marriageChildcare" },
+      { slug: "restaurant", labelKey: "sub.life.restaurant" },
+      { slug: "hospital", labelKey: "sub.life.hospital" },
+      { slug: "mobile", labelKey: "sub.life.mobile" },
+      { slug: "admin", labelKey: "sub.life.admin" },
+      { slug: "law", labelKey: "sub.life.law" },
+    ],
+  },
+  marketplace: {
+    slug: "marketplace",
+    labelKey: "category.marketplace",
+    boxStyle: "grid",
+    mainCount: 5,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: true,
+    hasNicknamePopup: true,
+  },
+  university: {
+    slug: "university",
+    labelKey: "category.university",
+    boxStyle: "grid",
+    mainCount: 5,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: false,
+    hasNicknamePopup: true,
+  },
+  meeting: {
+    slug: "meeting",
+    labelKey: "category.meeting",
+    boxStyle: "grid",
+    mainCount: 5,
+    hasAuthorAvatar: true,
+    hasCountryTag: true,
+    hasMessageButton: true,
+    hasNicknamePopup: true,
+  },
+};
+
+export const CATEGORY_ORDER: CategorySlug[] = [
+  "news",
+  "community",
+  "housing",
+  "life",
+  "marketplace",
+  "university",
+  "meeting",
+];
+
+export const LARGE_BOX_CATEGORIES: CategorySlug[] = ["news", "community"];
+export const GRID_BOX_CATEGORIES: CategorySlug[] = [
+  "housing",
+  "life",
+  "marketplace",
+  "university",
+  "meeting",
+];
