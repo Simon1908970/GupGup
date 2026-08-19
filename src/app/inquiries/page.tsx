@@ -1,12 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import { MOCK_INQUIRIES } from "@/lib/mock/inquiries";
+import { fetchInquiries, type InquiryRow } from "@/lib/supabase/inquiries";
 import { cn } from "@/lib/utils";
 
 export default function InquiriesPage() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [inquiries, setInquiries] = useState<InquiryRow[]>([]);
+  const [loadingInquiries, setLoadingInquiries] = useState(true);
+
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchInquiries(user.id)
+      .then(setInquiries)
+      .finally(() => setLoadingInquiries(false));
+  }, [user]);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
@@ -20,13 +38,17 @@ export default function InquiriesPage() {
         </Link>
       </div>
 
-      {MOCK_INQUIRIES.length === 0 ? (
+      {loadingInquiries ? (
+        <p className="py-16 text-center text-sm text-[var(--color-text-muted)]">
+          {t("common.loading")}
+        </p>
+      ) : inquiries.length === 0 ? (
         <p className="py-16 text-center text-sm text-[var(--color-text-muted)]">
           {t("inquiries.empty")}
         </p>
       ) : (
         <ul className="divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)]">
-          {MOCK_INQUIRIES.map((inq) => (
+          {inquiries.map((inq) => (
             <li key={inq.id}>
               <Link
                 href={`/inquiries/${inq.id}`}

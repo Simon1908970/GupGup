@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { getPostsForCategory } from "@/lib/mock/posts";
-import type { CategorySlug, CountryCode, SortOrder } from "@/lib/types";
+import { fetchPosts } from "@/lib/supabase/posts";
+import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
 import { CategoryBadge } from "@/components/common/CategoryBadge";
 import { CountryFilterChips } from "@/components/board/CountryFilterChips";
 import { PostListItem } from "@/components/board/PostListItem";
@@ -37,36 +37,45 @@ export default function BoardListPage() {
   const valid = isValidCategory(categorySlug);
   const config = valid ? CATEGORIES[categorySlug] : null;
 
-  const filtered = useMemo(() => {
-    if (!config) return [];
-    let posts = getPostsForCategory(config.slug);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-    if (subCategory !== "all") {
-      posts = posts.filter((p) => p.subCategory === subCategory);
-    }
-    if (config.hasCountryTag && country !== "all") {
-      posts = posts.filter((p) => p.country === country);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      posts = posts.filter((p) => {
-        if (searchScope === "author") return p.author.nickname.toLowerCase().includes(q);
-        if (searchScope === "title") return p.title.toLowerCase().includes(q);
-        return (
-          p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q)
-        );
+  useEffect(() => {
+    if (!config) return;
+    let cancelled = false;
+    // Marks the in-flight fetch below as loading; setting this outside the
+    // effect would require duplicating the same filter/sort/page deps.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    fetchPosts({
+      category: config.slug,
+      subCategory: subCategory === "all" ? undefined : subCategory,
+      country: config.hasCountryTag ? country : undefined,
+      sort,
+      search: searchQuery.trim() || undefined,
+      searchScope,
+      page,
+      pageSize: PAGE_SIZE,
+    })
+      .then(({ posts: rows, total: count }) => {
+        if (cancelled) return;
+        setPosts(rows);
+        setTotal(count);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPosts([]);
+          setTotal(0);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
-    }
-
-    posts = [...posts].sort((a, b) => {
-      if (sort === "popular") {
-        return b.viewCount + b.commentCount * 3 - (a.viewCount + a.commentCount * 3);
-      }
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-
-    return posts;
-  }, [config, subCategory, country, sort, searchQuery, searchScope]);
+    return () => {
+      cancelled = true;
+    };
+  }, [config, subCategory, country, sort, searchQuery, searchScope, page]);
 
   if (!config) {
     return (
@@ -76,8 +85,7 @@ export default function BoardListPage() {
     );
   }
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
@@ -166,14 +174,17 @@ export default function BoardListPage() {
       </div>
 
       <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
-        {paged.length === 0 && (
+        {loading && (
+          <li className="py-12 text-center text-sm text-[var(--color-text-muted)]">
+            {t("common.loading")}
+          </li>
+        )}
+        {!loading && posts.length === 0 && (
           <li className="py-12 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}
           </li>
         )}
-        {paged.map((post) => (
-          <PostListItem key={post.id} post={post} />
-        ))}
+        {!loading && posts.map((post) => <PostListItem key={post.id} post={post} />)}
       </ul>
 
       <div className="mt-5 flex flex-col items-center gap-4">

@@ -1,19 +1,33 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import { MOCK_INQUIRIES, type InquiryMessage } from "@/lib/mock/inquiries";
+import {
+  fetchInquiry,
+  fetchInquiryMessages,
+  sendInquiryMessage,
+  type InquiryMessageRow,
+  type InquiryRow,
+} from "@/lib/supabase/inquiries";
 import { cn, formatDate } from "@/lib/utils";
 
 export default function InquiryDetailPage() {
   const { t } = useLanguage();
   const params = useParams<{ id: string }>();
-  const inquiry = MOCK_INQUIRIES.find((i) => i.id === params.id);
-  const [messages, setMessages] = useState<InquiryMessage[]>(inquiry?.messages ?? []);
+  const { user } = useAuth();
+  const [inquiry, setInquiry] = useState<InquiryRow | null | undefined>(undefined);
+  const [messages, setMessages] = useState<InquiryMessageRow[]>([]);
   const [draft, setDraft] = useState("");
+  const [sending, setSending] = useState(false);
 
-  if (!inquiry) {
+  useEffect(() => {
+    fetchInquiry(params.id).then(setInquiry);
+    fetchInquiryMessages(params.id).then(setMessages);
+  }, [params.id]);
+
+  if (inquiry === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         문의를 찾을 수 없습니다.
@@ -21,19 +35,26 @@ export default function InquiryDetailPage() {
     );
   }
 
-  function handleSend(e: React.FormEvent) {
+  if (inquiry === undefined) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("common.loading")}
+      </div>
+    );
+  }
+
+  async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!draft.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `local-${prev.length}`,
-        senderType: "user",
-        body: draft.trim(),
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-    setDraft("");
+    if (!draft.trim() || !user) return;
+    setSending(true);
+    try {
+      await sendInquiryMessage(params.id, user.id, draft.trim());
+      const updated = await fetchInquiryMessages(params.id);
+      setMessages(updated);
+      setDraft("");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -75,7 +96,10 @@ export default function InquiryDetailPage() {
           placeholder={t("messages.chatPlaceholder")}
           className="h-10 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <button className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white">
+        <button
+          disabled={sending}
+          className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50"
+        >
           {t("messages.send")}
         </button>
       </form>

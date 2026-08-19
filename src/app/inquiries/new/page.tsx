@@ -2,20 +2,39 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { createInquiry } from "@/lib/supabase/inquiries";
 
 export default function NewInquiryPage() {
   const { t } = useLanguage();
   const router = useRouter();
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !body.trim()) return;
-    // TODO: insert into `inquiries` / `inquiry_messages` via Supabase once wired up.
-    console.log("create inquiry", { title, body });
-    router.push("/inquiries");
+    if (!title.trim() || !body.trim() || !user) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const id = await createInquiry(user.id, title.trim(), body.trim());
+      router.push(`/inquiries/${id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSubmitting(false);
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("auth.needVerification")}
+      </div>
+    );
   }
 
   return (
@@ -35,7 +54,11 @@ export default function NewInquiryPage() {
           rows={8}
           className="resize-none rounded-md border border-[var(--color-border-gray)] p-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <button className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white">
+        {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
+        <button
+          disabled={submitting}
+          className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50"
+        >
           {t("common.submit")}
         </button>
       </form>

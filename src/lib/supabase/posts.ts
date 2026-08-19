@@ -1,0 +1,201 @@
+import { createClient } from "@/lib/supabase/client";
+import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
+import type { SearchScope } from "@/components/board/BoardSearchBar";
+
+interface PostRow {
+  id: string;
+  category: CategorySlug;
+  sub_category: string | null;
+  country: CountryCode;
+  title: string;
+  body: string;
+  author_id: string;
+  thumbnail_url: string | null;
+  view_count: number;
+  created_at: string;
+  author: {
+    id: string;
+    nickname: string;
+    country: CountryCode;
+    avatar_url: string | null;
+    is_withdrawn: boolean;
+  } | null;
+  comments: { count: number }[];
+}
+
+const POST_SELECT =
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, view_count, created_at, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
+
+function mapPost(row: PostRow): Post {
+  return {
+    id: row.id,
+    category: row.category,
+    subCategory: row.sub_category ?? undefined,
+    country: row.country,
+    title: row.title,
+    body: row.body,
+    author: row.author
+      ? {
+          id: row.author.id,
+          nickname: row.author.nickname,
+          country: row.author.country,
+          avatarUrl: row.author.avatar_url ?? undefined,
+          isWithdrawn: row.author.is_withdrawn,
+        }
+      : { id: row.author_id, nickname: "알 수 없음", country: "etc" },
+    createdAt: row.created_at,
+    viewCount: row.view_count,
+    commentCount: row.comments?.[0]?.count ?? 0,
+    thumbnailUrl: row.thumbnail_url ?? undefined,
+  };
+}
+
+export interface FetchPostsParams {
+  category: CategorySlug;
+  subCategory?: string;
+  country?: CountryCode;
+  sort?: SortOrder;
+  search?: string;
+  searchScope?: SearchScope;
+  page?: number;
+  pageSize?: number;
+}
+
+export async function fetchPosts({
+  category,
+  subCategory,
+  country,
+  sort = "latest",
+  search,
+  searchScope = "titleContent",
+  page = 1,
+  pageSize = 20,
+}: FetchPostsParams): Promise<{ posts: Post[]; total: number }> {
+  const supabase = createClient();
+
+  let authorIds: string[] | null = null;
+  if (search && searchScope === "author") {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("nickname", `%${search}%`);
+    authorIds = (data ?? []).map((p) => p.id);
+    if (authorIds.length === 0) return { posts: [], total: 0 };
+  }
+
+  let query = supabase
+    .from("posts")
+    .select(POST_SELECT, { count: "exact" })
+    .eq("category", category);
+
+  if (subCategory && subCategory !== "all") {
+    query = query.eq("sub_category", subCategory);
+  }
+  if (country && country !== "all") {
+    query = query.eq("country", country);
+  }
+  if (search) {
+    if (searchScope === "title") {
+      query = query.ilike("title", `%${search}%`);
+    } else if (searchScope === "author" && authorIds) {
+      query = query.in("author_id", authorIds);
+    } else if (searchScope === "titleContent") {
+      query = query.or(`title.ilike.%${search}%,body.ilike.%${search}%`);
+    }
+  }
+
+  query = query.order(sort === "popular" ? "view_count" : "created_at", {
+    ascending: false,
+  });
+
+  const from = (page - 1) * pageSize;
+  query = query.range(from, from + pageSize - 1);
+
+  const { data, count, error } = await query;
+  if (error) throw error;
+
+  return {
+    posts: (data ?? []).map((row) => mapPost(row as unknown as PostRow)),
+    total: count ?? 0,
+  };
+}
+
+export async function fetchLatestPosts(
+  category: CategorySlug,
+  limit: number,
+): Promise<Post[]> {
+  const { posts } = await fetchPosts({ category, sort: "latest", page: 1, pageSize: limit });
+  return posts;
+}
+
+export async function fetchPostById(
+  category: CategorySlug,
+  id: string,
+): Promise<Post | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("category", category)
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return mapPost(data as unknown as PostRow);
+}
+
+export async function incrementViewCount(id: string, currentViewCount: number) {
+  const supabase = createClient();
+  await supabase
+    .from("posts")
+    .update({ view_count: currentViewCount + 1 })
+    .eq("id", id);
+}
+
+export interface CreatePostInput {
+  category: CategorySlug;
+  subCategory?: string;
+  country: CountryCode;
+  title: string;
+  body: string;
+  authorId: string;
+}
+
+export async function createPost(input: CreatePostInput): Promise<string> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .insert({
+      category: input.category,
+      sub_category: input.subCategory || null,
+      country: input.country,
+      title: input.title,
+      body: input.body,
+      author_id: input.authorId,
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+export async function fetchPostsByAuthor(authorId: string): Promise<Post[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("author_id", authorId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((row) => mapPost(row as unknown as PostRow));
+}
+
+export async function fetchPostCountByAuthor(authorId: string): Promise<number> {
+  const supabase = createClient();
+  const { count, error } = await supabase
+    .from("posts")
+    .select("id", { count: "exact", head: true })
+    .eq("author_id", authorId);
+  if (error) throw error;
+  return count ?? 0;
+}

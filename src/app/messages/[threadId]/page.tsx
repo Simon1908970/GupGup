@@ -1,28 +1,51 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { fetchPublicProfile } from "@/lib/supabase/profiles";
 import {
-  CURRENT_USER_ID,
-  getPartnerById,
-  getThreadMessages,
-  type MockMessage,
-} from "@/lib/mock/messages";
+  fetchMessages,
+  findOrCreateThread,
+  sendMessage,
+  type MessageRow,
+} from "@/lib/supabase/messages";
 import { NicknamePopup } from "@/components/common/NicknamePopup";
 import { Avatar } from "@/components/common/Avatar";
+import type { Author } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
 
 export default function ChatPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const params = useParams<{ threadId: string }>();
-  const partner = getPartnerById(params.threadId);
-  const [messages, setMessages] = useState<MockMessage[]>(() =>
-    getThreadMessages(params.threadId),
-  );
-  const [draft, setDraft] = useState("");
+  const { user, loading } = useAuth();
+  const partnerId = params.threadId;
 
-  if (!partner) {
+  const [partner, setPartner] = useState<Author | null | undefined>(undefined);
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<MessageRow[]>([]);
+  const [draft, setDraft] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    fetchPublicProfile(partnerId).then((p) => setPartner(p?.author ?? null));
+  }, [partnerId]);
+
+  useEffect(() => {
+    if (!user || !partner) return;
+    findOrCreateThread(user.id, partnerId).then((id) => {
+      setThreadId(id);
+      fetchMessages(id).then(setMessages);
+    });
+  }, [user, partner, partnerId]);
+
+  if (partner === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         사용자를 찾을 수 없습니다.
@@ -30,19 +53,26 @@ export default function ChatPage() {
     );
   }
 
-  function handleSend(e: React.FormEvent) {
+  if (!user || !partner || !threadId) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("common.loading")}
+      </div>
+    );
+  }
+
+  async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!draft.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `local-${prev.length}`,
-        senderId: CURRENT_USER_ID,
-        body: draft.trim(),
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-    setDraft("");
+    if (!draft.trim() || !threadId || !user) return;
+    setSending(true);
+    try {
+      await sendMessage(threadId, user.id, draft.trim());
+      const updated = await fetchMessages(threadId);
+      setMessages(updated);
+      setDraft("");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -54,7 +84,7 @@ export default function ChatPage() {
 
       <div className="flex-1 space-y-3 overflow-y-auto py-2">
         {messages.map((m) => {
-          const mine = m.senderId === CURRENT_USER_ID;
+          const mine = m.senderId === user.id;
           return (
             <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
               <div className={cn("max-w-[75%]", mine ? "items-end" : "items-start", "flex flex-col")}>
@@ -84,7 +114,10 @@ export default function ChatPage() {
           placeholder={t("messages.chatPlaceholder")}
           className="h-10 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <button className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white">
+        <button
+          disabled={sending}
+          className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50"
+        >
           {t("messages.send")}
         </button>
       </form>

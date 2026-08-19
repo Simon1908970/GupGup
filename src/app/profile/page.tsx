@@ -8,6 +8,9 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { COUNTRIES, SIGNUP_COUNTRIES } from "@/lib/constants/countries";
 import { createClient } from "@/lib/supabase/client";
+import { fetchPostCountByAuthor } from "@/lib/supabase/posts";
+import { fetchCommentCountByAuthor } from "@/lib/supabase/comments";
+import { fetchThreads } from "@/lib/supabase/messages";
 import { Avatar } from "@/components/common/Avatar";
 import type { CountryCode } from "@/lib/types";
 
@@ -77,10 +80,22 @@ export default function MyProfilePage() {
   const { t } = useLanguage();
   const router = useRouter();
   const { user, profile, loading, signOut } = useAuth();
+  const [stats, setStats] = useState({ posts: 0, comments: 0, messages: 0 });
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");
   }, [loading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    Promise.all([
+      fetchPostCountByAuthor(user.id),
+      fetchCommentCountByAuthor(user.id),
+      fetchThreads(user.id),
+    ]).then(([posts, comments, threads]) => {
+      setStats({ posts, comments, messages: threads.length });
+    });
+  }, [user]);
 
   if (loading || !user) {
     return <div className="px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">{t("common.loading")}</div>;
@@ -111,18 +126,18 @@ export default function MyProfilePage() {
 
       <div className="mb-6 grid grid-cols-3 gap-3 text-center">
         <div className="rounded-lg border border-[var(--color-border-gray)] py-4">
-          <p className="text-lg font-bold">0</p>
+          <p className="text-lg font-bold">{stats.posts}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.myPosts")}</p>
         </div>
         <div className="rounded-lg border border-[var(--color-border-gray)] py-4">
-          <p className="text-lg font-bold">0</p>
+          <p className="text-lg font-bold">{stats.comments}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.myComments")}</p>
         </div>
         <Link
           href="/messages"
           className="rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)]"
         >
-          <p className="text-lg font-bold">0</p>
+          <p className="text-lg font-bold">{stats.messages}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.receivedMessages")}</p>
         </Link>
       </div>

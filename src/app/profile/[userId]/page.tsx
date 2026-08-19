@@ -1,31 +1,36 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { getAuthorById, getPostsByAuthor } from "@/lib/mock/posts";
+import { fetchPublicProfile } from "@/lib/supabase/profiles";
+import { fetchPostsByAuthor } from "@/lib/supabase/posts";
+import type { Author, Post } from "@/lib/types";
 import { Avatar } from "@/components/common/Avatar";
 import { PostListItem } from "@/components/board/PostListItem";
 import { ReportModal } from "@/components/common/ReportModal";
-
-function mockJoinDate(id: string): string {
-  let hash = 0;
-  for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) % 1000;
-  const d = new Date(Date.now() - (hash + 30) * 24 * 60 * 60 * 1000);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
+import { formatDate } from "@/lib/utils";
 
 export default function OtherProfilePage() {
   const { t } = useLanguage();
   const router = useRouter();
   const params = useParams<{ userId: string }>();
   const [reportOpen, setReportOpen] = useState(false);
+  const [author, setAuthor] = useState<Author | null | undefined>(undefined);
+  const [joinedAt, setJoinedAt] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const author = getAuthorById(params.userId);
+  useEffect(() => {
+    fetchPublicProfile(params.userId).then((result) => {
+      setAuthor(result?.author ?? null);
+      setJoinedAt(result?.joinedAt ?? null);
+    });
+    fetchPostsByAuthor(params.userId).then(setPosts);
+  }, [params.userId]);
 
-  if (!author) {
+  if (author === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         사용자를 찾을 수 없습니다.
@@ -33,7 +38,14 @@ export default function OtherProfilePage() {
     );
   }
 
-  const posts = getPostsByAuthor(author.id);
+  if (author === undefined) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("common.loading")}
+      </div>
+    );
+  }
+
   const countryOption = COUNTRIES.find((c) => c.code === author.country);
 
   return (
@@ -45,9 +57,11 @@ export default function OtherProfilePage() {
           <p className="text-sm text-[var(--color-text-muted)]">
             {countryOption?.flag} {countryOption && t(countryOption.labelKey as DictionaryKey)}
           </p>
-          <p className="text-xs text-[var(--color-text-muted)]">
-            {t("profile.joinedAt")} {mockJoinDate(author.id)}
-          </p>
+          {joinedAt && (
+            <p className="text-xs text-[var(--color-text-muted)]">
+              {t("profile.joinedAt")} {formatDate(joinedAt)}
+            </p>
+          )}
         </div>
       </div>
 

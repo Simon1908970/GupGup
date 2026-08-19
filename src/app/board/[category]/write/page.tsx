@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import type { CategorySlug, CountryCode } from "@/lib/types";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { createPost } from "@/lib/supabase/posts";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -28,6 +29,7 @@ export default function WritePostPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!config) {
     return (
@@ -39,17 +41,40 @@ export default function WritePostPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !body.trim()) return;
+    if (!title.trim() || !body.trim() || !user) return;
     setSubmitting(true);
-    // TODO: insert into `posts` table via Supabase once the project is wired up.
-    console.log("create post", { category: config!.slug, subCategory, country, title, body });
-    router.push(`/board/${config!.slug}`);
+    setError(null);
+    try {
+      const postId = await createPost({
+        category: config!.slug,
+        subCategory: config!.subCategories ? subCategory : undefined,
+        country,
+        title: title.trim(),
+        body: body.trim(),
+        authorId: user.id,
+      });
+      router.push(`/board/${config!.slug}/${postId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSubmitting(false);
+    }
   }
 
   if (!user) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         {t("auth.needVerification")}
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        프로필 설정을 먼저 완료해주세요.{" "}
+        <button onClick={() => router.push("/onboarding")} className="text-[var(--color-brand-red)] underline">
+          온보딩으로 이동
+        </button>
       </div>
     );
   }
@@ -101,6 +126,8 @@ export default function WritePostPage() {
           rows={12}
           className="resize-none rounded-md border border-[var(--color-border-gray)] p-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
+
+        {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
 
         <div className="flex justify-end gap-2">
           <button
