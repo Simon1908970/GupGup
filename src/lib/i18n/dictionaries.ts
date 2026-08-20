@@ -8,6 +8,7 @@ export const SUPPORTED_LOCALES = [
   "lo",
   "my",
   "mn",
+  "ru",
 ] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -22,6 +23,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   lo: "ລາວ",
   my: "မြန်မာ",
   mn: "Монгол",
+  ru: "Русский",
 };
 
 const ko = {
@@ -601,6 +603,54 @@ const mn: Partial<Dictionary> = {
   "common.loading": "Ачааллаж байна...",
 };
 
+const ru: Partial<Dictionary> = {
+  "nav.news": "Новости",
+  "nav.community": "Сообщество",
+  "nav.housing": "Жильё",
+  "nav.life": "Жизнь в Корее",
+  "nav.marketplace": "Барахолка",
+  "nav.university": "Университеты Кореи",
+  "nav.meeting": "Знакомства",
+  "nav.inquiries": "Поддержка",
+  "sub.community.free": "Свободная доска",
+  "sub.community.qna": "Вопросы о жизни",
+  "sub.community.travel": "Путешествия и еда",
+  "sub.life.marriageChildcare": "Брак и воспитание детей",
+  "sub.life.restaurant": "Рестораны",
+  "sub.life.hospital": "Больницы",
+  "sub.life.mobile": "Мобильные телефоны",
+  "sub.life.admin": "Документы и администрация",
+  "sub.life.law": "Законы Кореи",
+  "country.all": "Все",
+  "country.vn": "Вьетнам",
+  "country.th": "Таиланд",
+  "country.la": "Лаос",
+  "country.id": "Индонезия",
+  "country.mm": "Мьянма",
+  "country.ph": "Филиппины",
+  "country.mn": "Монголия",
+  "country.etc": "Другое",
+  "header.login": "Войти",
+  "header.myProfile": "Мой профиль",
+  "header.messages": "Сообщения",
+  "sort.latest": "Новые",
+  "sort.popular": "Популярные",
+  "board.write": "Написать",
+  "board.viewMore": "Ещё",
+  "board.noPosts": "Пока нет постов.",
+  "board.views": "Просмотры",
+  "board.comments": "Комментарии",
+  "board.search": "Поиск",
+  "board.searchScope.titleContent": "Заголовок + содержание",
+  "board.searchScope.title": "Заголовок",
+  "board.searchScope.author": "Автор",
+  "common.all": "Все",
+  "common.confirm": "Подтвердить",
+  "common.cancel": "Отмена",
+  "common.submit": "Отправить",
+  "common.loading": "Загрузка...",
+};
+
 export const DICTIONARIES: Record<Locale, Dictionary> = {
   ko,
   en,
@@ -610,5 +660,6 @@ export const DICTIONARIES: Record<Locale, Dictionary> = {
   tl: { ...en, ...tl },
   lo: { ...en, ...lo },
   my: { ...en, ...my },
+  ru: { ...en, ...ru },
   mn: { ...en, ...mn },
 };
