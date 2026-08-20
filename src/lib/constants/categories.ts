@@ -3,7 +3,7 @@ import type { CategoryConfig, CategorySlug } from "@/lib/types";
 export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   news: {
     slug: "news",
-    labelKey: "category.news",
+    labelKey: "nav.news",
     boxStyle: "large",
     mainCount: 10,
     hasAuthorAvatar: false,
@@ -13,7 +13,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   community: {
     slug: "community",
-    labelKey: "category.community",
+    labelKey: "nav.community",
     boxStyle: "large",
     mainCount: 10,
     hasAuthorAvatar: true,
@@ -28,7 +28,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   housing: {
     slug: "housing",
-    labelKey: "category.housing",
+    labelKey: "nav.housing",
     boxStyle: "grid",
     mainCount: 5,
     hasAuthorAvatar: true,
@@ -38,7 +38,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   life: {
     slug: "life",
-    labelKey: "category.life",
+    labelKey: "nav.life",
     boxStyle: "grid",
     mainCount: 5,
     hasAuthorAvatar: true,
@@ -56,7 +56,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   marketplace: {
     slug: "marketplace",
-    labelKey: "category.marketplace",
+    labelKey: "nav.marketplace",
     boxStyle: "grid",
     mainCount: 5,
     hasAuthorAvatar: true,
@@ -66,7 +66,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   university: {
     slug: "university",
-    labelKey: "category.university",
+    labelKey: "nav.university",
     boxStyle: "grid",
     mainCount: 5,
     hasAuthorAvatar: true,
@@ -76,7 +76,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
   meeting: {
     slug: "meeting",
-    labelKey: "category.meeting",
+    labelKey: "nav.meeting",
     boxStyle: "grid",
     mainCount: 5,
     hasAuthorAvatar: true,
