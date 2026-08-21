@@ -33,7 +33,7 @@ export default function OtherProfilePage() {
   if (author === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
-        사용자를 찾을 수 없습니다.
+        {t("error.userNotFound")}
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function OtherProfilePage() {
         </button>
       </div>
 
-      <h2 className="mb-2 text-sm font-semibold">{t("profile.myPosts")}</h2>
+      <h2 className="mb-2 text-sm font-semibold">{t("profile.writtenPosts")}</h2>
       <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">

@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export interface Profile {
@@ -15,6 +16,15 @@ export interface Profile {
   nickname: string;
   country: string;
   avatar_url: string | null;
+  points: number;
+}
+
+interface ProfileRow {
+  id: string;
+  nickname: string;
+  country: string;
+  avatar_url: string | null;
+  is_withdrawn: boolean;
 }
 
 interface AuthContextValue {
@@ -23,6 +33,7 @@ interface AuthContextValue {
   loading: boolean;
   unreadCount: number;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const isSupabaseConfigured = Boolean(
@@ -36,12 +47,14 @@ const AuthContext = createContext<AuthContextValue>({
   loading: false,
   unreadCount: 0,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(isSupabaseConfigured);
+  const router = useRouter();
 
   const supabase = useMemo(
     () => (isSupabaseConfigured ? createClient() : null),
@@ -53,18 +66,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const client = supabase;
 
     async function loadProfile(nextUser: User | null) {
-      setUser(nextUser);
       if (!nextUser) {
+        setUser(null);
         setProfile(null);
         setLoading(false);
         return;
       }
       const { data } = await client
         .from("profiles")
-        .select("id, nickname, country, avatar_url")
+        .select("id, nickname, country, avatar_url, is_withdrawn")
         .eq("id", nextUser.id)
         .single();
-      setProfile(data ?? null);
+      const row = data as ProfileRow | null;
+      if (row?.is_withdrawn) {
+        await client.auth.signOut();
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
+        router.push("/login?withdrawn=1");
+        return;
+      }
+      setUser(nextUser);
+      if (row) {
+        const { data: points } = await client.rpc("get_my_points");
+        setProfile({ ...row, points: points ?? 0 });
+      } else {
+        setProfile(null);
+      }
       setLoading(false);
     }
 
@@ -86,6 +114,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     unreadCount: 0,
     signOut: async () => {
       await supabase?.auth.signOut();
+    },
+    refreshProfile: async () => {
+      if (!supabase || !user) return;
+      const { data: row } = await supabase
+        .from("profiles")
+        .select("id, nickname, country, avatar_url")
+        .eq("id", user.id)
+        .single();
+      if (!row) {
+        setProfile(null);
+        return;
+      }
+      const { data: points } = await supabase.rpc("get_my_points");
+      setProfile({ ...row, points: points ?? 0 });
     },
   };
 

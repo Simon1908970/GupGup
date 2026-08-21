@@ -23,13 +23,21 @@ function CommentRow({ comment, depth = 0 }: { comment: Comment; depth?: number }
               {formatDate(comment.createdAt)}
             </span>
           </div>
-          <p className="mt-0.5 whitespace-pre-wrap text-sm">{comment.body}</p>
-          <button
-            onClick={() => setReportOpen(true)}
-            className="mt-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
-          >
-            {t("post.report")}
-          </button>
+          {comment.isDeleted ? (
+            <p className="mt-0.5 text-sm text-[var(--color-text-muted)]">
+              {t("board.commentDeleted")}
+            </p>
+          ) : (
+            <>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm">{comment.body}</p>
+              <button
+                onClick={() => setReportOpen(true)}
+                className="mt-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
+              >
+                {t("post.report")}
+              </button>
+            </>
+          )}
         </div>
       </div>
       {reportOpen && (

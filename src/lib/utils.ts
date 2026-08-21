@@ -16,3 +16,10 @@ export function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}천`;
   return String(n);
 }
+
+export function getErrorMessage(err: unknown): string {
+  if (err && typeof err === "object" && "message" in err && typeof err.message === "string") {
+    return err.message;
+  }
+  return String(err);
+}

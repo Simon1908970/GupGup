@@ -1,19 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/constants/categories";
 import type { Post } from "@/lib/types";
 import { formatCount, formatDate } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
 import { MessageSquare, Eye } from "lucide-react";
 
-export function PostListItem({ post }: { post: Post }) {
+export function PostListItem({ post, onDelete }: { post: Post; onDelete?: () => void }) {
+  const { t } = useLanguage();
   const config = CATEGORIES[post.category];
 
   return (
-    <li className="border-b border-[var(--color-border-gray-light)] last:border-b-0">
+    <li className="flex items-center border-b border-[var(--color-border-gray-light)] last:border-b-0">
       <Link
         href={`/board/${post.category}/${post.id}`}
-        className="flex items-center gap-3 px-1 py-3 hover:bg-[var(--color-border-gray-light)]/60"
+        className="flex min-w-0 flex-1 items-center gap-3 px-1 py-3 hover:bg-[var(--color-border-gray-light)]/60"
       >
         {config.hasAuthorAvatar && (
           <Avatar
@@ -56,6 +60,14 @@ export function PostListItem({ post }: { post: Post }) {
           />
         )}
       </Link>
+      {onDelete && (
+        <button
+          onClick={onDelete}
+          className="shrink-0 px-3 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
+        >
+          {t("common.delete")}
+        </button>
+      )}
     </li>
   );
 }

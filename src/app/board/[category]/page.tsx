@@ -80,7 +80,7 @@ export default function BoardListPage() {
   if (!config) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
-        존재하지 않는 카테고리입니다.
+        {t("error.categoryNotFound")}
       </div>
     );
   }
@@ -174,6 +174,16 @@ export default function BoardListPage() {
       </div>
 
       <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
+        {config.slug === "housing" && (
+          <li className="flex items-start gap-2 border-b border-[var(--color-border-gray-light)] bg-[var(--color-border-gray-light)]/40 px-1 py-3">
+            <span className="mt-0.5 shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+              {t("housing.noticeLabel")}
+            </span>
+            <p className="text-xs leading-relaxed text-[var(--color-text-muted)]">
+              {t("housing.noticeText")}
+            </p>
+          </li>
+        )}
         {loading && (
           <li className="py-12 text-center text-sm text-[var(--color-text-muted)]">
             {t("common.loading")}

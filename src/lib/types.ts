@@ -7,6 +7,7 @@ export type CountryCode =
   | "mm"
   | "ph"
   | "mn"
+  | "kr"
   | "etc";
 
 export type CategorySlug =
@@ -57,6 +58,7 @@ export interface Post {
   viewCount: number;
   commentCount: number;
   thumbnailUrl?: string;
+  pointsAwarded: number;
 }
 
 export interface Comment {
@@ -66,6 +68,7 @@ export interface Comment {
   body: string;
   createdAt: string;
   parentId?: string;
+  isDeleted: boolean;
 }
 
 export type SortOrder = "latest" | "popular";

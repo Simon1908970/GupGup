@@ -48,7 +48,7 @@ export default function ChatPage() {
   if (partner === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
-        사용자를 찾을 수 없습니다.
+        {t("error.userNotFound")}
       </div>
     );
   }

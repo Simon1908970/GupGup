@@ -15,6 +15,7 @@ export const COUNTRIES: CountryOption[] = [
   { code: "mm", labelKey: "country.mm", flag: "🇲🇲" },
   { code: "ph", labelKey: "country.ph", flag: "🇵🇭" },
   { code: "mn", labelKey: "country.mn", flag: "🇲🇳" },
+  { code: "kr", labelKey: "country.kr", flag: "🇰🇷" },
   { code: "etc", labelKey: "country.etc", flag: "🌐" },
 ];
 

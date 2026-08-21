@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Star } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
+import { PointsInfo } from "@/components/common/PointsInfo";
 
 export function UserMenu() {
   const { t } = useLanguage();
@@ -54,7 +56,13 @@ export function UserMenu() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-40 mt-1 w-44 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-40 mt-1 w-44 rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
+          <div className="flex items-center gap-1.5 border-b border-[var(--color-border-gray-light)] px-4 py-2 text-sm">
+            <Star size={14} className="fill-[var(--color-badge-yellow)] text-[var(--color-badge-yellow)]" />
+            <span className="text-[var(--color-text-muted)]">{t("profile.points")}</span>
+            <PointsInfo align="right" />
+            <span className="ml-auto font-semibold">{profile?.points ?? 0}</span>
+          </div>
           <Link
             href="/profile"
             className="block px-4 py-2 text-sm hover:bg-[var(--color-border-gray-light)]"
@@ -83,7 +91,7 @@ export function UserMenu() {
               router.push("/");
               router.refresh();
             }}
-            className="block w-full border-t border-[var(--color-border-gray-light)] px-4 py-2 text-left text-sm text-[var(--color-brand-red)] hover:bg-[var(--color-brand-red-light)]"
+            className="block w-full rounded-b-md border-t border-[var(--color-border-gray-light)] px-4 py-2 text-left text-sm text-[var(--color-brand-red)] hover:bg-[var(--color-brand-red-light)]"
           >
             {t("header.logout")}
           </button>

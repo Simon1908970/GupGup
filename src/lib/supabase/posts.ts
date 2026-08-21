@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
 import type { SearchScope } from "@/components/board/BoardSearchBar";
+import { isPremiumPostTarget, POST_REWARD, PREMIUM_POST_COST } from "@/lib/constants/points";
 
 interface PostRow {
   id: string;
@@ -13,6 +14,7 @@ interface PostRow {
   thumbnail_url: string | null;
   view_count: number;
   created_at: string;
+  points_awarded: number;
   author: {
     id: string;
     nickname: string;
@@ -24,7 +26,7 @@ interface PostRow {
 }
 
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, view_count, created_at, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
 
 function mapPost(row: PostRow): Post {
   return {
@@ -47,7 +49,15 @@ function mapPost(row: PostRow): Post {
     viewCount: row.view_count,
     commentCount: row.comments?.[0]?.count ?? 0,
     thumbnailUrl: row.thumbnail_url ?? undefined,
+    pointsAwarded: row.points_awarded ?? 0,
   };
+}
+
+export class InsufficientPointsError extends Error {
+  constructor() {
+    super("INSUFFICIENT_POINTS");
+    this.name = "InsufficientPointsError";
+  }
 }
 
 export interface FetchPostsParams {
@@ -163,6 +173,17 @@ export interface CreatePostInput {
 
 export async function createPost(input: CreatePostInput): Promise<string> {
   const supabase = createClient();
+  const premium = isPremiumPostTarget(input.category, input.subCategory);
+
+  if (premium) {
+    const { data: currentPoints, error: pointsError } = await supabase.rpc("get_my_points");
+    if (pointsError) throw pointsError;
+    if ((currentPoints ?? 0) < PREMIUM_POST_COST) {
+      throw new InsufficientPointsError();
+    }
+  }
+
+  const delta = premium ? -PREMIUM_POST_COST : POST_REWARD;
   const { data, error } = await supabase
     .from("posts")
     .insert({
@@ -172,10 +193,15 @@ export async function createPost(input: CreatePostInput): Promise<string> {
       title: input.title,
       body: input.body,
       author_id: input.authorId,
+      points_awarded: delta,
     })
     .select("id")
     .single();
   if (error) throw error;
+
+  const { error: adjustError } = await supabase.rpc("adjust_points", { delta });
+  if (adjustError) throw adjustError;
+
   return data.id;
 }
 
@@ -188,6 +214,19 @@ export async function fetchPostsByAuthor(authorId: string): Promise<Post[]> {
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((row) => mapPost(row as unknown as PostRow));
+}
+
+export async function deletePost(postId: string, authorId: string, pointsAwarded: number) {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("posts")
+    .delete()
+    .eq("id", postId)
+    .eq("author_id", authorId);
+  if (error) throw error;
+  if (pointsAwarded !== 0) {
+    await supabase.rpc("adjust_points", { delta: -pointsAwarded });
+  }
 }
 
 export async function fetchPostCountByAuthor(authorId: string): Promise<number> {

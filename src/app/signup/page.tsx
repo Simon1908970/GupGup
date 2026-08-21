@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { AuthTabs } from "@/components/auth/AuthTabs";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function SignupPage() {
   const { t } = useLanguage();
@@ -18,7 +20,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
     if (password !== confirm) {
-      setError("비밀번호가 일치하지 않습니다.");
+      setError(t("signup.passwordMismatch"));
       return;
     }
     setLoading(true);
@@ -32,7 +34,7 @@ export default function SignupPage() {
       if (signUpError) throw signUpError;
       setDone(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -42,7 +44,7 @@ export default function SignupPage() {
     return (
       <div className="mx-auto max-w-sm px-4 py-16 text-center">
         <p className="text-sm">
-          인증 메일을 보냈습니다. 메일함을 확인해 이메일 인증을 완료해주세요.
+          {t("signup.verificationSent")}
         </p>
         <Link
           href="/login"
@@ -56,7 +58,7 @@ export default function SignupPage() {
 
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-4 px-4 py-10">
-      <h1 className="text-center text-xl font-bold">{t("auth.signup")}</h1>
+      <AuthTabs active="signup" />
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="email"
@@ -80,7 +82,7 @@ export default function SignupPage() {
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          placeholder="비밀번호 확인"
+          placeholder={t("signup.passwordConfirmPlaceholder")}
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
@@ -92,12 +94,6 @@ export default function SignupPage() {
           {t("auth.signup")}
         </button>
       </form>
-      <Link
-        href="/login"
-        className="text-center text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
-      >
-        {t("auth.login")}
-      </Link>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { createInquiry } from "@/lib/supabase/inquiries";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function NewInquiryPage() {
   const { t } = useLanguage();
@@ -24,7 +25,7 @@ export default function NewInquiryPage() {
       const id = await createInquiry(user.id, title.trim(), body.trim());
       router.push(`/inquiries/${id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(getErrorMessage(err));
       setSubmitting(false);
     }
   }
@@ -44,13 +45,13 @@ export default function NewInquiryPage() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="제목을 입력하세요"
+          placeholder={t("placeholder.title")}
           className="h-10 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="문의 내용을 입력하세요"
+          placeholder={t("inquiries.contentPlaceholder")}
           rows={8}
           className="resize-none rounded-md border border-[var(--color-border-gray)] p-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />

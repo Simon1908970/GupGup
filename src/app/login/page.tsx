@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { AuthTabs } from "@/components/auth/AuthTabs";
+import { GoogleIcon } from "@/components/auth/GoogleIcon";
+import { FacebookIcon } from "@/components/auth/FacebookIcon";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function LoginPage() {
   const { t } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +41,7 @@ export default function LoginPage() {
       router.push("/");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -44,19 +49,31 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-4 px-4 py-10">
-      <h1 className="text-center text-xl font-bold">{t("auth.login")}</h1>
+      <AuthTabs active="login" />
+
+      {searchParams.get("withdrawn") && (
+        <p className="rounded-md bg-[var(--color-border-gray-light)] px-3 py-2 text-xs text-[var(--color-brand-red)]">
+          {t("auth.withdrawnAccountError")}
+        </p>
+      )}
 
       <button
         onClick={() => handleOAuth("google")}
-        className="h-11 rounded-md border border-[var(--color-border-gray)] text-sm font-medium"
+        className="relative flex h-11 items-center justify-center rounded-md border border-[var(--color-border-gray)] text-sm font-medium"
       >
-        {t("auth.google")}
+        <span className="absolute left-3 top-1/2 -translate-y-1/2">
+          <GoogleIcon />
+        </span>
+        <span>{t("auth.google")}</span>
       </button>
       <button
         onClick={() => handleOAuth("facebook")}
-        className="h-11 rounded-md border border-[var(--color-border-gray)] text-sm font-medium"
+        className="relative flex h-11 items-center justify-center rounded-md border border-[var(--color-border-gray)] text-sm font-medium"
       >
-        {t("auth.facebook")}
+        <span className="absolute left-3 top-1/2 -translate-y-1/2">
+          <FacebookIcon />
+        </span>
+        <span>{t("auth.facebook")}</span>
       </button>
 
       <div className="my-1 flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
@@ -92,11 +109,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="flex justify-center gap-3 text-xs text-[var(--color-text-muted)]">
-        <Link href="/signup" className="hover:text-[var(--color-brand-red)]">
-          {t("auth.signup")}
-        </Link>
-        <span>·</span>
+      <div className="flex justify-center text-xs text-[var(--color-text-muted)]">
         <Link href="/forgot-password" className="hover:text-[var(--color-brand-red)]">
           {t("auth.forgotPassword")}
         </Link>

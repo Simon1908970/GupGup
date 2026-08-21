@@ -22,9 +22,8 @@ function isValidCategory(v: string): v is CategorySlug {
 export default function PostDetailPage() {
   const { t } = useLanguage();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const params = useParams<{ category: string; postId: string }>();
-  const [showTranslation, setShowTranslation] = useState(false);
   const [post, setPost] = useState<Post | null | undefined>(undefined);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentDraft, setCommentDraft] = useState("");
@@ -56,7 +55,7 @@ export default function PostDetailPage() {
   if (!config || post === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
-        게시글을 찾을 수 없습니다.
+        {t("error.postNotFound")}
       </div>
     );
   }
@@ -69,9 +68,6 @@ export default function PostDetailPage() {
     );
   }
 
-  // TODO: call a translation API here; showing a placeholder until wired up.
-  const translatedBody = `[${t("post.translateView")}] ${post.body}`;
-
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !commentDraft.trim() || !post) return;
@@ -81,6 +77,7 @@ export default function PostDetailPage() {
       const updated = await fetchComments(post.id);
       setComments(updated);
       setCommentDraft("");
+      await refreshProfile();
     } finally {
       setPosting(false);
     }
@@ -98,28 +95,18 @@ export default function PostDetailPage() {
 
       <h1 className="mb-4 text-lg font-bold leading-snug">{post.title}</h1>
 
-      <div className="mb-5 flex items-center justify-between border-b border-[var(--color-border-gray-light)] pb-4">
-        <div className="flex items-center gap-2">
-          {config.hasAuthorAvatar && (
-            <Avatar nickname={post.author.nickname} avatarUrl={post.author.avatarUrl} size={34} />
-          )}
-          {config.hasNicknamePopup ? (
-            <NicknamePopup author={post.author} className="text-sm" />
-          ) : (
-            <span className="text-sm font-medium">{post.author.nickname}</span>
-          )}
-        </div>
-        <button
-          onClick={() => setShowTranslation((v) => !v)}
-          className="rounded border border-[var(--color-border-gray)] px-2.5 py-1 text-xs text-[var(--color-text-muted)] hover:border-[var(--color-brand-red)] hover:text-[var(--color-brand-red)]"
-        >
-          {showTranslation ? t("post.originalView") : t("post.translateView")}
-        </button>
+      <div className="mb-5 flex items-center gap-2 border-b border-[var(--color-border-gray-light)] pb-4">
+        {config.hasAuthorAvatar && (
+          <Avatar nickname={post.author.nickname} avatarUrl={post.author.avatarUrl} size={34} />
+        )}
+        {config.hasNicknamePopup ? (
+          <NicknamePopup author={post.author} className="text-sm" />
+        ) : (
+          <span className="text-sm font-medium">{post.author.nickname}</span>
+        )}
       </div>
 
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed">
-        {showTranslation ? translatedBody : post.body}
-      </div>
+      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed">{post.body}</div>
 
       {config.hasMessageButton && (
         <button
@@ -144,7 +131,7 @@ export default function PostDetailPage() {
             <input
               value={commentDraft}
               onChange={(e) => setCommentDraft(e.target.value)}
-              placeholder="댓글을 입력하세요"
+              placeholder={t("board.commentPlaceholder")}
               className="h-9 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
             />
             <button

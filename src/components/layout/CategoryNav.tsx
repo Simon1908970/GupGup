@@ -31,7 +31,7 @@ export function CategoryNav() {
             </li>
           );
         })}
-        <li className="ml-auto">
+        <li>
           <Link
             href="/inquiries"
             className={cn(

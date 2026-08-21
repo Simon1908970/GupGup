@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import type { Author } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ReportModal } from "@/components/common/ReportModal";
@@ -19,10 +20,12 @@ export function NicknamePopup({
 }) {
   const { t } = useLanguage();
   const router = useRouter();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const isSelf = user?.id === author.id;
 
   useEffect(() => {
     if (!open) return;
@@ -47,13 +50,13 @@ export function NicknamePopup({
     <div className="relative inline-block" ref={rootRef}>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (isSelf ? router.push("/profile") : setOpen((v) => !v))}
         className={cn("font-medium hover:underline", className)}
       >
         {children ?? author.nickname}
       </button>
 
-      {open && (
+      {open && !isSelf && (
         <div className="absolute left-0 top-full z-40 mt-1 w-40 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
           <Link
             href={`/profile/${author.id}`}
