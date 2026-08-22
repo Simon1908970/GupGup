@@ -116,7 +116,7 @@ export default function ChatPage() {
         />
         <button
           disabled={sending}
-          className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50"
+          className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("messages.send")}
         </button>

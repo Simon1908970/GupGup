@@ -25,7 +25,7 @@ export function ConfirmModal({ message, onConfirm, onCancel }: ConfirmModalProps
             </button>
             <button
               onClick={onConfirm}
-              className="h-10 flex-1 rounded-md bg-[var(--color-brand-red)] text-sm font-medium text-white"
+              className="relative h-10 flex-1 rounded-md bg-[var(--color-brand-red)] text-sm font-medium text-white gg-glossy-btn"
             >
               {t("common.confirm")}
             </button>

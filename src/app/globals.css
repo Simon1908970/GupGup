@@ -25,7 +25,8 @@
   --color-border-gray: var(--color-border-gray);
   --color-border-gray-light: var(--color-border-gray-light);
   --color-text-muted: var(--color-text-muted);
-  --font-sans: var(--font-noto-sans-kr);
+  --font-sans: var(--font-scdream), var(--font-noto-sans-kr);
+  --font-heading: var(--font-heading);
 }
 
 body {
@@ -33,6 +34,184 @@ body {
   color: var(--foreground);
 }
 
+/* Dark mode — mobile only (toggled by the moon/sun icon in the mobile header) */
+@media (max-width: 639.98px) {
+  :root.gg-dark {
+    --background: #121214;
+    --foreground: #ececed;
+    --color-brand-red-light: rgba(225, 29, 46, 0.16);
+    --color-border-gray: #3a3a3e;
+    --color-border-gray-light: #34343a;
+    --color-text-muted: #9a9a9f;
+  }
+
+  :root.gg-dark .bg-white {
+    background-color: #1c1c1f;
+  }
+
+  :root.gg-dark input,
+  :root.gg-dark select,
+  :root.gg-dark textarea {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Emphasis font (titles, subtitles, buttons, category names, etc.) —
+   applied to every bold/semibold/medium/extrabold text sitewide */
+.font-extrabold,
+.font-bold,
+.font-semibold,
+.font-medium {
+  font-family: var(--font-heading), var(--font-sans);
+  font-weight: 900;
+  -webkit-text-stroke: 0.3px currentColor;
+  font-size: 18px; /* fallback when no text-* size class is present */
+}
+
+/* Bump each emphasized size by 2px over its normal Tailwind size,
+   keeping the relative hierarchy between them intact */
+.text-xs.font-extrabold, .text-xs.font-bold, .text-xs.font-semibold, .text-xs.font-medium {
+  font-size: 14px;
+}
+.text-sm.font-extrabold, .text-sm.font-bold, .text-sm.font-semibold, .text-sm.font-medium {
+  font-size: 16px;
+}
+.text-lg.font-extrabold, .text-lg.font-bold, .text-lg.font-semibold, .text-lg.font-medium {
+  font-size: 20px;
+}
+.text-xl.font-extrabold, .text-xl.font-bold, .text-xl.font-semibold, .text-xl.font-medium {
+  font-size: 22px;
+}
+
+/* Plain black text (no explicit white/red/muted/yellow color override) —
+   goes back to a regular, non-bold look instead of the emphasis treatment
+   above, and drops 1px below its already-boosted size */
+:is(.font-extrabold, .font-bold, .font-semibold, .font-medium):not([class*="text-white"]):not([class*="text-[var(--color-brand-red"]):not([class*="text-[var(--color-text-muted)"]):not([class*="text-[var(--color-badge"]) {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  -webkit-text-stroke: 0;
+  font-size: 17px;
+}
+
+.text-xs:is(.font-extrabold, .font-bold, .font-semibold, .font-medium):not([class*="text-white"]):not([class*="text-[var(--color-brand-red"]):not([class*="text-[var(--color-text-muted)"]):not([class*="text-[var(--color-badge"]) {
+  font-size: 13px;
+}
+.text-sm:is(.font-extrabold, .font-bold, .font-semibold, .font-medium):not([class*="text-white"]):not([class*="text-[var(--color-brand-red"]):not([class*="text-[var(--color-text-muted)"]):not([class*="text-[var(--color-badge"]) {
+  font-size: 15px;
+}
+.text-lg:is(.font-extrabold, .font-bold, .font-semibold, .font-medium):not([class*="text-white"]):not([class*="text-[var(--color-brand-red"]):not([class*="text-[var(--color-text-muted)"]):not([class*="text-[var(--color-badge"]) {
+  font-size: 19px;
+}
+.text-xl:is(.font-extrabold, .font-bold, .font-semibold, .font-medium):not([class*="text-white"]):not([class*="text-[var(--color-brand-red"]):not([class*="text-[var(--color-text-muted)"]):not([class*="text-[var(--color-badge"]) {
+  font-size: 21px;
+}
+
+/* "글쓰기" button: 2px smaller than the category badge text (14px), with a
+   matching smaller box */
+.gg-write-btn.font-medium {
+  font-size: 12px;
+}
+
+/* "최신순 / 인기순" sort labels: 1px smaller than the country name chips (14px) */
+.gg-sort-text.font-medium {
+  font-size: 13px;
+}
+
+/* Laminated / glossy card treatment (boxes, list panels, dropdowns) */
+.gg-glossy,
+.gg-glossy-interactive {
+  box-shadow:
+    0 1px 2px rgba(17, 17, 17, 0.05),
+    0 10px 24px -14px rgba(17, 17, 17, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.gg-glossy::before,
+.gg-glossy-interactive::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.12) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.gg-glossy-interactive {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.gg-glossy-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(17, 17, 17, 0.06),
+    0 16px 32px -14px rgba(17, 17, 17, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Glossy CTA buttons (solid brand-red) */
+.gg-glossy-btn {
+  box-shadow:
+    0 1px 2px rgba(17, 17, 17, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  transition:
+    filter 0.15s ease,
+    transform 0.05s ease;
+}
+
+.gg-glossy-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.gg-glossy-btn:hover {
+  filter: brightness(1.05);
+}
+
+.gg-glossy-btn:active {
+  transform: translateY(1px);
+  filter: brightness(0.97);
+}
+
+/* Inset "pressed laminate" badge */
+.gg-badge-inset {
+  box-shadow: inset 0 1px 2px rgba(17, 17, 17, 0.1);
+}
+
+/* Sheen for full-width solid-color bars (no hover/press motion) */
+.gg-glossy-bar {
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.gg-glossy-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }

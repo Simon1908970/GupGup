@@ -20,7 +20,7 @@ export function PointsInfo({ align = "left" }: { align?: "left" | "right" }) {
           ?
         </button>
         <span
-          className={`pointer-events-none absolute top-full z-50 mt-1 w-64 whitespace-pre-line rounded-md border border-[var(--color-border-gray)] bg-white p-3 text-left text-[11px] leading-relaxed text-[var(--color-text-muted)] opacity-0 shadow-lg transition-opacity group-hover:opacity-100 ${align === "right" ? "right-0" : "left-0"}`}
+          className={`pointer-events-none absolute top-full z-50 mt-1 w-64 whitespace-pre-line rounded-md border border-[var(--color-border-gray)] bg-white p-3 text-left text-[11px] leading-relaxed text-[var(--color-text-muted)] opacity-0 shadow-lg transition-opacity group-hover:opacity-100 gg-glossy ${align === "right" ? "right-0" : "left-0"}`}
         >
           {t("points.infoBody")}
         </span>

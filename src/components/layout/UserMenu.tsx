@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, User } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
@@ -29,12 +29,21 @@ export function UserMenu() {
 
   if (!user) {
     return (
-      <Link
-        href="/login"
-        className="flex h-10 shrink-0 items-center rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white"
-      >
-        {t("header.login")}
-      </Link>
+      <>
+        <Link
+          href="/login"
+          aria-label={t("header.login")}
+          className="flex shrink-0 items-center p-1 text-[var(--foreground)] sm:hidden"
+        >
+          <User size={22} />
+        </Link>
+        <Link
+          href="/login"
+          className="relative hidden h-10 shrink-0 items-center rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white gg-glossy-btn sm:flex"
+        >
+          {t("header.login")}
+        </Link>
+      </>
     );
   }
 
@@ -56,7 +65,7 @@ export function UserMenu() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-40 mt-1 w-44 rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-40 mt-1 w-44 rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg gg-glossy">
           <div className="flex items-center gap-1.5 border-b border-[var(--color-border-gray-light)] px-4 py-2 text-sm">
             <Star size={14} className="fill-[var(--color-badge-yellow)] text-[var(--color-badge-yellow)]" />
             <span className="text-[var(--color-text-muted)]">{t("profile.points")}</span>

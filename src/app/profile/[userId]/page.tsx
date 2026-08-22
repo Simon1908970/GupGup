@@ -68,7 +68,7 @@ export default function OtherProfilePage() {
       <div className="mb-6 flex gap-2">
         <button
           onClick={() => router.push(`/messages/${author.id}`)}
-          className="flex-1 rounded-md bg-[var(--color-brand-red)] py-2 text-sm font-medium text-white"
+          className="relative flex-1 rounded-md bg-[var(--color-brand-red)] py-2 text-sm font-medium text-white gg-glossy-btn"
         >
           {t("post.sendMessage")}
         </button>
@@ -81,7 +81,7 @@ export default function OtherProfilePage() {
       </div>
 
       <h2 className="mb-2 text-sm font-semibold">{t("profile.writtenPosts")}</h2>
-      <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
+      <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}

@@ -46,7 +46,7 @@ export function ReportModal({
             <p className="text-sm font-medium">{t("post.reportSubmitted")}</p>
             <button
               onClick={onClose}
-              className="rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white"
+              className="relative rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white gg-glossy-btn"
             >
               {t("common.confirm")}
             </button>
@@ -82,7 +82,7 @@ export function ReportModal({
               <button
                 onClick={handleSubmit}
                 disabled={!reason}
-                className="rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+                className="relative rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white disabled:opacity-40 gg-glossy-btn"
               >
                 {t("report.submit")}
               </button>

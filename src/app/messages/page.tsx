@@ -39,7 +39,7 @@ export default function MessagesListPage() {
           {t("messages.empty")}
         </p>
       ) : (
-        <ul className="divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)]">
+        <ul className="relative divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)] gg-glossy">
           {threads.map(({ threadId, partner, lastMessage }) => (
             <li key={threadId}>
               <Link

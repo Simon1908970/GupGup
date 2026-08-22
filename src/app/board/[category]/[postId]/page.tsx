@@ -111,7 +111,7 @@ export default function PostDetailPage() {
       {config.hasMessageButton && (
         <button
           onClick={() => router.push(`/messages/${post.author.id}`)}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-brand-red)] py-2.5 text-sm font-medium text-white"
+          className="relative mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-brand-red)] py-2.5 text-sm font-medium text-white gg-glossy-btn"
         >
           <MessageCircle size={16} />
           {t("post.messageButton")}
@@ -136,7 +136,7 @@ export default function PostDetailPage() {
             />
             <button
               disabled={posting}
-              className="rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50"
+              className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
             >
               {t("common.submit")}
             </button>

@@ -48,7 +48,7 @@ export default function SignupPage() {
         </p>
         <Link
           href="/login"
-          className="mt-6 inline-block rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white"
+          className="relative mt-6 inline-block rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white gg-glossy-btn"
         >
           {t("auth.login")}
         </Link>
@@ -89,7 +89,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50"
+          className="relative h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("auth.signup")}
         </button>

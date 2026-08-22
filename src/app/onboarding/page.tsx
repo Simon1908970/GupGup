@@ -257,7 +257,7 @@ export default function OnboardingPage() {
         <button
           type="submit"
           disabled={submitting || !allAgreed}
-          className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50"
+          className="relative h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("onboarding.submit")}
         </button>

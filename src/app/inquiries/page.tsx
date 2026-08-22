@@ -32,7 +32,7 @@ export default function InquiriesPage() {
         <h1 className="text-lg font-bold">{t("inquiries.title")}</h1>
         <Link
           href="/inquiries/new"
-          className="rounded-md bg-[var(--color-brand-red)] px-4 py-1.5 text-sm font-medium text-white"
+          className="relative rounded-md bg-[var(--color-brand-red)] px-4 py-1.5 text-sm font-medium text-white gg-glossy-btn"
         >
           {t("inquiries.new")}
         </Link>
@@ -47,7 +47,7 @@ export default function InquiriesPage() {
           {t("inquiries.empty")}
         </p>
       ) : (
-        <ul className="divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)]">
+        <ul className="relative divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)] gg-glossy">
           {inquiries.map((inq) => (
             <li key={inq.id}>
               <Link

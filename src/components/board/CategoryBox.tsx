@@ -20,7 +20,7 @@ export function CategoryBox({
   const items = posts.slice(0, config.mainCount);
 
   return (
-    <div className="flex h-full flex-col rounded-lg border border-[var(--color-border-gray)] bg-white">
+    <div className="relative flex h-full flex-col rounded-lg border border-[var(--color-border-gray)] bg-white gg-glossy-interactive">
       <div className="flex items-center justify-between border-b border-[var(--color-border-gray-light)] px-4 py-3">
         <CategoryBadge>{label}</CategoryBadge>
         <Link

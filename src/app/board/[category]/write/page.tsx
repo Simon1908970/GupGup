@@ -157,7 +157,7 @@ export default function WritePostPage() {
           <button
             type="submit"
             disabled={submitting || insufficientPoints}
-            className="rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="relative rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
           >
             {t("common.submit")}
           </button>

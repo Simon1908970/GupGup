@@ -58,7 +58,7 @@ export default function NewInquiryPage() {
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
         <button
           disabled={submitting}
-          className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50"
+          className="relative h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("common.submit")}
         </button>

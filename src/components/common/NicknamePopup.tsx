@@ -57,7 +57,7 @@ export function NicknamePopup({
       </button>
 
       {open && !isSelf && (
-        <div className="absolute left-0 top-full z-40 mt-1 w-40 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
+        <div className="absolute left-0 top-full z-40 mt-1 w-40 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg gg-glossy">
           <Link
             href={`/profile/${author.id}`}
             className="block px-4 py-2 text-sm hover:bg-[var(--color-border-gray-light)]"

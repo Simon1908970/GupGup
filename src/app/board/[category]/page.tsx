@@ -96,7 +96,7 @@ export default function BoardListPage() {
         {config.slug !== "news" && (
           <Link
             href={`/board/${config.slug}/write`}
-            className="rounded-md bg-[var(--color-brand-red)] px-4 py-1.5 text-sm font-medium text-white"
+            className="gg-write-btn relative rounded-md bg-[var(--color-brand-red)] px-3 py-1 text-sm font-medium text-white gg-glossy-btn"
           >
             {t("board.write")}
           </Link>
@@ -139,6 +139,10 @@ export default function BoardListPage() {
         </div>
       )}
 
+      {config.subCategories && config.hasCountryTag && (
+        <div className="mb-3 border-t border-[var(--color-border-gray-light)]" />
+      )}
+
       {config.hasCountryTag && (
         <div className="mb-3">
           <CountryFilterChips
@@ -155,7 +159,7 @@ export default function BoardListPage() {
         <button
           onClick={() => setSort("latest")}
           className={cn(
-            "rounded px-2 py-1 font-medium",
+            "gg-sort-text rounded px-2 py-1 font-medium",
             sort === "latest" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
           )}
         >
@@ -165,7 +169,7 @@ export default function BoardListPage() {
         <button
           onClick={() => setSort("popular")}
           className={cn(
-            "rounded px-2 py-1 font-medium",
+            "gg-sort-text rounded px-2 py-1 font-medium",
             sort === "popular" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
           )}
         >
@@ -173,7 +177,7 @@ export default function BoardListPage() {
         </button>
       </div>
 
-      <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
+      <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {config.slug === "housing" && (
           <li className="flex items-start gap-2 border-b border-[var(--color-border-gray-light)] bg-[var(--color-border-gray-light)]/40 px-1 py-3">
             <span className="mt-0.5 shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-bold text-white">

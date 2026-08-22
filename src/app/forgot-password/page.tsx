@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
             className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
           />
           {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
-          <button className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white">
+          <button className="relative h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white gg-glossy-btn">
             {t("forgotPassword.submit")}
           </button>
         </form>

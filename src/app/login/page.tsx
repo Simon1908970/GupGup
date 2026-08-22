@@ -103,7 +103,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50"
+          className="relative h-11 rounded-md bg-[var(--color-brand-red)] text-sm font-semibold text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("auth.login")}
         </button>

@@ -41,7 +41,7 @@ export default function MyPostsPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="mb-4 text-lg font-bold">{t("profile.myPosts")}</h1>
-      <ul className="rounded-lg border border-[var(--color-border-gray)] px-3">
+      <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}

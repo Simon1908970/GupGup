@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
         <Globe size={20} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-40 mt-1 max-h-80 w-40 overflow-y-auto rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-40 mt-1 max-h-80 w-40 overflow-y-auto rounded-md border border-[var(--color-border-gray)] bg-white shadow-lg gg-glossy">
           {SUPPORTED_LOCALES.map((loc) => (
             <button
               key={loc}

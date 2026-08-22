@@ -126,7 +126,7 @@ function ProfileHeader({
       <>
       <form
         onSubmit={handleSave}
-        className="mb-6 flex flex-col gap-3 rounded-lg border border-[var(--color-border-gray)] p-4"
+        className="relative mb-6 flex flex-col gap-3 rounded-lg border border-[var(--color-border-gray)] p-4 gg-glossy"
       >
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold">{t("profile.edit")}</p>
@@ -167,7 +167,7 @@ function ProfileHeader({
                 <Settings size={14} />
               </button>
               {accountMenuOpen && (
-                <div className="absolute right-0 top-full z-40 mt-1 w-36 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white text-left shadow-lg">
+                <div className="absolute right-0 top-full z-40 mt-1 w-36 overflow-hidden rounded-md border border-[var(--color-border-gray)] bg-white text-left shadow-lg gg-glossy">
                   {accountMenuStep === "root" ? (
                     <button
                       type="button"
@@ -234,7 +234,7 @@ function ProfileHeader({
         <button
           type="submit"
           disabled={saving}
-          className="h-10 rounded-md bg-[var(--color-brand-red)] text-sm font-medium text-white disabled:opacity-50"
+          className="relative h-10 rounded-md bg-[var(--color-brand-red)] text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
         >
           {t("common.submit")}
         </button>
@@ -246,7 +246,7 @@ function ProfileHeader({
               <p className="text-sm font-medium">{completion.message}</p>
               <button
                 onClick={completion.onConfirm}
-                className="rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white"
+                className="relative rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white gg-glossy-btn"
               >
                 {t("common.confirm")}
               </button>
@@ -328,21 +328,21 @@ export default function MyProfilePage() {
       <div className="mb-6 grid grid-cols-3 gap-3 text-center">
         <Link
           href="/profile/posts"
-          className="rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)]"
+          className="relative rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)] gg-glossy-interactive"
         >
           <p className="text-lg font-bold">{stats.posts}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.myPosts")}</p>
         </Link>
         <Link
           href="/profile/comments"
-          className="rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)]"
+          className="relative rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)] gg-glossy-interactive"
         >
           <p className="text-lg font-bold">{stats.comments}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.myComments")}</p>
         </Link>
         <Link
           href="/messages"
-          className="rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)]"
+          className="relative rounded-lg border border-[var(--color-border-gray)] py-4 hover:border-[var(--color-brand-red)] gg-glossy-interactive"
         >
           <p className="text-lg font-bold">{stats.messages}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("profile.receivedMessages")}</p>
