@@ -72,6 +72,15 @@ export function UserMenu() {
             <PointsInfo align="right" />
             <span className="ml-auto font-semibold">{profile?.points ?? 0}</span>
           </div>
+          {profile?.is_admin && (
+            <Link
+              href="/admin"
+              className="block px-4 py-2 text-sm font-semibold text-[var(--color-brand-red)] hover:bg-[var(--color-border-gray-light)]"
+              onClick={() => setOpen(false)}
+            >
+              관리자 페이지
+            </Link>
+          )}
           <Link
             href="/profile"
             className="block px-4 py-2 text-sm hover:bg-[var(--color-border-gray-light)]"

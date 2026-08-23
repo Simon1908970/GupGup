@@ -17,6 +17,7 @@ export interface Profile {
   country: string;
   avatar_url: string | null;
   points: number;
+  is_admin: boolean;
 }
 
 interface ProfileRow {
@@ -25,6 +26,7 @@ interface ProfileRow {
   country: string;
   avatar_url: string | null;
   is_withdrawn: boolean;
+  is_admin: boolean;
 }
 
 interface AuthContextValue {
@@ -74,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const { data } = await client
         .from("profiles")
-        .select("id, nickname, country, avatar_url, is_withdrawn")
+        .select("id, nickname, country, avatar_url, is_withdrawn, is_admin")
         .eq("id", nextUser.id)
         .single();
       const row = data as ProfileRow | null;
@@ -119,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!supabase || !user) return;
       const { data: row } = await supabase
         .from("profiles")
-        .select("id, nickname, country, avatar_url")
+        .select("id, nickname, country, avatar_url, is_admin")
         .eq("id", user.id)
         .single();
       if (!row) {
