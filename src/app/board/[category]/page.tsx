@@ -13,6 +13,8 @@ import { CountryFilterChips } from "@/components/board/CountryFilterChips";
 import { PostListItem } from "@/components/board/PostListItem";
 import { Pagination } from "@/components/board/Pagination";
 import { BoardSearchBar, type SearchScope } from "@/components/board/BoardSearchBar";
+import { TranslateToggle } from "@/components/common/TranslateToggle";
+import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 20;
@@ -40,6 +42,9 @@ export default function BoardListPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
+    posts.map((p) => p.title),
+  );
 
   useEffect(() => {
     if (!config) return;
@@ -155,26 +160,31 @@ export default function BoardListPage() {
         </div>
       )}
 
-      <div className="mb-2 flex items-center gap-1.5 text-xs">
-        <button
-          onClick={() => setSort("latest")}
-          className={cn(
-            "gg-sort-text rounded px-2 py-1 font-medium",
-            sort === "latest" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
-          )}
-        >
-          {t("sort.latest")}
-        </button>
-        <span className="text-[var(--color-border-gray)]">|</span>
-        <button
-          onClick={() => setSort("popular")}
-          className={cn(
-            "gg-sort-text rounded px-2 py-1 font-medium",
-            sort === "popular" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
-          )}
-        >
-          {t("sort.popular")}
-        </button>
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setSort("latest")}
+            className={cn(
+              "gg-sort-text rounded px-2 py-1 font-medium",
+              sort === "latest" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
+            )}
+          >
+            {t("sort.latest")}
+          </button>
+          <span className="text-[var(--color-border-gray)]">|</span>
+          <button
+            onClick={() => setSort("popular")}
+            className={cn(
+              "gg-sort-text rounded px-2 py-1 font-medium",
+              sort === "popular" ? "text-[var(--color-brand-red)]" : "text-[var(--color-text-muted)]",
+            )}
+          >
+            {t("sort.popular")}
+          </button>
+        </div>
+        {posts.length > 0 && (
+          <TranslateToggle showTranslation={showTranslation} translating={translating} onClick={toggle} />
+        )}
       </div>
 
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
@@ -198,7 +208,14 @@ export default function BoardListPage() {
             {t("board.noPosts")}
           </li>
         )}
-        {!loading && posts.map((post) => <PostListItem key={post.id} post={post} />)}
+        {!loading &&
+          posts.map((post, i) => (
+            <PostListItem
+              key={post.id}
+              post={post}
+              titleOverride={showTranslation && translatedTitles ? translatedTitles[i] : undefined}
+            />
+          ))}
       </ul>
 
       <div className="mt-5 flex flex-col items-center gap-4">

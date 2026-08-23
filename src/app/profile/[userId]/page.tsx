@@ -15,6 +15,8 @@ import type { Author, Post } from "@/lib/types";
 import { Avatar } from "@/components/common/Avatar";
 import { PostListItem } from "@/components/board/PostListItem";
 import { ReportModal } from "@/components/common/ReportModal";
+import { TranslateToggle } from "@/components/common/TranslateToggle";
+import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
 import { formatDate } from "@/lib/utils";
 
 export default function OtherProfilePage() {
@@ -28,6 +30,9 @@ export default function OtherProfilePage() {
   const [joinedAt, setJoinedAt] = useState<string | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<CommentWithPost[]>([]);
+  const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
+    posts.map((p) => p.title),
+  );
 
   useEffect(() => {
     fetchPublicProfile(params.userId).then((result) => {
@@ -92,15 +97,24 @@ export default function OtherProfilePage() {
         </button>
       </div>
 
-      <h2 className="mb-2 text-sm font-semibold">{t("profile.writtenPosts")}</h2>
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-sm font-semibold">{t("profile.writtenPosts")}</h2>
+        {posts.length > 0 && (
+          <TranslateToggle showTranslation={showTranslation} translating={translating} onClick={toggle} />
+        )}
+      </div>
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}
           </li>
         )}
-        {posts.map((post) => (
-          <PostListItem key={post.id} post={post} />
+        {posts.map((post, i) => (
+          <PostListItem
+            key={post.id}
+            post={post}
+            titleOverride={showTranslation && translatedTitles ? translatedTitles[i] : undefined}
+          />
         ))}
       </ul>
 

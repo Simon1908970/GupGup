@@ -8,6 +8,8 @@ import { deletePost, fetchPostsByAuthor } from "@/lib/supabase/posts";
 import type { Post } from "@/lib/types";
 import { PostListItem } from "@/components/board/PostListItem";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { TranslateToggle } from "@/components/common/TranslateToggle";
+import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
 
 export default function MyPostsPage() {
   const { t } = useLanguage();
@@ -15,6 +17,9 @@ export default function MyPostsPage() {
   const { user, loading, refreshProfile } = useAuth();
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
+  const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
+    (posts ?? []).map((p) => p.title),
+  );
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");
@@ -40,15 +45,25 @@ export default function MyPostsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="mb-4 text-lg font-bold">{t("profile.myPosts")}</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-lg font-bold">{t("profile.myPosts")}</h1>
+        {posts.length > 0 && (
+          <TranslateToggle showTranslation={showTranslation} translating={translating} onClick={toggle} />
+        )}
+      </div>
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}
           </li>
         )}
-        {posts.map((post) => (
-          <PostListItem key={post.id} post={post} onDelete={() => setPendingDelete(post)} />
+        {posts.map((post, i) => (
+          <PostListItem
+            key={post.id}
+            post={post}
+            onDelete={() => setPendingDelete(post)}
+            titleOverride={showTranslation && translatedTitles ? translatedTitles[i] : undefined}
+          />
         ))}
       </ul>
       {pendingDelete && (

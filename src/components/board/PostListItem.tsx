@@ -9,7 +9,15 @@ import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
 import { MessageSquare, Eye } from "lucide-react";
 
-export function PostListItem({ post, onDelete }: { post: Post; onDelete?: () => void }) {
+export function PostListItem({
+  post,
+  onDelete,
+  titleOverride,
+}: {
+  post: Post;
+  onDelete?: () => void;
+  titleOverride?: string;
+}) {
   const { t } = useLanguage();
   const config = CATEGORIES[post.category];
 
@@ -31,7 +39,7 @@ export function PostListItem({ post, onDelete }: { post: Post; onDelete?: () => 
           <div className="flex items-center gap-2">
             {config.hasCountryTag && <CountryTag country={post.country} />}
             <p className="truncate text-sm font-medium text-[var(--foreground)]">
-              {post.title}
+              {titleOverride ?? post.title}
             </p>
             {post.commentCount > 0 && (
               <span className="shrink-0 text-xs font-semibold text-[var(--color-brand-red)]">
