@@ -138,7 +138,9 @@ All require `assertAdmin`; all return 403 otherwise.
 - `POST /api/admin/reports/:id/resolve` — mark resolved
 - `DELETE /api/admin/posts/:id` — hard-delete a post (any author)
 - `PATCH /api/admin/comments/:id` — set `is_deleted = true`
-- `GET /api/admin/posts?category=&q=` — list posts for moderation
+- (no list endpoint for posts — `posts` is publicly readable under RLS,
+  so `/admin/posts` queries Supabase directly with the browser client;
+  only the delete above needs the service role)
 - `GET /api/admin/inquiries?status=` — list all inquiries
 - `GET /api/admin/inquiries/:id/messages` — thread messages
 - `POST /api/admin/inquiries/:id/reply` — send an admin message, flips status
