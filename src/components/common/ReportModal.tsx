@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { createClient } from "@/lib/supabase/client";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import type { ReportReason, ReportTarget } from "@/lib/types";
 
@@ -22,14 +24,27 @@ export function ReportModal({
   onClose: () => void;
 }) {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [reason, setReason] = useState<ReportReason | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit() {
-    if (!reason) return;
-    // TODO: insert into `reports` table via Supabase once wired up.
-    console.log("report submitted", { target, reason });
-    setSubmitted(true);
+  async function handleSubmit() {
+    if (!reason || !user) return;
+    setSubmitting(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from("reports").insert({
+        reporter_id: user.id,
+        target_type: target.type,
+        target_id: target.id,
+        reason,
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -81,7 +96,7 @@ export function ReportModal({
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!reason}
+                disabled={!reason || submitting}
                 className="relative rounded bg-[var(--color-brand-red)] px-4 py-2 text-sm font-medium text-white disabled:opacity-40 gg-glossy-btn"
               >
                 {t("report.submit")}
