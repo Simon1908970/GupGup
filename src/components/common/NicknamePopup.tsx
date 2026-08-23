@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { blockUser } from "@/lib/supabase/blocks";
 import type { Author } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ReportModal } from "@/components/common/ReportModal";
@@ -76,10 +77,15 @@ export function NicknamePopup({
           </button>
           <button
             className="block w-full px-4 py-2 text-left text-sm hover:bg-[var(--color-border-gray-light)]"
-            onClick={() => {
-              setBlocked(true);
+            onClick={async () => {
               setOpen(false);
-              // TODO: insert into `blocks` table via Supabase once wired up.
+              if (!user) return;
+              try {
+                await blockUser(user.id, author.id);
+                setBlocked(true);
+              } catch {
+                // already blocked or request failed; no UI change
+              }
             }}
           >
             {t("post.block")}

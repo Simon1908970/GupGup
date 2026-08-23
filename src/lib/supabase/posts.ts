@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
 import type { SearchScope } from "@/components/board/BoardSearchBar";
 import { isPremiumPostTarget, POST_REWARD, PREMIUM_POST_COST } from "@/lib/constants/points";
+import { fetchBlockedIds } from "@/lib/supabase/blocks";
 
 interface PostRow {
   id: string;
@@ -83,6 +84,11 @@ export async function fetchPosts({
 }: FetchPostsParams): Promise<{ posts: Post[]; total: number }> {
   const supabase = createClient();
 
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const blockedIds = viewer ? await fetchBlockedIds(viewer.id) : [];
+
   let authorIds: string[] | null = null;
   if (search && searchScope === "author") {
     const { data } = await supabase
@@ -98,6 +104,9 @@ export async function fetchPosts({
     .select(POST_SELECT, { count: "exact" })
     .eq("category", category);
 
+  if (blockedIds.length > 0) {
+    query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
+  }
   if (subCategory && subCategory !== "all") {
     query = query.eq("sub_category", subCategory);
   }

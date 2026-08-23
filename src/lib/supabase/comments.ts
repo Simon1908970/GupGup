@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { CategorySlug, Comment, CountryCode } from "@/lib/types";
 import { COMMENT_REWARD } from "@/lib/constants/points";
+import { fetchBlockedIds } from "@/lib/supabase/blocks";
 
 interface CommentRow {
   id: string;
@@ -44,11 +45,21 @@ function mapComment(row: CommentRow): Comment {
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const supabase = createClient();
-  const { data, error } = await supabase
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const blockedIds = viewer ? await fetchBlockedIds(viewer.id) : [];
+
+  let query = supabase
     .from("comments")
     .select(COMMENT_SELECT)
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
+  if (blockedIds.length > 0) {
+    query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
+  }
+
+  const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map((row) => mapComment(row as unknown as CommentRow));
 }
