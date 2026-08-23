@@ -84,6 +84,8 @@ const ko = {
   "post.block": "차단하기",
   "post.report": "신고하기",
   "post.messageButton": "쪽지 보내기",
+  "post.translateView": "번역 보기",
+  "post.originalView": "원문 보기",
   "post.withdrawnUser": "탈퇴한 회원입니다",
   "post.blockedSuffix": "님을 차단했습니다",
 
@@ -278,6 +280,8 @@ const en: Dictionary = {
   "post.block": "Block",
   "post.report": "Report",
   "post.messageButton": "Send Message",
+  "post.translateView": "View Translation",
+  "post.originalView": "View Original",
   "post.withdrawnUser": "Deleted user",
   "post.blockedSuffix": " blocked",
 
@@ -538,6 +542,8 @@ const vi: Partial<Dictionary> = {
   "post.block": "Chặn",
   "post.report": "Báo cáo",
   "post.messageButton": "Gửi tin nhắn",
+  "post.translateView": "Xem bản dịch",
+  "post.originalView": "Xem bản gốc",
   "post.withdrawnUser": "Thành viên đã rời đi",
   "post.blockedSuffix": "đã bị chặn",
 
@@ -724,6 +730,8 @@ const th: Partial<Dictionary> = {
   "post.block": "บล็อก",
   "post.report": "รายงาน",
   "post.messageButton": "ส่งข้อความ",
+  "post.translateView": "ดูคำแปล",
+  "post.originalView": "ดูต้นฉบับ",
   "post.withdrawnUser": "สมาชิกที่ลาออกแล้ว",
   "post.blockedSuffix": "ถูกบล็อกแล้ว",
 
@@ -910,6 +918,8 @@ const id: Partial<Dictionary> = {
   "post.block": "Blokir",
   "post.report": "Laporkan",
   "post.messageButton": "Kirim Pesan",
+  "post.translateView": "Lihat Terjemahan",
+  "post.originalView": "Lihat Asli",
   "post.withdrawnUser": "Anggota yang telah keluar",
   "post.blockedSuffix": "telah diblokir",
 
@@ -1096,6 +1106,8 @@ const tl: Partial<Dictionary> = {
   "post.block": "I-block",
   "post.report": "I-report",
   "post.messageButton": "Magpadala ng Mensahe",
+  "post.translateView": "Tingnan ang Salin",
+  "post.originalView": "Tingnan ang Orihinal",
   "post.withdrawnUser": "Umalis na miyembro",
   "post.blockedSuffix": "na-block na",
 
@@ -1282,6 +1294,8 @@ const lo: Partial<Dictionary> = {
   "post.block": "ບລັອກ",
   "post.report": "ລາຍງານ",
   "post.messageButton": "ສົ່ງຂໍ້ຄວາມ",
+  "post.translateView": "ເບິ່ງຄຳແປ",
+  "post.originalView": "ເບິ່ງຕົ້ນສະບັບ",
   "post.withdrawnUser": "ສະມາຊິກທີ່ອອກໄປແລ້ວ",
   "post.blockedSuffix": "ຖືກບລັອກແລ້ວ",
 
@@ -1468,6 +1482,8 @@ const my: Partial<Dictionary> = {
   "post.block": "ပိတ်ပင်ရန်",
   "post.report": "တိုင်ကြားရန်",
   "post.messageButton": "မက်ဆေ့ချ်ပို့ရန်",
+  "post.translateView": "ဘာသာပြန်ကြည့်ရန်",
+  "post.originalView": "မူရင်းကြည့်ရန်",
   "post.withdrawnUser": "ထွက်ခွာသွားသောအသင်းဝင်",
   "post.blockedSuffix": "ကို ပိတ်ပင်ထားသည်",
 
@@ -1654,6 +1670,8 @@ const mn: Partial<Dictionary> = {
   "post.block": "Блоклох",
   "post.report": "Мэдээлэх",
   "post.messageButton": "Зурвас илгээх",
+  "post.translateView": "Орчуулга харах",
+  "post.originalView": "Эх хувийг харах",
   "post.withdrawnUser": "Гарсан гишүүн",
   "post.blockedSuffix": "-г блоклолоо",
 
@@ -1840,6 +1858,8 @@ const ru: Partial<Dictionary> = {
   "post.block": "Заблокировать",
   "post.report": "Пожаловаться",
   "post.messageButton": "Отправить сообщение",
+  "post.translateView": "Показать перевод",
+  "post.originalView": "Показать оригинал",
   "post.withdrawnUser": "Пользователь удалил аккаунт",
   "post.blockedSuffix": "заблокирован(а)",
 

@@ -20,7 +20,7 @@ function isValidCategory(v: string): v is CategorySlug {
 }
 
 export default function PostDetailPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const { user, refreshProfile } = useAuth();
   const params = useParams<{ category: string; postId: string }>();
@@ -29,6 +29,9 @@ export default function PostDetailPage() {
   const [commentDraft, setCommentDraft] = useState("");
   const [posting, setPosting] = useState(false);
   const viewCounted = useRef(false);
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [translated, setTranslated] = useState<{ title: string; body: string } | null>(null);
+  const [translating, setTranslating] = useState(false);
 
   const categorySlug = params.category;
   const config = isValidCategory(categorySlug) ? CATEGORIES[categorySlug] : null;
@@ -68,6 +71,34 @@ export default function PostDetailPage() {
     );
   }
 
+  async function handleToggleTranslate() {
+    if (!post) return;
+    if (showTranslation) {
+      setShowTranslation(false);
+      return;
+    }
+    if (translated) {
+      setShowTranslation(true);
+      return;
+    }
+    setTranslating(true);
+    try {
+      const res = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texts: [post.title, post.body], target: locale }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.translations) throw new Error(data.error ?? "translate failed");
+      setTranslated({ title: data.translations[0], body: data.translations[1] });
+      setShowTranslation(true);
+    } catch {
+      // leave original text shown if translation fails
+    } finally {
+      setTranslating(false);
+    }
+  }
+
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !commentDraft.trim() || !post) return;
@@ -93,20 +124,37 @@ export default function PostDetailPage() {
         </span>
       </div>
 
-      <h1 className="mb-4 text-lg font-bold leading-snug">{post.title}</h1>
+      <h1 className="mb-4 text-lg font-bold leading-snug">
+        {showTranslation && translated ? translated.title : post.title}
+      </h1>
 
-      <div className="mb-5 flex items-center gap-2 border-b border-[var(--color-border-gray-light)] pb-4">
-        {config.hasAuthorAvatar && (
-          <Avatar nickname={post.author.nickname} avatarUrl={post.author.avatarUrl} size={34} />
-        )}
-        {config.hasNicknamePopup ? (
-          <NicknamePopup author={post.author} className="text-sm" />
-        ) : (
-          <span className="text-sm font-medium">{post.author.nickname}</span>
-        )}
+      <div className="mb-5 flex items-center justify-between border-b border-[var(--color-border-gray-light)] pb-4">
+        <div className="flex items-center gap-2">
+          {config.hasAuthorAvatar && (
+            <Avatar nickname={post.author.nickname} avatarUrl={post.author.avatarUrl} size={34} />
+          )}
+          {config.hasNicknamePopup ? (
+            <NicknamePopup author={post.author} className="text-sm" />
+          ) : (
+            <span className="text-sm font-medium">{post.author.nickname}</span>
+          )}
+        </div>
+        <button
+          onClick={handleToggleTranslate}
+          disabled={translating}
+          className="shrink-0 text-xs font-medium text-[var(--color-brand-red)] disabled:opacity-50"
+        >
+          {translating
+            ? t("common.loading")
+            : showTranslation
+              ? t("post.originalView")
+              : t("post.translateView")}
+        </button>
       </div>
 
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed">{post.body}</div>
+      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed">
+        {showTranslation && translated ? translated.body : post.body}
+      </div>
 
       {config.hasMessageButton && (
         <button
