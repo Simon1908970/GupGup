@@ -23,6 +23,7 @@ export default function AdminPostsPage() {
   const [q, setQ] = useState("");
   const [posts, setPosts] = useState<AdminPostRow[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [moveNotice, setMoveNotice] = useState<string | null>(null);
 
   function load() {
     const supabase = createClient();
@@ -45,9 +46,32 @@ export default function AdminPostsPage() {
     load();
   }
 
+  async function handleMove(postId: string, targetCategory: CategorySlug) {
+    const res = await fetch(`/api/admin/posts/${postId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ category: targetCategory }),
+    });
+    const data = await res.json();
+    if (data.action === "deleted_insufficient_points") {
+      setMoveNotice(
+        "작성자의 포인트가 부족해 이동 대신 게시글을 삭제하고, 작성자에게 쪽지로 안내했습니다.",
+      );
+    } else if (data.action === "moved") {
+      setMoveNotice("카테고리를 이동하고 포인트를 정산했습니다.");
+    }
+    load();
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-lg font-bold">게시글 관리</h1>
+
+      {moveNotice && (
+        <p className="rounded-md border border-[var(--color-border-gray)] bg-[var(--color-border-gray-light)]/60 px-3 py-2 text-xs">
+          {moveNotice}
+        </p>
+      )}
 
       <div className="flex flex-wrap gap-2">
         <select
@@ -102,6 +126,24 @@ export default function AdminPostsPage() {
             >
               보기
             </a>
+            <select
+              defaultValue=""
+              onChange={(e) => {
+                const target = e.target.value as CategorySlug;
+                e.target.value = "";
+                if (target) handleMove(p.id, target);
+              }}
+              className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
+            >
+              <option value="" disabled>
+                카테고리 이동
+              </option>
+              {CATEGORY_ORDER.filter((slug) => slug !== p.category).map((slug) => (
+                <option key={slug} value={slug}>
+                  {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+                </option>
+              ))}
+            </select>
             <button
               onClick={() => setDeleteTarget(p.id)}
               className="shrink-0 text-xs font-medium text-[var(--color-brand-red)]"
