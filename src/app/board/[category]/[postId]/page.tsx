@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Eye, MessageCircle } from "lucide-react";
+import { Eye, Languages, MessageCircle } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -142,8 +142,9 @@ export default function PostDetailPage() {
         <button
           onClick={handleToggleTranslate}
           disabled={translating}
-          className="shrink-0 text-xs font-medium text-[var(--color-brand-red)] disabled:opacity-50"
+          className="flex shrink-0 items-center gap-1 text-xs font-medium text-[var(--color-brand-red)] disabled:opacity-50"
         >
+          <Languages size={14} />
           {translating
             ? t("common.loading")
             : showTranslation
