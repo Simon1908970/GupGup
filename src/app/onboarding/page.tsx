@@ -111,7 +111,7 @@ export default function OnboardingPage() {
         points: SIGNUP_BONUS,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
       });
-      if (insertError) throw insertError;
+      if (insertError && insertError.code !== "23505") throw insertError;
       if (avatarFile) {
         const formData = new FormData();
         formData.append("file", avatarFile);
