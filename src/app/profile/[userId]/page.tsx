@@ -1,12 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { COUNTRIES } from "@/lib/constants/countries";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { fetchPublicProfile } from "@/lib/supabase/profiles";
 import { fetchPostsByAuthor } from "@/lib/supabase/posts";
+import { fetchCommentsByAuthor, type CommentWithPost } from "@/lib/supabase/comments";
+import { CATEGORIES } from "@/lib/constants/categories";
 import type { Author, Post } from "@/lib/types";
 import { Avatar } from "@/components/common/Avatar";
 import { PostListItem } from "@/components/board/PostListItem";
@@ -17,10 +21,13 @@ export default function OtherProfilePage() {
   const { t } = useLanguage();
   const router = useRouter();
   const params = useParams<{ userId: string }>();
+  const { profile } = useAuth();
+  const isAdminViewer = !!profile?.is_admin;
   const [reportOpen, setReportOpen] = useState(false);
   const [author, setAuthor] = useState<Author | null | undefined>(undefined);
   const [joinedAt, setJoinedAt] = useState<string | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [comments, setComments] = useState<CommentWithPost[]>([]);
 
   useEffect(() => {
     fetchPublicProfile(params.userId).then((result) => {
@@ -29,6 +36,11 @@ export default function OtherProfilePage() {
     });
     fetchPostsByAuthor(params.userId).then(setPosts);
   }, [params.userId]);
+
+  useEffect(() => {
+    if (!isAdminViewer) return;
+    fetchCommentsByAuthor(params.userId).then(setComments);
+  }, [params.userId, isAdminViewer]);
 
   if (author === null) {
     return (
@@ -91,6 +103,37 @@ export default function OtherProfilePage() {
           <PostListItem key={post.id} post={post} />
         ))}
       </ul>
+
+      {isAdminViewer && (
+        <>
+          <h2 className="mb-2 mt-6 text-sm font-semibold">작성 댓글 (관리자 전용 보기)</h2>
+          <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
+            {comments.length === 0 && (
+              <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">
+                {t("board.noComments")}
+              </li>
+            )}
+            {comments.map((c) => (
+              <li
+                key={c.id}
+                className="border-b border-[var(--color-border-gray-light)] py-3 last:border-b-0"
+              >
+                <Link href={`/board/${c.postCategory}/${c.postId}`}>
+                  <p className="truncate text-xs text-[var(--color-text-muted)]">
+                    {t(CATEGORIES[c.postCategory].labelKey as DictionaryKey)} · {c.postTitle}
+                  </p>
+                  <p className="mt-0.5 truncate text-sm">
+                    {c.isDeleted ? t("board.commentDeleted") : c.body}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+                    {formatDate(c.createdAt)}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {reportOpen && (
         <ReportModal target={{ type: "user", id: author.id }} onClose={() => setReportOpen(false)} />

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { NicknamePopup } from "@/components/common/NicknamePopup";
+import type { CountryCode } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 interface AdminUserRow {
@@ -77,7 +79,12 @@ export default function AdminUsersPage() {
       <ul className="divide-y divide-[var(--color-border-gray-light)] rounded-lg border border-[var(--color-border-gray)]">
         {users.map((u) => (
           <li key={u.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
-            <span className="min-w-0 flex-1 truncate font-medium">{u.nickname}</span>
+            <div className="min-w-0 flex-1">
+              <NicknamePopup
+                author={{ id: u.id, nickname: u.nickname, country: u.country as CountryCode, isWithdrawn: u.is_withdrawn }}
+                className="block w-full truncate text-left font-medium"
+              />
+            </div>
             <span className="text-xs text-[var(--color-text-muted)]">{u.country}</span>
             <span className="text-xs text-[var(--color-text-muted)]">{formatDate(u.created_at)}</span>
             <span className="text-xs font-semibold">{u.points}P</span>
