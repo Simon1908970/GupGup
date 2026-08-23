@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Languages, MessageCircle } from "lucide-react";
+import { Eye, MessageCircle } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -14,6 +14,7 @@ import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
 import { NicknamePopup } from "@/components/common/NicknamePopup";
 import { CommentSection } from "@/components/board/CommentSection";
+import { TranslateToggle } from "@/components/common/TranslateToggle";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -139,18 +140,11 @@ export default function PostDetailPage() {
             <span className="text-sm font-medium">{post.author.nickname}</span>
           )}
         </div>
-        <button
+        <TranslateToggle
+          showTranslation={showTranslation}
+          translating={translating}
           onClick={handleToggleTranslate}
-          disabled={translating}
-          className="flex shrink-0 items-center gap-1 text-xs font-medium text-[var(--color-brand-red)] disabled:opacity-50"
-        >
-          <Languages size={14} />
-          {translating
-            ? t("common.loading")
-            : showTranslation
-              ? t("post.originalView")
-              : t("post.translateView")}
-        </button>
+        />
       </div>
 
       <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
