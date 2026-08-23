@@ -24,7 +24,7 @@ export function TranslateToggle({
       onClick={onClick}
       disabled={translating}
       className={cn(
-        "flex shrink-0 items-center gap-1 text-xs font-medium text-[var(--color-brand-red)] disabled:opacity-50",
+        "flex shrink-0 items-center gap-1 text-xs font-medium text-green-600 disabled:opacity-50",
         className,
       )}
     >

@@ -153,7 +153,7 @@ export default function PostDetailPage() {
         </button>
       </div>
 
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed">
+      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
         {showTranslation && translated ? translated.body : post.body}
       </div>
 
