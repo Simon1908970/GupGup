@@ -47,3 +47,4 @@ next-env.d.ts
 # raw search results are an intermediate artifact; the curated daily/*.md
 # summaries are committed by the scheduled digest routine
 /news-digest/daily/raw-*.json
+/news-digest/daily/fetch.log
