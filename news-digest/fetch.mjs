@@ -25,6 +25,13 @@ const ENDPOINTS = ["news", "blog", "cafearticle"];
 const DISPLAY_PER_KEYWORD = 5;
 const MAX_AGE_DAYS = 3;
 
+// The news/blog/cafearticle search APIs share one free pool of 775,000
+// calls/month (NAVER API HUB). A normal run uses ~keywords.length * 3 calls
+// (currently ~87/day, ~2,600/month) -- nowhere near the cap. This is just a
+// hard stop so a much larger keyword list can't run away and approach it.
+const MAX_CALLS_PER_RUN = 200;
+let callCount = 0;
+
 function readKeywords() {
   const text = readFileSync(path.join(__dirname, "keywords.md"), "utf-8");
   return text
@@ -54,6 +61,7 @@ function parseDate(item) {
 }
 
 async function searchOne(endpoint, keyword) {
+  callCount += 1;
   const url = new URL(`https://naverapihub.apigw.ntruss.com/search/v1/${endpoint}`);
   url.searchParams.set("query", keyword);
   url.searchParams.set("display", String(DISPLAY_PER_KEYWORD));
@@ -85,8 +93,14 @@ async function main() {
   console.log(`${keywords.length} keywords x ${ENDPOINTS.length} endpoints`);
 
   const all = [];
-  for (const keyword of keywords) {
+  outer: for (const keyword of keywords) {
     for (const endpoint of ENDPOINTS) {
+      if (callCount >= MAX_CALLS_PER_RUN) {
+        console.warn(
+          `Stopping early: hit the per-run safety cap of ${MAX_CALLS_PER_RUN} API calls.`,
+        );
+        break outer;
+      }
       const items = await searchOne(endpoint, keyword);
       all.push(...items);
     }
@@ -109,6 +123,7 @@ async function main() {
 
   console.log(`${all.length} results -> ${filtered.length} after dedupe/age filter`);
   console.log(`Saved: ${outPath}`);
+  console.log(`API calls this run: ${callCount} (free pool: 775,000/month, shared across news/blog/cafe)`);
 }
 
 main();
