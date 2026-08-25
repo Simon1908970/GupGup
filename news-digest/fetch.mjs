@@ -4,7 +4,7 @@
 // The raw file is then read and turned into a curated daily/<date>.md by
 // a separate summarization step (done by an agent, not this script).
 
-import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -24,6 +24,7 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 const ENDPOINTS = ["news", "blog", "cafearticle"];
 const DISPLAY_PER_KEYWORD = 5;
 const MAX_AGE_DAYS = 3;
+const RAW_RETENTION_DAYS = 60;
 
 // The news/blog/cafearticle search APIs share one free pool of 775,000
 // calls/month (NAVER API HUB). A normal run uses ~keywords.length * 3 calls
@@ -59,6 +60,24 @@ function parseDate(item) {
     return new Date(`${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`);
   }
   return null; // cafearticle has no date field
+}
+
+function purgeOldRawFiles(outDir) {
+  const cutoff = Date.now() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+  let files;
+  try {
+    files = readdirSync(outDir);
+  } catch {
+    return; // outDir doesn't exist yet on a first-ever run
+  }
+  for (const name of files) {
+    if (!/^raw-\d{4}-\d{2}-\d{2}\.json$/.test(name)) continue;
+    const filePath = path.join(outDir, name);
+    if (statSync(filePath).mtimeMs < cutoff) {
+      unlinkSync(filePath);
+      console.log(`Purged (> ${RAW_RETENTION_DAYS} days old): ${name}`);
+    }
+  }
 }
 
 async function searchOne(endpoint, keyword) {
@@ -121,6 +140,7 @@ async function main() {
   mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, `raw-${today}.json`);
   writeFileSync(outPath, JSON.stringify(filtered, null, 2), "utf-8");
+  purgeOldRawFiles(outDir);
 
   console.log(`${all.length} results -> ${filtered.length} after dedupe/age filter`);
   console.log(`Saved: ${outPath}`);
