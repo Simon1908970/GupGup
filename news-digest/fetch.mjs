@@ -27,9 +27,10 @@ const MAX_AGE_DAYS = 3;
 
 // The news/blog/cafearticle search APIs share one free pool of 775,000
 // calls/month (NAVER API HUB). A normal run uses ~keywords.length * 3 calls
-// (currently ~87/day, ~2,600/month) -- nowhere near the cap. This is just a
-// hard stop so a much larger keyword list can't run away and approach it.
-const MAX_CALLS_PER_RUN = 200;
+// (currently ~195/day, ~6,000/month) -- well under 1% of the cap. This is
+// just a hard stop so a much larger keyword list can't run away and
+// approach it.
+const MAX_CALLS_PER_RUN = 400;
 let callCount = 0;
 
 function readKeywords() {
