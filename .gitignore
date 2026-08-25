@@ -44,5 +44,6 @@ next-env.d.ts
 # local IDE/agent tooling
 .serena/
 
-# generated daily digest files (keywords.md / README.md stay tracked)
-/news-digest/daily/
+# raw search results are an intermediate artifact; the curated daily/*.md
+# summaries are committed by the scheduled digest routine
+/news-digest/daily/raw-*.json
