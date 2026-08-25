@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local IDE/agent tooling
 .serena/
+
+# generated daily digest files (keywords.md / README.md stay tracked)
+/news-digest/daily/
