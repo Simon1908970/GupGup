@@ -17,6 +17,7 @@ const PREMIUM_POST_TARGETS: PremiumTarget[] = [
   { category: "life", subCategory: "hospital" },
   { category: "life", subCategory: "mobile" },
   { category: "life", subCategory: "admin" },
+  { category: "community", subCategory: "dating" },
 ];
 
 export function isPremiumPostTarget(category: CategorySlug, subCategory?: string): boolean {

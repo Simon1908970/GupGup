@@ -24,6 +24,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
       { slug: "free", labelKey: "sub.community.free" },
       { slug: "qna", labelKey: "sub.community.qna" },
       { slug: "travel", labelKey: "sub.community.travel" },
+      { slug: "dating", labelKey: "sub.community.dating" },
     ],
   },
   housing: {
