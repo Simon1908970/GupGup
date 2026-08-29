@@ -25,6 +25,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { exec, execFile } from "node:child_process";
 
+import Parser from "rss-parser";
+
 import { kstDate, stripTags, purgeOldFiles } from "./_lib.mjs";
 import { pickTopShorts } from "./kculture/pickTopShorts.mjs";
 
@@ -120,6 +122,33 @@ export async function collectExa(exaSources, { runMcporter = defaultRunMcporter,
   return items;
 }
 
+// ── RSS ──────────────────────────────────────────────────────
+export async function collectRss(rssSources, { parser = new Parser(), now = new Date() } = {}) {
+  const items = [];
+  for (const feed of rssSources) {
+    let parsed;
+    try {
+      parsed = await parser.parseURL(feed.url);
+    } catch (e) {
+      console.warn(`  ! rss ${feed.name}: ${e.message}`);
+      continue;
+    }
+    for (const entry of parsed.items || []) {
+      const date = entry.isoDate || entry.pubDate || null;
+      if (!withinDays(date, 7, now)) continue;
+      items.push({
+        source: `rss:${feed.name}`,
+        keyword: feed.section,
+        title: (entry.title || "").trim(),
+        description: stripTags(entry.contentSnippet || entry.content || "").slice(0, 400),
+        link: entry.link || "",
+        date,
+      });
+    }
+  }
+  return items;
+}
+
 // ── main (expanded in Tasks 4–6) ─────────────────────────────
 async function main(argv) {
   const flags = new Set(argv.slice(2));
@@ -138,6 +167,15 @@ async function main(argv) {
       anyOk = true;
     } catch (e) {
       console.warn(`exa section failed: ${e.message}`);
+    }
+  }
+
+  if (!only || only === "rss") {
+    try {
+      results.push(await collectRss(sources.rss, {}));
+      anyOk = true;
+    } catch (e) {
+      console.warn(`rss section failed: ${e.message}`);
     }
   }
 

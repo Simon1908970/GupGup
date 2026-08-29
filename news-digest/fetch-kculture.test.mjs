@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { KOREA_REGEX, parseExaOutput, withinDays, collectExa } from "./fetch-kculture.mjs";
+import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss } from "./fetch-kculture.mjs";
 
 const NOW = new Date("2026-08-29T00:00:00Z");
 
@@ -93,4 +93,60 @@ test("collectExa: runMcporter 예외는 삼키고 계속", async () => {
     { runMcporter: throwing, now: NOW },
   );
   assert.deepEqual(items, []);
+});
+
+test("collectRss: 7일 이내 항목만, 스키마 + description 정리", async () => {
+  const fakeParser = {
+    async parseURL(url) {
+      assert.equal(url, "https://feed.example/rss");
+      return {
+        items: [
+          {
+            title: "  New K-pop MV drops  ",
+            link: "https://ex.com/mv",
+            isoDate: "2026-08-28T00:00:00.000Z",
+            contentSnippet: "<p>The <b>group</b> released the video</p>",
+          },
+          {
+            title: "Stale item",
+            link: "https://ex.com/old",
+            isoDate: "2026-08-01T00:00:00.000Z",
+            contentSnippet: "old",
+          },
+        ],
+      };
+    },
+  };
+
+  const items = await collectRss(
+    [{ name: "demo", url: "https://feed.example/rss", section: "kpop" }],
+    { parser: fakeParser, now: new Date("2026-08-29T00:00:00Z") },
+  );
+
+  assert.equal(items.length, 1);
+  assert.deepEqual(items[0], {
+    source: "rss:demo",
+    keyword: "kpop",
+    title: "New K-pop MV drops",
+    description: "The group released the video",
+    link: "https://ex.com/mv",
+    date: "2026-08-28T00:00:00.000Z",
+  });
+});
+
+test("collectRss: 한 피드가 던져도 다른 피드는 계속", async () => {
+  const parser = {
+    async parseURL(url) {
+      if (url.includes("bad")) throw new Error("404");
+      return { items: [{ title: "ok", link: "https://ex.com/ok", isoDate: "2026-08-28T00:00:00.000Z" }] };
+    },
+  };
+  const items = await collectRss(
+    [
+      { name: "bad", url: "https://bad.example/rss", section: "kpop" },
+      { name: "good", url: "https://good.example/rss", section: "kpop" },
+    ],
+    { parser, now: new Date("2026-08-29T00:00:00Z") },
+  );
+  assert.deepEqual(items.map((i) => i.source), ["rss:good"]);
 });

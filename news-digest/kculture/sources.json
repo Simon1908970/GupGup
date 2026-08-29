@@ -14,8 +14,8 @@
     { "section": "dating", "query": "국제커플 한국 연애 이야기",          "freshnessDays": 90 }
   ],
   "rss": [
-    { "name": "soompi",  "url": "https://www.soompi.com/feed",      "section": "kpop" },
-    { "name": "allkpop", "url": "https://www.allkpop.com/rss/news", "section": "kpop" }
+    { "name": "soompi",   "url": "https://www.soompi.com/feed",     "section": "kpop" },
+    { "name": "koreaboo", "url": "https://www.koreaboo.com/feed/",  "section": "kpop" }
   ],
   "shorts": [
     { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc vlog", "du lịch Hàn Quốc"] },
