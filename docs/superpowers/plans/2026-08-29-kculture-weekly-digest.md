@@ -1538,3 +1538,52 @@ RSS 피드 URL은 Task 4 Step 6에서 실검증·수정. 그 외 모든 스텝�
 `{ ...shorts item }` 으로 재매핑 (필드명 일치: `views`←`views`, `link`←`link`, `date`←`date`).
 `withinDays`·`KOREA_REGEX`·`pickTopShorts` 시그니처가 정의 태스크와 사용 태스크에서 동일.
 `runMcporter`/`parser`/`runYtDlp`/`now` 주입 인자명이 각 수집기와 테스트에서 일치.
+
+---
+
+## 실행 중 확정 / 최종 리뷰 반영 (구현 후 addendum)
+
+SDD 실행 중 내려진 결정과 최종 whole-branch 리뷰 수정을 반영. 커밋된 코드가 최종 기준.
+
+**소스 교체:** allkpop RSS 폐지(리디자인) → `koreaboo` (`https://www.koreaboo.com/feed/`).
+
+**쇼츠 (Task 5, 최종):**
+- `defaultRunYtDlp` 는 `execFileP("python", ["-m","yt_dlp", ...])` — yt-dlp 콘솔 스크립트 dir 가
+  비대화형/스케줄 셸의 PATH 에 없음.
+- `sources.json` 검색어에 `#shorts` 부착.
+- 나라별 후보 풀 1회 수집(`gatherCandidates`) → `pickTopShorts` 를 7 → 14 → 90일 창으로 재필터.
+  키워드 게이트 없음(`EMPTY_RE`) — 검색어가 한국 스코프. note: `"최근 90일 내 조건 충족 영상 없음"`.
+- yt-dlp 실행 실패(모든 term throw)와 결과 없음을 구분: 실패 시 `note: "yt-dlp 실행 실패"` + `error`.
+- ⚠️ 실측: `ytsearch` 는 관련도순이라 최근 ≤60s 한국 Shorts 가 거의 안 잡혀 실제로는 note-only.
+  코드/테스트/폴백 경로는 정상. 날짜 스코프 쿼리 전략은 후속 과제.
+
+**Exa (Task 3, 최종):** `parseExaOutput` 이 `N/A`/빈값/`null`/`none` 등을 `null` 로 정규화.
+`collectExa` 는 `date === null` 항목을 유지(freshness 건너뜀, `KOREA_REGEX` 는 적용).
+⚠️ 실측: exa 가 K-pop 0건 / K-drama 1건 수준 기여 — 섹션 1·2 는 사실상 RSS 로 채워짐 (소스 믹스는 사용자 판단).
+
+**RSS (Task 4, 최종):** `sources.json` `rss` 항목에 `freshnessDays`(7) + `limit`(15).
+`collectRss` 가 이를 준수하고 피드별 최신순 `limit` 개로 컷.
+
+**`main()` (Task 6 → 최종 리뷰):**
+- `export async function main(argv, deps = {})` — deps 주입 가능(`runMcporter`/`parser`/`runYtDlp`/`kcultureDir`/`now`), 단위 테스트됨.
+- **쓰기 가드**: link 있는 항목이 0개면 파일을 쓰지 않고 exit 1. `--section=<x>`(부분 실행, dry-run 아님)은
+  정규 `raw-kculture-<date>.json` 을 덮어쓰지 않음(안내만 출력). 종료코드 결정이 쓰기보다 앞.
+- `anyOk` 폐기 — 성공 = link 보유 항목 ≥ 1.
+- `--section=kpop|kdrama|dating` 은 해당 섹션 exa 쿼리만 실행(진짜 필터). `--section=exa` 는 전체.
+  알 수 없는 `--section` 값은 에러 + exit 1. 플래그는 `kculture/README.md` "플래그" 절에 문서화.
+- 엔트리 가드는 `process.exitCode`(= `process.exit()` 아님) — `.ps1` 파이프에서 stdout 잘림 방지.
+
+**README (Task 7 → 최종 리뷰):**
+- step 1: `raw-kculture-*.json` 글롭 → 파일명 날짜가 가장 최신인 것 사용, 없거나 7일 초과 시에만 재수집
+  (예약 pre-bake 를 버리지 않도록). step 4: step 1 에서 고른 파일에 append, append 후 fetch 재실행 금지.
+- step 5: `curl.exe -s` (PowerShell 에서 `curl` 은 별칭).
+- note 문자열 3종을 코드와 일치하게 명시.
+
+**보류 (parked — 사용자/후속):**
+1. 부분 성공 full run(예: exa+rss 실패, shorts만 성공)은 여전히 정규 raw json 을 얇게 덮어씀 —
+   소스별 최소 수량 임계값은 이번 범위 밖. README 워크플로로 완화(제거 아님).
+2. 쇼츠 note-only, exa 의 K-pop/K-drama 기여 미미 — 소스 전략 결정.
+3. 후속 정리: mcporter `.cmd`/셸 이스케이프, `description` 마크업 잔여, 소스 간 date 정규화,
+   `run-fetch-kculture.ps1` 타임스탬프 중복, `fetch.mjs` 빈 줄, utm 파라미터 중복, 기타.
+
+**최종 상태:** 38개 테스트 통과. `node news-digest/fetch-kculture.mjs --dry-run` 정상 (exa 1쿼리 + RSS 전체 + yt-dlp 4검색, 파일 미작성).
