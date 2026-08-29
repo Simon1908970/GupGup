@@ -20,7 +20,7 @@
 - `KOREA_REGEX = /korea|korean|한국|케이팝|k-?pop|k-?drama|hallyu|한류|kdrama/i` — `g` 플래그 금지(`.test()` 상태성 회피).
 - 생성물(`raw-kculture-*.json`, 날짜형 `<date>.md`)은 **로컬 전용**. `.gitignore` 처리, 절대 커밋하지 않음. `README.md`·`TEMPLATE.md`·`sources.json`·코드는 커밋.
 - 보존 기간 60일 (raw json + 날짜형 md).
-- 쇼츠: 4개국 `vietnam / thailand / indonesia / philippines`, YouTube만, `view_count` 상위 2개, `duration ≤ 60`, 업로드 ≤ 7일(부족 시 14일 폴백), 한국 관련어 포함.
+- 쇼츠: 4개국 `vietnam / thailand / indonesia / philippines`, YouTube만, `view_count` 상위 2개, `duration ≤ 60`, 업로드 ≤ 7일(부족 시 14일 → 90일 순으로 폴백). 검색어(`"… #shorts"`)가 한국 스코프를 잡으므로 결과에는 별도 한국 관련어 게이트를 걸지 않음(RSS와 동일 원칙 — `KOREA_REGEX` 는 영/한 전용이라 현지어 제목을 떨궈버림).
 - 편집 규칙: 연애 후기 섹션은 개인 식별정보 제거·주제 단위 집계, 원문 전문 복사 금지, 루머·광고 제외.
 - 다이제스트 언어: 제목 = 원어 + 괄호 한국어 번역, 요약 문장 = 한국어.
 - 4개 섹션 고정 순서: K-pop 소식 / K-drama 소식 / 한국인과의 연애 후기 / 동남아 쇼츠.
@@ -945,7 +945,7 @@ git commit -m "Add RSS collector to fetch-kculture"
 ## Task 5: YouTube Shorts 수집기
 
 **Files:**
-- Modify: `news-digest/fetch-kculture.mjs` (`parseYtDlpJsonLines`, `gatherCountry`, `collectShorts` 추가, `main` 배선)
+- Modify: `news-digest/fetch-kculture.mjs` (`parseYtDlpJsonLines`, `gatherCandidates`, `collectShorts` 추가, `main` 배선)
 - Modify: `news-digest/fetch-kculture.test.mjs` (Shorts 테스트 추가)
 
 **Interfaces:**
@@ -1006,7 +1006,7 @@ test("collectShorts: 나라별 상위 2개, 7일 우선", async () => {
   assert.equal(items[0].note, undefined);
 });
 
-test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
+test("collectShorts: 7일 내 0개면 더 넓은 창(14/90)으로 폴백", async () => {
   const now = new Date("2026-08-29T00:00:00Z");
   // 20260817 = 12일 전: 7일 창 밖, 14일 창 안 → 폴백이 성공해야 함
   const runYtDlp = async () =>
@@ -1022,8 +1022,9 @@ test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
   assert.equal(items[0].note, "조건 충족 영상 부족");
 });
 
-test("collectShorts: 14일 내도 0개면 note-only 항목", async () => {
+test("collectShorts: 90일 내도 0개면 note-only 항목", async () => {
   const now = new Date("2026-08-29T00:00:00Z");
+  // 20260101 = 90일보다 훨씬 오래됨 → 모든 창(7/14/90)에서 탈락
   const runYtDlp = async () =>
     JSON.stringify({ id: "ancient", title: "Korea", view_count: 5, upload_date: "20260101", duration: 30, webpage_url: "https://youtu.be/ancient" });
 
@@ -1035,7 +1036,7 @@ test("collectShorts: 14일 내도 0개면 note-only 항목", async () => {
   assert.equal(items.length, 1);
   assert.equal(items[0].link, "");
   assert.equal(items[0].country, "indonesia");
-  assert.equal(items[0].note, "최근 14일 내 조건 충족 영상 없음");
+  assert.equal(items[0].note, "최근 90일 내 조건 충족 영상 없음");
 });
 
 test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
@@ -1050,6 +1051,22 @@ test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
   );
   assert.equal(items.length, 1);
   assert.equal(items[0].link, "https://youtu.be/ok");
+});
+
+test("collectShorts: 현지어 제목(한국 관련어 미포함)도 통과 — 검색어가 스코프를 잡음", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  // "Hàn Quốc" 은 KOREA_REGEX 에 안 걸리지만 쇼츠 경로는 키워드 게이트가 없어야 함
+  const runYtDlp = async () =>
+    JSON.stringify({ id: "vn", title: "Hàn Quốc đẹp quá", view_count: 800, upload_date: "20260828", duration: 25, webpage_url: "https://youtu.be/vn", channel: "V" });
+
+  const items = await collectShorts(
+    [{ country: "vietnam", lang: "vi", terms: ["Hàn Quốc #shorts"] }],
+    { runYtDlp, now },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].link, "https://youtu.be/vn");
+  assert.equal(items[0].note, "조건 충족 영상 부족");
 });
 ```
 
@@ -1100,7 +1117,8 @@ async function defaultRunYtDlp(term) {
   return stdout;
 }
 
-async function gatherCountry(country, maxAgeDays, runYtDlp, now) {
+// Fetch the raw candidate pool for one country ONCE (one call per term).
+async function gatherCandidates(country, runYtDlp) {
   const all = [];
   for (const term of country.terms) {
     let out;
@@ -1112,14 +1130,26 @@ async function gatherCountry(country, maxAgeDays, runYtDlp, now) {
     }
     all.push(...parseYtDlpJsonLines(out));
   }
-  return pickTopShorts(all, { maxAgeDays, limit: 2, koreaRegex: KOREA_REGEX, now });
+  return all;
 }
+
+// EMPTY_RE matches any string incl. "" — the shorts search term (e.g.
+// "Hàn Quốc #shorts") already scopes results to Korea, the same way an RSS
+// feed is Korea-scoped by its source, so no keyword gate is applied here.
+// (KOREA_REGEX is English/Korean-only and would drop local-language titles.)
+const EMPTY_RE = /(?:)/;
 
 export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp, now = new Date() } = {}) {
   const items = [];
   for (const country of shortsSources) {
-    let picks = await gatherCountry(country, 7, runYtDlp, now);
-    if (picks.length < 2) picks = await gatherCountry(country, 14, runYtDlp, now);
+    const candidates = await gatherCandidates(country, runYtDlp);
+    // ytsearch ranks by relevance, not recency — widen the window in tiers
+    // (7 → 14 → 90 days) against the SAME pool until we have 2.
+    let picks = [];
+    for (const maxAgeDays of [7, 14, 90]) {
+      picks = pickTopShorts(candidates, { maxAgeDays, limit: 2, koreaRegex: EMPTY_RE, now });
+      if (picks.length >= 2) break;
+    }
 
     if (picks.length === 0) {
       items.push({
@@ -1127,7 +1157,7 @@ export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp,
         country: country.country, lang: country.lang,
         title: "", description: "", link: "", date: null,
         channel: "", views: 0, duration: null,
-        note: "최근 14일 내 조건 충족 영상 없음",
+        note: "최근 90일 내 조건 충족 영상 없음",
       });
       continue;
     }
@@ -1483,7 +1513,7 @@ git commit -m "Add K-culture digest agent procedure, template, and ops wiring"
 | `sources.json` 스키마 (exa/rss/shorts/reddit) | Task 3 Step 4 |
 | Exa 수집 + freshness + 한국 한정 필터 | Task 3 |
 | RSS 수집 (`rss-parser`, 7일 필터) | Task 4 |
-| YouTube Shorts: 4개국, ≤60s, 7일(→14일 폴백), view 상위 2, 한국 한정 | Task 2 (`pickTopShorts`) + Task 5 (`collectShorts`) |
+| YouTube Shorts: 4개국, ≤60s, 7→14→90일 폴백, view 상위 2, 검색어 스코프(키워드 게이트 없음) | Task 2 (`pickTopShorts`) + Task 5 (`collectShorts`) |
 | `pickTopShorts` 순수 함수 + 픽스처 테스트 | Task 2 |
 | 병합·중복제거(link) + raw json 저장 + 60일 purge | Task 6 |
 | `--dry-run`, `--section=` 플래그 | Task 3 (skeleton) → Task 5·6 (확장) |
