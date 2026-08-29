@@ -25,7 +25,10 @@
 - 다이제스트 언어: 제목 = 원어 + 괄호 한국어 번역, 요약 문장 = 한국어.
 - 4개 섹션 고정 순서: K-pop 소식 / K-drama 소식 / 한국인과의 연애 후기 / 동남아 쇼츠.
 - v1에 seen-topics 없음.
-- 테스트 러너: `node --test` (외부 프레임워크 없음).
+- 테스트 러너: `node --test` (외부 프레임워크 없음). `package.json`의 `test` 스크립트는
+  `node --test "news-digest/**/*.test.mjs"` (따옴표 포함, Node가 글롭 전개). Node 24 +
+  Windows에서 `node --test <디렉터리>` 는 디렉터리 인자를 모듈 경로로 취급해 실패하므로
+  글롭 형태를 쓴다.
 
 ---
 
@@ -231,14 +234,17 @@ Expected: `exports OK`.
 
 - [ ] **Step 7: `package.json`에 test 스크립트 추가**
 
-`scripts`에 추가 (`lint` 다음 줄):
+`scripts`에 추가 (`lint` 다음 줄, JSON 유효성 유지 — 내부 따옴표는 `\"` 로 이스케이프):
 
 ```json
-    "test": "node --test news-digest/"
+    "test": "node --test \"news-digest/**/*.test.mjs\""
 ```
 
+> `node --test <디렉터리>` 는 Node 24 + Windows에서 디렉터리 인자를 모듈로 취급해 실패한다.
+> 따옴표로 감싼 글롭을 넘겨 Node가 직접 전개하게 한다 (재귀 검색 유지).
+
 Run: `npm test`
-Expected: `_lib.test.mjs`의 5개 테스트 PASS (다른 테스트 파일은 아직 없음).
+Expected: `_lib.test.mjs`의 5개 테스트 PASS, 출력 pristine (`tests 5 / pass 5 / fail 0`).
 
 - [ ] **Step 8: 커밋**
 
@@ -575,7 +581,7 @@ Create `news-digest/kculture/sources.json`:
   ],
   "rss": [
     { "name": "soompi",  "url": "https://www.soompi.com/feed",      "section": "kpop" },
-    { "name": "allkpop", "url": "https://www.allkpop.com/rss/news", "section": "kpop" }
+    { "name": "koreaboo", "url": "https://www.koreaboo.com/feed/", "section": "kpop" }
   ],
   "shorts": [
     { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc vlog", "du lịch Hàn Quốc"] },
@@ -923,9 +929,9 @@ Expected: PASS (Exa + RSS 테스트 전부).
 
 Run:
 ```bash
-node -e "import('rss-parser').then(async ({default:P}) => { const p = new P(); for (const u of ['https://www.soompi.com/feed','https://www.allkpop.com/rss/news']) { try { const f = await p.parseURL(u); console.log(u, 'OK', (f.items||[]).length, 'items'); } catch (e) { console.log(u, 'FAIL', e.message); } } })"
+node -e "import('rss-parser').then(async ({default:P}) => { const p = new P(); for (const u of ['https://www.soompi.com/feed','https://www.koreaboo.com/feed/']) { try { const f = await p.parseURL(u); console.log(u, 'OK', (f.items||[]).length, 'items'); } catch (e) { console.log(u, 'FAIL', e.message); } } })"
 ```
-Expected: 각 URL이 `OK <n> items`. `FAIL`이면 해당 매체의 올바른 RSS 경로를 찾아 `sources.json`의 `rss[].url`을 고치고 이 스텝을 다시 실행. (예: allkpop이 `/rss` 또는 `/rss/index` 등일 수 있음.)
+Expected: 각 URL이 `OK <n> items`. `FAIL`이면 해당 매체의 올바른 RSS 경로를 찾거나(없으면 동급 K-pop/K-컬처 매체로 교체) `sources.json`의 `rss[].url`을 고치고 이 스텝을 다시 실행. (구현 시 확인: allkpop은 리디자인으로 RSS를 폐지 → koreaboo로 교체함.)
 
 - [ ] **Step 7: 커밋**
 

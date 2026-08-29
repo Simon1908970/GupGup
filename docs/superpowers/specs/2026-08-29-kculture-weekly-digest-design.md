@@ -94,7 +94,7 @@ news-digest/
   ],
   "rss": [
     { "name": "soompi",  "url": "https://www.soompi.com/feed",        "section": "kpop" },
-    { "name": "allkpop", "url": "https://www.allkpop.com/rss/news",   "section": "kpop" }
+    { "name": "koreaboo", "url": "https://www.koreaboo.com/feed/",    "section": "kpop" }
   ],
   "shorts": [
     { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc", "..."] },
@@ -259,6 +259,6 @@ seen-topics: v1 없음 (YAGNI). K-pop/드라마 섹션이 매주 반복되면 �
 
 1. `mcporter call exa`의 구조화(JSON) 출력 옵션 유무 — 없으면 현재 텍스트 블록
    (`Title: / URL Source: / Published Time: / Highlights:`) 파싱.
-2. RSS 피드 실제 URL 검증 (Soompi, allkpop, 필요 시 K-drama 전용 하나).
+2. RSS 피드 실제 URL 검증 (Soompi OK, allkpop은 RSS 폐지 → koreaboo로 교체 완료, 필요 시 K-drama 전용 하나 추가).
 3. 국가별 쇼츠 검색어 실제 목록 (베트남어/태국어/인도네시아어/필리핀어 한국 관련 seed).
 4. 프로젝트 테스트 러너 확인 (`node:test` 직접 실행 vs 기존 설정 유무).
