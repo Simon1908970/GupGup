@@ -167,8 +167,9 @@ URL은 구현 시 채우고 검증한다 ("미해결" 참조).
 CLAUDE.md에 짧은 포인터 섹션 추가(기존 "뉴스 다이제스트 요약 요청"과 동형) → 이 README
 절차를 따르도록 지시.
 
-1. 이번 주 KST 날짜 태그 결정. `raw-kculture-<date>.json`이 없거나 이번 주 것이 아니면
-   `node news-digest/fetch-kculture.mjs` 먼저 실행.
+1. 날짜 태그 = 실행일 KST `YYYY-MM-DD` (`_lib.mjs`의 `kstDate()`, 일일 파이프라인과 동일 규칙).
+   `raw-kculture-<date>.json`이 없거나 7일 넘게 오래됐으면 `node news-digest/fetch-kculture.mjs`
+   먼저 실행.
 2. **Reddit (연애 후기):** `sources.json`의 `reddit` 항목으로 `opencli reddit search`.
    opencli 데몬 다운/AUTH_REQUIRED면 `redditStatus = "미수집 (로그인/연결 실패)"` 기록
    후 계속. 히트 → `{ source: "reddit:<sub>", keyword: "dating", title, description, link, date }`.
@@ -224,8 +225,9 @@ seen-topics: v1 없음 (YAGNI). K-pop/드라마 섹션이 매주 반복되면 �
 
 ## 테스트
 
-- **`pickTopShorts()` 단위 테스트** (`node:test`, 픽스처 배열): duration ≤ 60 필터,
-  7일 창, `view_count` 내림차순, top-2 캡, 결과 < 2 시 14일 폴백, 한국 관련어 필터.
+- **`pickTopShorts(candidates, { maxAgeDays, limit, koreaRegex })` 단위 테스트**
+  (`node:test`, 픽스처 배열): duration ≤ 60 필터, `maxAgeDays` 창, `view_count` 내림차순,
+  `limit` 캡, `koreaRegex` 관련어 필터. (14일 폴백 재시도 자체는 호출부 로직이므로 별도 확인.)
 - **`fetch-kculture.mjs --dry-run` 스모크:** mcporter/yt-dlp/rss-parser 배선 확인.
 - **첫 실전 실행:** `raw-kculture-<date>.json` 육안 검토 — Exa/RSS 항목 존재, 나라별
   쇼츠 2개(또는 note), 조용히 빈 소스 없음.
