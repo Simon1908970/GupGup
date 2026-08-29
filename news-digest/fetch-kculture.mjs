@@ -149,6 +149,86 @@ export async function collectRss(rssSources, { parser = new Parser(), now = new 
   return items;
 }
 
+// ── YouTube Shorts ───────────────────────────────────────────
+export function parseYtDlpJsonLines(stdout) {
+  const rows = [];
+  for (const line of String(stdout).split("\n")) {
+    const t = line.trim();
+    if (!t || t[0] !== "{") continue;
+    try {
+      const j = JSON.parse(t);
+      rows.push({
+        id: j.id,
+        title: j.title || "",
+        description: j.description || "",
+        channel: j.channel || j.uploader || "",
+        view_count: j.view_count ?? 0,
+        upload_date: j.upload_date || "",
+        duration: typeof j.duration === "number" ? j.duration : null,
+        url: j.webpage_url || j.url || (j.id ? `https://www.youtube.com/watch?v=${j.id}` : ""),
+      });
+    } catch {
+      // progress / non-JSON line
+    }
+  }
+  return rows;
+}
+
+async function defaultRunYtDlp(term) {
+  const { stdout } = await execFileP(
+    "yt-dlp",
+    ["--dump-json", "--no-warnings", "--ignore-errors", `ytsearch12:${term}`],
+    { timeout: 180000, maxBuffer: 50 * 1024 * 1024 },
+  );
+  return stdout;
+}
+
+async function gatherCountry(country, maxAgeDays, runYtDlp, now) {
+  const all = [];
+  for (const term of country.terms) {
+    let out;
+    try {
+      out = await runYtDlp(term);
+    } catch (e) {
+      console.warn(`  ! shorts ${country.country} "${term}": ${e.message}`);
+      continue;
+    }
+    all.push(...parseYtDlpJsonLines(out));
+  }
+  return pickTopShorts(all, { maxAgeDays, limit: 2, koreaRegex: KOREA_REGEX, now });
+}
+
+export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp, now = new Date() } = {}) {
+  const items = [];
+  for (const country of shortsSources) {
+    let picks = await gatherCountry(country, 7, runYtDlp, now);
+    if (picks.length < 2) picks = await gatherCountry(country, 14, runYtDlp, now);
+
+    if (picks.length === 0) {
+      items.push({
+        source: "shorts", keyword: "shorts",
+        country: country.country, lang: country.lang,
+        title: "", description: "", link: "", date: null,
+        channel: "", views: 0, duration: null,
+        note: "최근 14일 내 조건 충족 영상 없음",
+      });
+      continue;
+    }
+
+    const short = picks.length < 2 ? "조건 충족 영상 부족" : undefined;
+    for (const p of picks) {
+      items.push({
+        source: "shorts", keyword: "shorts",
+        country: country.country, lang: country.lang,
+        title: p.title, description: "", link: p.link, date: p.date,
+        channel: p.channel, views: p.views, duration: p.duration,
+        ...(short ? { note: short } : {}),
+      });
+    }
+  }
+  return items;
+}
+
 // ── main (expanded in Tasks 4–6) ─────────────────────────────
 async function main(argv) {
   const flags = new Set(argv.slice(2));
@@ -176,6 +256,18 @@ async function main(argv) {
       anyOk = true;
     } catch (e) {
       console.warn(`rss section failed: ${e.message}`);
+    }
+  }
+
+  if (!only || only === "shorts") {
+    const shortsSrc = dryRun
+      ? sources.shorts.map((s) => ({ ...s, terms: s.terms.slice(0, 1) }))
+      : sources.shorts;
+    try {
+      results.push(await collectShorts(shortsSrc, {}));
+      anyOk = true;
+    } catch (e) {
+      console.warn(`shorts section failed: ${e.message}`);
     }
   }
 

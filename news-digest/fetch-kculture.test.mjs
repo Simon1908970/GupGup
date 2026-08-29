@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss } from "./fetch-kculture.mjs";
+import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss, parseYtDlpJsonLines, collectShorts } from "./fetch-kculture.mjs";
 
 const NOW = new Date("2026-08-29T00:00:00Z");
 
@@ -149,4 +149,87 @@ test("collectRss: 한 피드가 던져도 다른 피드는 계속", async () => 
     { parser, now: new Date("2026-08-29T00:00:00Z") },
   );
   assert.deepEqual(items.map((i) => i.source), ["rss:good"]);
+});
+
+test("parseYtDlpJsonLines: JSON 줄만 파싱, 진행 로그 줄 무시", () => {
+  const out = [
+    "[youtube:search] Extracting URL",
+    JSON.stringify({ id: "v1", title: "Korea vlog", view_count: 5000, upload_date: "20260828", duration: 40, webpage_url: "https://youtu.be/v1", channel: "A" }),
+    "download progress 50%",
+    JSON.stringify({ id: "v2", title: "Seoul food", view_count: 900, upload_date: "20260827", duration: 55, webpage_url: "https://youtu.be/v2" }),
+  ].join("\n");
+  const rows = parseYtDlpJsonLines(out);
+  assert.deepEqual(rows.map((r) => r.id), ["v1", "v2"]);
+  assert.equal(rows[0].channel, "A");
+  assert.equal(rows[1].channel, "");
+});
+
+test("collectShorts: 나라별 상위 2개, 7일 우선", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  const runYtDlp = async (term) => {
+    // 모든 term에 대해 동일 후보 반환 (pickTopShorts가 dedupe/rank)
+    return [
+      JSON.stringify({ id: "hi", title: "Korea " + term, view_count: 9000, upload_date: "20260828", duration: 30, webpage_url: "https://youtu.be/hi", channel: "H" }),
+      JSON.stringify({ id: "mid", title: "korea " + term, view_count: 4000, upload_date: "20260827", duration: 30, webpage_url: "https://youtu.be/mid", channel: "M" }),
+      JSON.stringify({ id: "lo", title: "korea " + term, view_count: 10, upload_date: "20260827", duration: 30, webpage_url: "https://youtu.be/lo", channel: "L" }),
+    ].join("\n");
+  };
+
+  const items = await collectShorts(
+    [{ country: "vietnam", lang: "vi", terms: ["t1", "t2"] }],
+    { runYtDlp, now },
+  );
+
+  assert.equal(items.length, 2);
+  assert.deepEqual(items.map((i) => i.link), ["https://youtu.be/hi", "https://youtu.be/mid"]);
+  assert.equal(items[0].source, "shorts");
+  assert.equal(items[0].country, "vietnam");
+  assert.equal(items[0].views, 9000);
+  assert.equal(items[0].note, undefined);
+});
+
+test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  // 20260817 = 12일 전: 7일 창 밖, 14일 창 안 → 폴백이 성공해야 함
+  const runYtDlp = async () =>
+    JSON.stringify({ id: "old1", title: "Korea old", view_count: 50, upload_date: "20260817", duration: 30, webpage_url: "https://youtu.be/old1", channel: "O" });
+
+  const items = await collectShorts(
+    [{ country: "thailand", lang: "th", terms: ["t"] }],
+    { runYtDlp, now },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].link, "https://youtu.be/old1");
+  assert.equal(items[0].note, "조건 충족 영상 부족");
+});
+
+test("collectShorts: 14일 내도 0개면 note-only 항목", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  const runYtDlp = async () =>
+    JSON.stringify({ id: "ancient", title: "Korea", view_count: 5, upload_date: "20260101", duration: 30, webpage_url: "https://youtu.be/ancient" });
+
+  const items = await collectShorts(
+    [{ country: "indonesia", lang: "id", terms: ["t"] }],
+    { runYtDlp, now },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].link, "");
+  assert.equal(items[0].country, "indonesia");
+  assert.equal(items[0].note, "최근 14일 내 조건 충족 영상 없음");
+});
+
+test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  const runYtDlp = async (term) => {
+    if (term === "boom") throw new Error("yt-dlp exited 1");
+    return JSON.stringify({ id: "ok", title: "Korea ok", view_count: 100, upload_date: "20260828", duration: 20, webpage_url: "https://youtu.be/ok", channel: "K" });
+  };
+  const items = await collectShorts(
+    [{ country: "philippines", lang: "fil", terms: ["boom", "good"] }],
+    { runYtDlp, now },
+  );
+  assert.equal(items.length, 1);
+  assert.equal(items[0].link, "https://youtu.be/ok");
 });
