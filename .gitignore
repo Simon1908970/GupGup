@@ -52,6 +52,7 @@ next-env.d.ts
 # K-culture weekly digest — generated artifacts stay local (README/TEMPLATE/sources.json are committed)
 /news-digest/kculture/raw-kculture-*.json
 /news-digest/kculture/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
+/news-digest/kculture/fetch.log
 
 # SDD tooling scratch
 /.superpowers/

@@ -152,3 +152,14 @@
    매번 재확인).
 7. 완료 후 처리한 날짜별로 핵심 내용을 대화창에 간단히 요약해서 보여줄 것 (파일 전체를 다시 붙여넣지 말고
    날짜별 하이라이트만). 60일 지나서 삭제한 파일이 있으면 그것도 짧게 언급할 것.
+
+## K-컬처 & 라이프 주간 다이제스트 요청 (운영 지침 — Claude용)
+
+사용자가 "K컬처 요약해줘", "케이컬처 다이제스트", "주간 K컬처" 같은 요청을 하면
+`news-digest/kculture/README.md`의 "요약 요청 시 절차"를 그대로 수행할 것.
+
+배경: agent-reach 도구로 K-pop·K-drama·한국인과의 연애 후기·동남아 쇼츠를 주 1회 모아
+한 페이지로 정리하는 별도 파이프라인. `news-digest/fetch-kculture.mjs`가 Exa/RSS/YouTube
+Shorts를 수집해 `news-digest/kculture/raw-kculture-<날짜>.json`을 만들고(`.env.local`
+불필요), 요약 세션이 Reddit·TikTok을 보태 `news-digest/kculture/<날짜>.md`로 정리한다.
+생성물(raw json, 주간 .md)은 **로컬 전용 — git commit/push 하지 않는다.**
