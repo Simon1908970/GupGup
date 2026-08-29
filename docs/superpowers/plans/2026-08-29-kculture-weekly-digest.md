@@ -584,10 +584,10 @@ Create `news-digest/kculture/sources.json`:
     { "name": "koreaboo", "url": "https://www.koreaboo.com/feed/", "section": "kpop" }
   ],
   "shorts": [
-    { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc vlog", "du lịch Hàn Quốc"] },
-    { "country": "thailand",    "lang": "th",  "terms": ["เที่ยวเกาหลี", "เกาหลี รีวิว"] },
-    { "country": "indonesia",   "lang": "id",  "terms": ["Korea Selatan vlog", "jalan jalan ke Korea"] },
-    { "country": "philippines", "lang": "fil", "terms": ["Korea vlog Pinoy", "life in Korea Filipino"] }
+    { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc #shorts", "du lịch Hàn Quốc #shorts"] },
+    { "country": "thailand",    "lang": "th",  "terms": ["เกาหลี #shorts", "เที่ยวเกาหลี #shorts"] },
+    { "country": "indonesia",   "lang": "id",  "terms": ["Korea Selatan #shorts", "jalan jalan ke Korea #shorts"] },
+    { "country": "philippines", "lang": "fil", "terms": ["Korea #shorts Pinoy", "Korea vlog Filipino #shorts"] }
   ],
   "reddit": [
     { "query": "dating a korean guy experience",  "subreddits": ["korea", "Living_in_Korea", "hanguk"] },
