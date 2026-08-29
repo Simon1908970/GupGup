@@ -59,8 +59,8 @@ news-digest/
     README.md                   신규: 주간 요약 작성 규칙 + 에이전트 절차
     TEMPLATE.md                 신규: 형식 견본
     sources.json                신규: Exa 쿼리 + RSS 피드 + 국가별 쇼츠 검색어 + Reddit 쿼리
-    raw-kculture-<date>.json     생성물 (git 제외)
-    <date>.md                    생성물 (로컬 전용, 커밋 여부 미확정 — 아래 참조)
+    raw-kculture-<date>.json     생성물 (로컬 전용, git 제외)
+    <date>.md                    생성물 (로컬 전용, git 제외)
 ```
 
 ## `_lib.mjs` (공용 헬퍼)
@@ -241,11 +241,10 @@ seen-topics: v1 없음 (YAGNI). K-pop/드라마 섹션이 매주 반복되면 �
   주간 항목(예: 월요일)을 만들어 raw를 미리 구워둘 수 있다 (기존 `run-fetch.ps1` 방식).
 - **보존:** `raw-kculture-*.json`(스크립트가 purge) + `kculture/*.md`(요약 세션이
   오래된 것 삭제) 둘 다 60일. 주간이라 각 약 8~9개 유지.
-- **커밋 정책:** 생성물(raw json, 주간 `.md`)은 로컬 전용. `.gitignore`에
-  `/news-digest/kculture/raw-kculture-*.json` 추가 (기존 `daily/raw-*.json` 제외와 동형).
-  `kculture/*.md`의 커밋 여부는 미확정 — "미해결" 참조. 이 스펙 문서와 코드
-  (`_lib.mjs`, `fetch-kculture.mjs`, `kculture/README.md`, `TEMPLATE.md`, `sources.json`)는
-  커밋한다.
+- **커밋 정책:** 생성물(raw json, 주간 `.md`) **둘 다 로컬 전용, git 제외**. `.gitignore`에
+  `/news-digest/kculture/raw-kculture-*.json` 와 `/news-digest/kculture/*.md` 추가.
+  이 스펙 문서와 코드(`_lib.mjs`, `fetch-kculture.mjs`, `kculture/README.md`,
+  `TEMPLATE.md`, `sources.json`)는 커밋한다.
 
 ## 범위 밖 (YAGNI)
 
@@ -263,5 +262,3 @@ seen-topics: v1 없음 (YAGNI). K-pop/드라마 섹션이 매주 반복되면 �
 2. RSS 피드 실제 URL 검증 (Soompi, allkpop, 필요 시 K-drama 전용 하나).
 3. 국가별 쇼츠 검색어 실제 목록 (베트남어/태국어/인도네시아어/필리핀어 한국 관련 seed).
 4. 프로젝트 테스트 러너 확인 (`node:test` 직접 실행 vs 기존 설정 유무).
-5. `kculture/*.md`도 `.gitignore`에 넣을지 (raw json은 제외 확정, `.md`는 사용자 선택 —
-   기존 `daily/*.md`는 현재 커밋되고 있음).
