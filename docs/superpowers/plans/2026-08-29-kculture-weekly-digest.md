@@ -955,7 +955,7 @@ git commit -m "Add RSS collector to fetch-kculture"
   - `collectShorts(shortsSources, { runYtDlp }) → Promise<Array<item>>`
     - `shortsSources` 요소: `{ country: string, lang: string, terms: string[] }`
     - `runYtDlp(term: string) → Promise<string>` (yt-dlp NDJSON stdout)
-    - 나라별: 7일 기준 `pickTopShorts` → 2개 미만이면 14일 재시도 → 그래도 0개면 `note` 항목 1개
+    - 나라별: 후보 풀 1회 수집 후 `pickTopShorts` 를 7 → 14 → 90일 창으로 재필터(2개 확보 시 중단), 키워드 게이트 없음(`EMPTY_RE`) → 90일에도 0개면 `note` 항목 1개
     - item: `{ source:"shorts", keyword:"shorts", country, lang, title, description:"", link, date, channel, views, duration, note? }`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
@@ -1346,7 +1346,8 @@ git commit -m "Finish fetch-kculture: merge/dedupe, dry-run smoke, gitignore art
 2. K-drama 소식
 3. 한국인과의 연애 후기
 4. 동남아 쇼츠 — 베트남·태국·인도네시아·필리핀, 각국 YouTube Shorts 조회수 상위 2개
-   (한국 관련, 최근 7일 업로드, 부족하면 14일)
+   (검색어가 한국 스코프를 잡음, 최근 7일 업로드 → 부족하면 14일 → 90일 순으로 폴백,
+   그래도 없으면 "조건 충족 영상 없음" note)
 
 ## 실행 모델 (하이브리드)
 - `news-digest/fetch-kculture.mjs` 가 Exa 웹검색 + RSS + YouTube Shorts 를 모아
@@ -1417,7 +1418,7 @@ v1 없음. K-pop/드라마 섹션이 매주 같은 내용을 반복하면 그때
 대표 글: https://example.com/c , https://example.com/d
 (이번 주 Reddit 미수집: 해당 시 여기에 표시)
 
-## 동남아 쇼츠 (한국 관련, 최근 7일, 조회수 상위)
+## 동남아 쇼츠 (한국 관련, 조회수 상위 · 최근 업로드 우선)
 ### 베트남
 - **Một ngày ở Seoul** (서울에서의 하루) — 조회수 42만 · @travelvn
   베트남인 유학생의 서울 일상 브이로그.
