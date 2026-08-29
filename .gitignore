@@ -48,3 +48,6 @@ next-env.d.ts
 # summaries are committed by the scheduled digest routine
 /news-digest/daily/raw-*.json
 /news-digest/daily/fetch.log
+
+# SDD tooling scratch
+/.superpowers/

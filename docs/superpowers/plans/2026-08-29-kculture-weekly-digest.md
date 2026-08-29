@@ -808,7 +808,7 @@ test("collectRss: 7일 이내 항목만, 스키마 + description 정리", async 
             title: "  New K-pop MV drops  ",
             link: "https://ex.com/mv",
             isoDate: "2026-08-28T00:00:00.000Z",
-            contentSnippet: "<p>The <b>group</b> released ...</p>",
+            contentSnippet: "<p>The <b>group</b> released the video</p>",
           },
           {
             title: "Stale item",
@@ -831,7 +831,7 @@ test("collectRss: 7일 이내 항목만, 스키마 + description 정리", async 
     source: "rss:demo",
     keyword: "kpop",
     title: "New K-pop MV drops",
-    description: 'The group released',
+    description: "The group released the video",
     link: "https://ex.com/mv",
     date: "2026-08-28T00:00:00.000Z",
   });
@@ -1002,8 +1002,9 @@ test("collectShorts: 나라별 상위 2개, 7일 우선", async () => {
 
 test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
   const now = new Date("2026-08-29T00:00:00Z");
+  // 20260817 = 12일 전: 7일 창 밖, 14일 창 안 → 폴백이 성공해야 함
   const runYtDlp = async () =>
-    JSON.stringify({ id: "old1", title: "Korea old", view_count: 50, upload_date: "20260818", duration: 30, webpage_url: "https://youtu.be/old1", channel: "O" });
+    JSON.stringify({ id: "old1", title: "Korea old", view_count: 50, upload_date: "20260817", duration: 30, webpage_url: "https://youtu.be/old1", channel: "O" });
 
   const items = await collectShorts(
     [{ country: "thailand", lang: "th", terms: ["t"] }],
