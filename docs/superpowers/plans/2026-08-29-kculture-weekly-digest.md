@@ -1587,3 +1587,15 @@ SDD 실행 중 내려진 결정과 최종 whole-branch 리뷰 수정을 반영. 
    `run-fetch-kculture.ps1` 타임스탬프 중복, `fetch.mjs` 빈 줄, utm 파라미터 중복, 기타.
 
 **최종 상태:** 38개 테스트 통과. `node news-digest/fetch-kculture.mjs --dry-run` 정상 (exa 1쿼리 + RSS 전체 + yt-dlp 4검색, 파일 미작성).
+
+---
+
+## 쇼츠 섹션 제거 (구현 후 결정, commit 0822f2d)
+
+사용자 결정으로 **동남아 쇼츠 섹션을 v1 에서 제거.** 근거: `ytsearch` 는 관련도순만
+지원하고 최신순 정렬이 없어 최근 ≤60초 한국 Shorts 가 사실상 안 잡힘 — 섹션이 항상
+note-only 만 냈다. 제거 범위: `collectShorts`/`gatherCandidates`/`parseYtDlpJsonLines`/
+`pickTopShorts(.mjs+test)`, `defaultRunYtDlp`(= `python -m yt_dlp` 의존성), `sources.json`
+`shorts` 배열, `--section=shorts` 플래그, README/TEMPLATE 4번 섹션, CLAUDE.md 언급.
+다이제스트는 **3섹션**(K-pop / K-drama / 연애 후기). 테스트 38 → 23.
+되살릴 경우: 최근 6~12개월 창 + 노출 이력 제외(seen-list) 조합.
