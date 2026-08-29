@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss, parseYtDlpJsonLines, collectShorts } from "./fetch-kculture.mjs";
+import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss, parseYtDlpJsonLines, collectShorts, mergeAndDedupe } from "./fetch-kculture.mjs";
 
 const NOW = new Date("2026-08-29T00:00:00Z");
 
@@ -249,4 +249,21 @@ test("collectShorts: 현지어 제목(한국 관련어 미포함)도 통과 — 
   assert.equal(items.length, 1);
   assert.equal(items[0].link, "https://youtu.be/vn");
   assert.equal(items[0].note, "조건 충족 영상 부족");
+});
+
+test("mergeAndDedupe: link 기준 중복 제거, 빈 link 보존, 순서 유지", () => {
+  const a = [
+    { source: "exa", link: "https://x/1", title: "one" },
+    { source: "rss:z", link: "https://x/2", title: "two" },
+  ];
+  const b = [
+    { source: "reddit:korea", link: "https://x/1", title: "dup" },
+    { source: "shorts", link: "", note: "n1" },
+    { source: "shorts", link: "", note: "n2" },
+    { source: "tiktok", link: "https://x/3", title: "three" },
+  ];
+  const out = mergeAndDedupe([a, b]);
+  assert.deepEqual(out.map((i) => i.source),
+    ["exa", "rss:z", "shorts", "shorts", "tiktok"]);
+  assert.equal(out.length, 5);
 });

@@ -245,6 +245,22 @@ export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp,
   return items;
 }
 
+// ── merge ────────────────────────────────────────────────────
+export function mergeAndDedupe(itemArrays) {
+  const seen = new Set();
+  const out = [];
+  for (const arr of itemArrays) {
+    for (const it of arr) {
+      if (it.link) {
+        if (seen.has(it.link)) continue;
+        seen.add(it.link);
+      }
+      out.push(it);
+    }
+  }
+  return out;
+}
+
 // ── main (expanded in Tasks 4–6) ─────────────────────────────
 async function main(argv) {
   const flags = new Set(argv.slice(2));
@@ -287,7 +303,7 @@ async function main(argv) {
     }
   }
 
-  const merged = results.flat();
+  const merged = mergeAndDedupe(results);
   console.log(`collected ${merged.length} items`);
 
   if (dryRun) {
