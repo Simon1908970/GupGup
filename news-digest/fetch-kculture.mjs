@@ -175,9 +175,12 @@ export function parseYtDlpJsonLines(stdout) {
 }
 
 async function defaultRunYtDlp(term) {
+  // Invoke via `python -m yt_dlp`: yt-dlp is installed as a Python module and
+  // `python` is on PATH, whereas the `yt-dlp` console-script dir
+  // (…\Python\…\Scripts) is not on PATH for non-interactive / scheduled runs.
   const { stdout } = await execFileP(
-    "yt-dlp",
-    ["--dump-json", "--no-warnings", "--ignore-errors", `ytsearch12:${term}`],
+    "python",
+    ["-m", "yt_dlp", "--dump-json", "--no-warnings", "--ignore-errors", `ytsearch12:${term}`],
     { timeout: 180000, maxBuffer: 50 * 1024 * 1024 },
   );
   return stdout;
