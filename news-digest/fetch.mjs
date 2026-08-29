@@ -4,9 +4,10 @@
 // The raw file is then read and turned into a curated daily/<date>.md by
 // a separate summarization step (done by an agent, not this script).
 
-import { readFileSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { kstDate, stripTags, purgeOldFiles } from "./_lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -43,15 +44,6 @@ function readKeywords() {
     .filter(Boolean);
 }
 
-function stripTags(s) {
-  return s
-    .replace(/<[^>]+>/g, "")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .trim();
-}
 
 function parseDate(item) {
   if (item.pubDate) return new Date(item.pubDate);
@@ -62,23 +54,6 @@ function parseDate(item) {
   return null; // cafearticle has no date field
 }
 
-function purgeOldRawFiles(outDir) {
-  const cutoff = Date.now() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000;
-  let files;
-  try {
-    files = readdirSync(outDir);
-  } catch {
-    return; // outDir doesn't exist yet on a first-ever run
-  }
-  for (const name of files) {
-    if (!/^raw-\d{4}-\d{2}-\d{2}\.json$/.test(name)) continue;
-    const filePath = path.join(outDir, name);
-    if (statSync(filePath).mtimeMs < cutoff) {
-      unlinkSync(filePath);
-      console.log(`Purged (> ${RAW_RETENTION_DAYS} days old): ${name}`);
-    }
-  }
-}
 
 async function searchOne(endpoint, keyword) {
   callCount += 1;
@@ -135,12 +110,14 @@ async function main() {
     return true;
   });
 
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date());
+  const today = kstDate();
   const outDir = path.join(ROOT, "news-digest", "daily");
   mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, `raw-${today}.json`);
   writeFileSync(outPath, JSON.stringify(filtered, null, 2), "utf-8");
-  purgeOldRawFiles(outDir);
+  for (const name of purgeOldFiles(outDir, /^raw-\d{4}-\d{2}-\d{2}\.json$/, RAW_RETENTION_DAYS)) {
+    console.log(`Purged (> ${RAW_RETENTION_DAYS} days old): ${name}`);
+  }
 
   console.log(`${all.length} results -> ${filtered.length} after dedupe/age filter`);
   console.log(`Saved: ${outPath}`);
