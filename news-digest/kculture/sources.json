@@ -1,0 +1,31 @@
+{
+  "exa": [
+    { "section": "kpop",   "query": "K-pop news this week comeback",      "freshnessDays": 7 },
+    { "section": "kpop",   "query": "K-pop group announcement",           "freshnessDays": 7 },
+    { "section": "kdrama", "query": "new Korean drama premiere this week", "freshnessDays": 7 },
+    { "section": "kdrama", "query": "K-drama casting news",               "freshnessDays": 7 },
+    { "section": "dating", "query": "dating a Korean guy experience",     "freshnessDays": 90 },
+    { "section": "dating", "query": "dating a Korean girl experience",    "freshnessDays": 90 },
+    { "section": "dating", "query": "foreigner Korean boyfriend girlfriend story", "freshnessDays": 90 },
+    { "section": "dating", "query": "international couple living in Korea", "freshnessDays": 90 },
+    { "section": "dating", "query": "한국남자 국제연애 후기",             "freshnessDays": 90 },
+    { "section": "dating", "query": "한국여자 국제연애 후기",             "freshnessDays": 90 },
+    { "section": "dating", "query": "외국인 한국 연애 후기",              "freshnessDays": 90 },
+    { "section": "dating", "query": "국제커플 한국 연애 이야기",          "freshnessDays": 90 }
+  ],
+  "rss": [
+    { "name": "soompi",  "url": "https://www.soompi.com/feed",      "section": "kpop" },
+    { "name": "allkpop", "url": "https://www.allkpop.com/rss/news", "section": "kpop" }
+  ],
+  "shorts": [
+    { "country": "vietnam",     "lang": "vi",  "terms": ["Hàn Quốc vlog", "du lịch Hàn Quốc"] },
+    { "country": "thailand",    "lang": "th",  "terms": ["เที่ยวเกาหลี", "เกาหลี รีวิว"] },
+    { "country": "indonesia",   "lang": "id",  "terms": ["Korea Selatan vlog", "jalan jalan ke Korea"] },
+    { "country": "philippines", "lang": "fil", "terms": ["Korea vlog Pinoy", "life in Korea Filipino"] }
+  ],
+  "reddit": [
+    { "query": "dating a korean guy experience",  "subreddits": ["korea", "Living_in_Korea", "hanguk"] },
+    { "query": "dating a korean girl experience", "subreddits": ["korea", "Living_in_Korea", "hanguk"] },
+    { "query": "international couple korea",       "subreddits": ["korea", "Living_in_Korea"] }
+  ]
+}
