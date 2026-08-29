@@ -188,7 +188,7 @@ test("collectShorts: 나라별 상위 2개, 7일 우선", async () => {
   assert.equal(items[0].note, undefined);
 });
 
-test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
+test("collectShorts: 7일 내 0개면 더 넓은 창(14/90)으로 폴백", async () => {
   const now = new Date("2026-08-29T00:00:00Z");
   // 20260817 = 12일 전: 7일 창 밖, 14일 창 안 → 폴백이 성공해야 함
   const runYtDlp = async () =>
@@ -204,8 +204,9 @@ test("collectShorts: 7일 내 0개면 14일로 폴백", async () => {
   assert.equal(items[0].note, "조건 충족 영상 부족");
 });
 
-test("collectShorts: 14일 내도 0개면 note-only 항목", async () => {
+test("collectShorts: 90일 내도 0개면 note-only 항목", async () => {
   const now = new Date("2026-08-29T00:00:00Z");
+  // 20260101 = 90일보다 훨씬 오래됨 → 모든 창(7/14/90)에서 탈락
   const runYtDlp = async () =>
     JSON.stringify({ id: "ancient", title: "Korea", view_count: 5, upload_date: "20260101", duration: 30, webpage_url: "https://youtu.be/ancient" });
 
@@ -217,7 +218,7 @@ test("collectShorts: 14일 내도 0개면 note-only 항목", async () => {
   assert.equal(items.length, 1);
   assert.equal(items[0].link, "");
   assert.equal(items[0].country, "indonesia");
-  assert.equal(items[0].note, "최근 14일 내 조건 충족 영상 없음");
+  assert.equal(items[0].note, "최근 90일 내 조건 충족 영상 없음");
 });
 
 test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
@@ -232,4 +233,20 @@ test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
   );
   assert.equal(items.length, 1);
   assert.equal(items[0].link, "https://youtu.be/ok");
+});
+
+test("collectShorts: 현지어 제목(한국 관련어 미포함)도 통과 — 검색어가 스코프를 잡음", async () => {
+  const now = new Date("2026-08-29T00:00:00Z");
+  // "Hàn Quốc" 은 KOREA_REGEX 에 안 걸리지만 쇼츠 경로는 키워드 게이트가 없어야 함
+  const runYtDlp = async () =>
+    JSON.stringify({ id: "vn", title: "Hàn Quốc đẹp quá", view_count: 800, upload_date: "20260828", duration: 25, webpage_url: "https://youtu.be/vn", channel: "V" });
+
+  const items = await collectShorts(
+    [{ country: "vietnam", lang: "vi", terms: ["Hàn Quốc #shorts"] }],
+    { runYtDlp, now },
+  );
+
+  assert.equal(items.length, 1);
+  assert.equal(items[0].link, "https://youtu.be/vn");
+  assert.equal(items[0].note, "조건 충족 영상 부족");
 });

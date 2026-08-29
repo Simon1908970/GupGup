@@ -186,7 +186,8 @@ async function defaultRunYtDlp(term) {
   return stdout;
 }
 
-async function gatherCountry(country, maxAgeDays, runYtDlp, now) {
+// Fetch the raw candidate pool for one country ONCE (one call per term).
+async function gatherCandidates(country, runYtDlp) {
   const all = [];
   for (const term of country.terms) {
     let out;
@@ -198,14 +199,26 @@ async function gatherCountry(country, maxAgeDays, runYtDlp, now) {
     }
     all.push(...parseYtDlpJsonLines(out));
   }
-  return pickTopShorts(all, { maxAgeDays, limit: 2, koreaRegex: KOREA_REGEX, now });
+  return all;
 }
+
+// EMPTY_RE matches any string incl. "" — the shorts search term (e.g.
+// "Hàn Quốc #shorts") already scopes results to Korea, the same way an RSS
+// feed is Korea-scoped by its source, so no keyword gate is applied here.
+// (KOREA_REGEX is English/Korean-only and would drop local-language titles.)
+const EMPTY_RE = /(?:)/;
 
 export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp, now = new Date() } = {}) {
   const items = [];
   for (const country of shortsSources) {
-    let picks = await gatherCountry(country, 7, runYtDlp, now);
-    if (picks.length < 2) picks = await gatherCountry(country, 14, runYtDlp, now);
+    const candidates = await gatherCandidates(country, runYtDlp);
+    // ytsearch ranks by relevance, not recency — widen the window in tiers
+    // (7 → 14 → 90 days) against the SAME pool until we have 2.
+    let picks = [];
+    for (const maxAgeDays of [7, 14, 90]) {
+      picks = pickTopShorts(candidates, { maxAgeDays, limit: 2, koreaRegex: EMPTY_RE, now });
+      if (picks.length >= 2) break;
+    }
 
     if (picks.length === 0) {
       items.push({
@@ -213,7 +226,7 @@ export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp,
         country: country.country, lang: country.lang,
         title: "", description: "", link: "", date: null,
         channel: "", views: 0, duration: null,
-        note: "최근 14일 내 조건 충족 영상 없음",
+        note: "최근 90일 내 조건 충족 영상 없음",
       });
       continue;
     }
