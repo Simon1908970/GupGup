@@ -9,7 +9,7 @@
 3. 한국인과의 연애 후기
 4. 동남아 쇼츠 — 베트남·태국·인도네시아·필리핀, 각국 YouTube Shorts 조회수 상위 2개
    (검색어가 한국 스코프를 잡음(키워드 게이트 없음), 최근 7일 → 14일 → 90일 순 폴백,
-   그래도 없으면 "조건 충족 영상 없음" note)
+   그래도 없으면 note 항목만 남음)
 
 ## 실행 모델 (하이브리드)
 - `news-digest/fetch-kculture.mjs` 가 Exa 웹검색 + RSS + YouTube Shorts 를 모아
@@ -18,11 +18,35 @@
 - 사용자가 "K컬처 요약해줘" 류로 요청하면, 이 세션이 Reddit·TikTok 을 보태고 전체를
   `kculture/<날짜>.md` 로 요약한다.
 - 생성물(`raw-kculture-*.json`, `<날짜>.md`)은 **로컬 전용 — git commit 안 함.**
+- 수집 범위는 `kculture/sources.json` 에서 조절한다. `rss` 항목의 `freshnessDays`(기본 7)
+  는 며칠치를 볼지, `limit` 은 피드당 최대 몇 건을 남길지(최신순으로 자름)를 정한다.
+  한 피드(soompi)가 전체 결과를 독식하지 않도록 하는 장치다.
+
+### 플래그
+| 플래그 | 동작 |
+|---|---|
+| (없음) | 전체 수집 → `kculture/raw-kculture-<KST 날짜>.json` 기록 + 60일 지난 raw json 정리 |
+| `--dry-run` | exa 1개 쿼리 · 전체 RSS · 국가별 쇼츠 검색어 1개만 돌려 앞 5건을 출력. **파일을 쓰지 않음** |
+| `--section=kpop\|kdrama\|dating` | 해당 섹션의 exa 쿼리만 실행 |
+| `--section=exa` | exa 쿼리 전체만 실행 |
+| `--section=rss` | RSS 만 실행 |
+| `--section=shorts` | YouTube Shorts 만 실행 |
+
+- `--section=…` 은 정의상 부분 실행이라 **canonical `raw-kculture-<날짜>.json` 을
+  덮어쓰지 않는다** (수집 결과만 출력). 요약 세션이 append 한 Reddit·TikTok 항목은
+  재생성이 불가능하므로 부분 실행 결과로 날려서는 안 된다. 디버깅·점검용 플래그다.
+- 수집 결과가 0건이면(쇼츠 note 항목만 있는 경우 포함) 파일을 쓰지 않고 **exit 1**.
+  기존 raw json 은 그대로 둔다. `run-fetch-kculture.ps1` 이 이 종료 코드를 로그에 남긴다.
 
 ## 요약 요청 시 절차 (Claude용)
 
-1. 날짜 태그 = 실행일 KST `YYYY-MM-DD`. `kculture/raw-kculture-<날짜>.json` 이 없거나
-   7일 넘게 오래됐으면 먼저 `node news-digest/fetch-kculture.mjs` 실행.
+1. 날짜 태그 = 실행일 KST `YYYY-MM-DD`.
+   **원본 데이터 확보:** `kculture/raw-kculture-*.json` 을 훑어 **파일명 날짜가 가장 최신인
+   것 하나**를 고른다. (파일명 날짜는 수집 시점이지 오늘이 아니다 — 스케줄러가 월요일에
+   미리 받아둔 파일이 그대로 쓰인다.)
+   - 그런 파일이 하나도 없거나, 가장 최신 파일의 날짜가 오늘(KST)보다 **7일 넘게** 오래됐으면
+     먼저 `node news-digest/fetch-kculture.mjs` 를 실행해 새로 받는다.
+   - 그 외에는 다시 받지 말고 **찾은 최신 파일**을 이후 절차(2~6번)의 입력으로 쓴다.
 2. **Reddit (연애 후기):** `kculture/sources.json` 의 `reddit` 항목마다
    `opencli reddit search "<query>" -f yaml` (필요 시 서브레딧 지정). opencli 데몬
    다운 / `AUTH_REQUIRED` 면 `redditStatus = "미수집 (로그인/연결 실패)"` 로 기록하고 계속.
@@ -30,12 +54,18 @@
 3. **TikTok (보조, best-effort):** `opencli tiktok search "<query>" -f yaml` — K-pop /
    K-drama / "dating in korea" 류. 실패하면 조용히 스킵.
    히트 → `{ source: "tiktok", keyword, title, description, link, views }`.
-4. 2·3 결과를 `kculture/raw-kculture-<날짜>.json` 에 같은 스키마로 append.
-5. **원문 읽기:** 후보 기사(쇼츠·틱톡 제외)마다 `curl -s "https://r.jina.ai/<link>"` 로
+4. 2·3 결과를 **1번에서 고른 raw json 파일**에 같은 스키마로 append.
+   (이 append 분은 재생성이 불가능하므로, 이후 `fetch-kculture.mjs` 를 다시 돌리지 않는다.)
+5. **원문 읽기:** 후보 기사(쇼츠·틱톡 제외)마다 `curl.exe -s "https://r.jina.ai/<link>"` 로
    본문을 확보한 뒤 요약. 최대 약 15건.
+   (PowerShell 에서 `curl` 은 `Invoke-WebRequest` 별칭이므로 반드시 `curl.exe` 로 호출.)
 6. **`kculture/<날짜>.md` 작성** (`TEMPLATE.md` 형식):
    - 각 항목: `**<원어 제목>** (<한국어 번역>)` + 한국어 요약 1~2문장 + `원문: <link>`
-   - 쇼츠: 국가별 소제목, 최대 2개, 각 `조회수 N만 · <채널>` + 링크. note가 있으면 그대로 표기.
+   - 쇼츠: 국가별 소제목, 최대 2개, 각 `조회수 N만 · <채널>` + 링크.
+     항목에 `note` 필드가 있으면 **문구를 그대로** 표기한다(코드가 내는 값은
+     `최근 90일 내 조건 충족 영상 없음` / `조건 충족 영상 부족` / `yt-dlp 실행 실패` 세 가지).
+     `yt-dlp 실행 실패` 는 "볼 만한 영상이 없었다"가 아니라 **수집 자체가 실패**했다는 뜻이므로
+     그 나라는 "이번 주 수집 실패"로 적는다.
    - `redditStatus` 가 미수집이면 "한국인과의 연애 후기" 섹션 머리에 그 사실을 적는다.
 7. **로컬 전용:** git add / commit / push 하지 않는다.
 8. 대화창에 섹션별 하이라이트만 짧게 보고. 60일 지나 삭제한 `<날짜>.md` 가 있으면 언급.

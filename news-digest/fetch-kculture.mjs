@@ -1,5 +1,9 @@
 // Weekly "K-컬처 & 라이프" collector — Exa + RSS + YouTube Shorts → raw-kculture-<date>.json.
 // Does NOT need .env.local. Run: node news-digest/fetch-kculture.mjs [--dry-run] [--section=<name>]
+//   --dry-run             collect a small sample, print it, write nothing
+//   --section=<name>      kpop | kdrama | dating | exa | rss | shorts — partial run,
+//                         never overwrites the canonical raw-kculture-<date>.json
+// Exit 1 when nothing was collected (the raw json is then left untouched).
 // Reddit + TikTok are added later by the weekly agent session (see kculture/README.md).
 //
 // mcporter output contract (from Task 3 Step 1 investigation): TEXT path.
@@ -39,17 +43,32 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const KCULTURE_DIR = path.join(HERE, "kculture");
 
 // ── date helpers ─────────────────────────────────────────────
-export function withinDays(dateStr, n, now = new Date()) {
-  if (!dateStr) return false;
+/** ISO string or YYYYMMDD → epoch ms. Unparseable / empty → NaN. */
+function toMs(dateStr) {
+  if (!dateStr) return NaN;
   const ymd = /^(\d{4})(\d{2})(\d{2})$/.exec(String(dateStr));
-  const ms = ymd
+  return ymd
     ? Date.UTC(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3]))
     : Date.parse(dateStr);
+}
+
+export function withinDays(dateStr, n, now = new Date()) {
+  const ms = toMs(dateStr);
   if (Number.isNaN(ms)) return false;
   return ms >= now.getTime() - n * 24 * 60 * 60 * 1000;
 }
 
 // ── Exa ──────────────────────────────────────────────────────
+// exa often reports "Published: N/A" (see the sample at the top of this file).
+// Those placeholders must become a real null, not the literal string, or the
+// freshness check silently drops every undated result.
+function normalizeExaDate(v) {
+  if (v == null) return null;
+  const s = String(v).trim();
+  if (!s || /^(?:n\/a|na|null|none|unknown|undefined)$/i.test(s)) return null;
+  return s;
+}
+
 // TEXT PATH (Task 3 Step 1 investigation found no structured JSON output — use this):
 export function parseExaOutput(text) {
   const blocks = String(text).split(/\n(?=Title:\s)/);
@@ -58,7 +77,7 @@ export function parseExaOutput(text) {
     const title = (/^Title:\s*(.+)$/m.exec(b) || [])[1];
     const link = (/^URL(?:\s*Source)?:\s*(\S+)\s*$/m.exec(b) || [])[1];
     if (!title || !link) continue;
-    const date = (/^Published(?:\s*Time)?:\s*(\S+)\s*$/m.exec(b) || [])[1] || null;
+    const date = normalizeExaDate((/^Published(?:\s*Time)?:\s*(\S+)\s*$/m.exec(b) || [])[1]);
     const hlRaw = (/^Highlights?:\s*\n?([\s\S]*)$/m.exec(b) || [])[1] || "";
     const description = hlRaw
       .replace(/\s*\.\.\.\s*/g, " ")
@@ -107,7 +126,10 @@ export async function collectExa(exaSources, { runMcporter = defaultRunMcporter,
       continue;
     }
     for (const r of parseExaOutput(raw)) {
-      if (!withinDays(r.date, src.freshnessDays, now)) continue;
+      // Undated result (exa "Published: N/A"): keep it — the weekly agent filters
+      // editorially anyway, and dropping them cost us nearly the whole exa yield.
+      // The Korea gate below still applies.
+      if (r.date !== null && !withinDays(r.date, src.freshnessDays, now)) continue;
       if (!KOREA_REGEX.test(`${r.title} ${r.description}`)) continue;
       items.push({
         source: "exa",
@@ -133,10 +155,13 @@ export async function collectRss(rssSources, { parser = new Parser(), now = new 
       console.warn(`  ! rss ${feed.name}: ${e.message}`);
       continue;
     }
+    // Freshness and per-feed cap come from sources.json — a single busy feed
+    // (soompi alone was 60 of 86 items) must not crowd out everything else.
+    const fresh = [];
     for (const entry of parsed.items || []) {
       const date = entry.isoDate || entry.pubDate || null;
-      if (!withinDays(date, 7, now)) continue;
-      items.push({
+      if (!withinDays(date, feed.freshnessDays ?? 7, now)) continue;
+      fresh.push({
         source: `rss:${feed.name}`,
         keyword: feed.section,
         title: (entry.title || "").trim(),
@@ -145,6 +170,8 @@ export async function collectRss(rssSources, { parser = new Parser(), now = new 
         date,
       });
     }
+    fresh.sort((a, b) => toMs(b.date) - toMs(a.date));
+    items.push(...fresh.slice(0, feed.limit ?? Infinity));
   }
   return items;
 }
@@ -187,19 +214,25 @@ async function defaultRunYtDlp(term) {
 }
 
 // Fetch the raw candidate pool for one country ONCE (one call per term).
+// Returns the failure count too, so the caller can tell "tool never ran" apart
+// from "tool ran and found nothing".
 async function gatherCandidates(country, runYtDlp) {
-  const all = [];
+  const candidates = [];
+  let failedTerms = 0;
+  let lastError = null;
   for (const term of country.terms) {
     let out;
     try {
       out = await runYtDlp(term);
     } catch (e) {
+      failedTerms += 1;
+      lastError = e.message;
       console.warn(`  ! shorts ${country.country} "${term}": ${e.message}`);
       continue;
     }
-    all.push(...parseYtDlpJsonLines(out));
+    candidates.push(...parseYtDlpJsonLines(out));
   }
-  return all;
+  return { candidates, failedTerms, lastError };
 }
 
 // EMPTY_RE matches any string incl. "" — the shorts search term (e.g.
@@ -211,7 +244,21 @@ const EMPTY_RE = /(?:)/;
 export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp, now = new Date() } = {}) {
   const items = [];
   for (const country of shortsSources) {
-    const candidates = await gatherCandidates(country, runYtDlp);
+    const { candidates, failedTerms, lastError } = await gatherCandidates(country, runYtDlp);
+
+    // Every term threw → yt-dlp itself never produced results. Report that as a
+    // tool failure, not as "no qualifying video" (which reads as a real search).
+    if (country.terms.length > 0 && failedTerms === country.terms.length) {
+      items.push({
+        source: "shorts", keyword: "shorts",
+        country: country.country, lang: country.lang,
+        title: "", description: "", link: "", date: null,
+        channel: "", views: 0, duration: null,
+        note: "yt-dlp 실행 실패", error: lastError,
+      });
+      continue;
+    }
+
     // ytsearch ranks by relevance, not recency — widen the window in tiers
     // (7 → 14 → 90 days) against the SAME pool until we have 2.
     let picks = [];
@@ -261,22 +308,40 @@ export function mergeAndDedupe(itemArrays) {
   return out;
 }
 
-// ── main (expanded in Tasks 4–6) ─────────────────────────────
-async function main(argv) {
+// ── main ─────────────────────────────────────────────────────
+const EXA_SECTIONS = ["kpop", "kdrama", "dating"];
+
+/**
+ * @param {string[]} argv  process.argv shaped
+ * @param {{runMcporter?:Function, parser?:object, runYtDlp?:Function,
+ *          kcultureDir?:string, now?:Date}} deps  injected for tests
+ * @returns {Promise<number>} exit code (0 ok, 1 nothing collected)
+ */
+export async function main(argv, deps = {}) {
+  const { runMcporter, parser, runYtDlp, kcultureDir = KCULTURE_DIR, now = new Date() } = deps;
+
   const flags = new Set(argv.slice(2));
   const dryRun = flags.has("--dry-run");
   const sectionArg = [...flags].find((f) => f.startsWith("--section="));
   const only = sectionArg ? sectionArg.split("=")[1] : null;
 
-  const sources = JSON.parse(readFileSync(path.join(KCULTURE_DIR, "sources.json"), "utf-8"));
-  const results = [];
-  let anyOk = false;
+  const KNOWN_SECTIONS = [...EXA_SECTIONS, "exa", "rss", "shorts"];
+  if (only && !KNOWN_SECTIONS.includes(only)) {
+    console.error(`unknown --section=${only} (expected: ${KNOWN_SECTIONS.join(" | ")})`);
+    return 1;
+  }
 
-  if (!only || only === "exa" || ["kpop", "kdrama", "dating"].includes(only)) {
-    const exaSrc = dryRun ? sources.exa.slice(0, 1) : sources.exa;
+  const sources = JSON.parse(readFileSync(path.join(kcultureDir, "sources.json"), "utf-8"));
+  const results = [];
+
+  if (!only || only === "exa" || EXA_SECTIONS.includes(only)) {
+    // --section=kpop|kdrama|dating narrows to that section's queries only.
+    let exaSrc = EXA_SECTIONS.includes(only)
+      ? sources.exa.filter((s) => s.section === only)
+      : sources.exa;
+    if (dryRun) exaSrc = exaSrc.slice(0, 1);
     try {
-      results.push(await collectExa(exaSrc, {}));
-      anyOk = true;
+      results.push(await collectExa(exaSrc, { runMcporter, now }));
     } catch (e) {
       console.warn(`exa section failed: ${e.message}`);
     }
@@ -284,8 +349,7 @@ async function main(argv) {
 
   if (!only || only === "rss") {
     try {
-      results.push(await collectRss(sources.rss, {}));
-      anyOk = true;
+      results.push(await collectRss(sources.rss, { parser, now }));
     } catch (e) {
       console.warn(`rss section failed: ${e.message}`);
     }
@@ -296,8 +360,7 @@ async function main(argv) {
       ? sources.shorts.map((s) => ({ ...s, terms: s.terms.slice(0, 1) }))
       : sources.shorts;
     try {
-      results.push(await collectShorts(shortsSrc, {}));
-      anyOk = true;
+      results.push(await collectShorts(shortsSrc, { runYtDlp, now }));
     } catch (e) {
       console.warn(`shorts section failed: ${e.message}`);
     }
@@ -309,18 +372,42 @@ async function main(argv) {
   if (dryRun) {
     console.log(JSON.stringify(merged.slice(0, 5), null, 2));
     console.log("dry run — no file written");
-    return;
+    return 0;
   }
 
-  const outPath = path.join(KCULTURE_DIR, `raw-kculture-${kstDate()}.json`);
+  // Health comes from the output, not from "a section was attempted": every
+  // collector swallows its own errors. note-only shorts placeholders (link: "")
+  // don't count — otherwise a run where every source failed still looks fine.
+  const collected = merged.filter((it) => it.link).length;
+  if (collected === 0) {
+    console.error(
+      `no items collected${only ? ` for --section=${only}` : ""} — not writing (existing raw json left intact)`,
+    );
+    return 1;
+  }
+
+  // A --section run is partial by definition. The weekly agent appends Reddit /
+  // TikTok items to the canonical raw json and those cannot be regenerated, so a
+  // partial run must never overwrite it.
+  if (only) {
+    console.log(`--section=${only}: partial run — canonical raw-kculture-*.json not written`);
+    return 0;
+  }
+
+  const outPath = path.join(kcultureDir, `raw-kculture-${kstDate(now)}.json`);
   writeFileSync(outPath, JSON.stringify(merged, null, 2), "utf-8");
-  for (const name of purgeOldFiles(KCULTURE_DIR, /^raw-kculture-\d{4}-\d{2}-\d{2}\.json$/, 60)) {
+  for (const name of purgeOldFiles(kcultureDir, /^raw-kculture-\d{4}-\d{2}-\d{2}\.json$/, 60)) {
     console.log(`purged old: ${name}`);
   }
   console.log(`saved: ${outPath}`);
-  if (!anyOk) process.exit(1);
+  return 0;
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
-  main(process.argv);
+  // process.exitCode (not process.exit) so buffered stdout is flushed first —
+  // run-fetch-kculture.ps1 pipes this into a log file and reads $LASTEXITCODE.
+  main(process.argv).then(
+    (code) => { process.exitCode = code; },
+    (e) => { console.error(e); process.exitCode = 1; },
+  );
 }
