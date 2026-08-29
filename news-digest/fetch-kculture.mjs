@@ -1,7 +1,7 @@
-// Weekly "K-컬처 & 라이프" collector — Exa + RSS + YouTube Shorts → raw-kculture-<date>.json.
+// Weekly "K-컬처 & 라이프" collector — Exa + RSS → raw-kculture-<date>.json.
 // Does NOT need .env.local. Run: node news-digest/fetch-kculture.mjs [--dry-run] [--section=<name>]
 //   --dry-run             collect a small sample, print it, write nothing
-//   --section=<name>      kpop | kdrama | dating | exa | rss | shorts — partial run,
+//   --section=<name>      kpop | kdrama | dating | exa | rss — partial run,
 //                         never overwrites the canonical raw-kculture-<date>.json
 // Exit 1 when nothing was collected (the raw json is then left untouched).
 // Reddit + TikTok are added later by the weekly agent session (see kculture/README.md).
@@ -27,15 +27,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
-import { exec, execFile } from "node:child_process";
+import { exec } from "node:child_process";
 
 import Parser from "rss-parser";
 
 import { kstDate, stripTags, purgeOldFiles } from "./_lib.mjs";
-import { pickTopShorts } from "./kculture/pickTopShorts.mjs";
 
 const execP = promisify(exec);
-const execFileP = promisify(execFile);
 
 export const KOREA_REGEX = /korea|korean|한국|케이팝|k-?pop|k-?drama|hallyu|한류|kdrama/i;
 
@@ -176,122 +174,6 @@ export async function collectRss(rssSources, { parser = new Parser(), now = new 
   return items;
 }
 
-// ── YouTube Shorts ───────────────────────────────────────────
-export function parseYtDlpJsonLines(stdout) {
-  const rows = [];
-  for (const line of String(stdout).split("\n")) {
-    const t = line.trim();
-    if (!t || t[0] !== "{") continue;
-    try {
-      const j = JSON.parse(t);
-      rows.push({
-        id: j.id,
-        title: j.title || "",
-        description: j.description || "",
-        channel: j.channel || j.uploader || "",
-        view_count: j.view_count ?? 0,
-        upload_date: j.upload_date || "",
-        duration: typeof j.duration === "number" ? j.duration : null,
-        url: j.webpage_url || j.url || (j.id ? `https://www.youtube.com/watch?v=${j.id}` : ""),
-      });
-    } catch {
-      // progress / non-JSON line
-    }
-  }
-  return rows;
-}
-
-async function defaultRunYtDlp(term) {
-  // Invoke via `python -m yt_dlp`: yt-dlp is installed as a Python module and
-  // `python` is on PATH, whereas the `yt-dlp` console-script dir
-  // (…\Python\…\Scripts) is not on PATH for non-interactive / scheduled runs.
-  const { stdout } = await execFileP(
-    "python",
-    ["-m", "yt_dlp", "--dump-json", "--no-warnings", "--ignore-errors", `ytsearch12:${term}`],
-    { timeout: 180000, maxBuffer: 50 * 1024 * 1024 },
-  );
-  return stdout;
-}
-
-// Fetch the raw candidate pool for one country ONCE (one call per term).
-// Returns the failure count too, so the caller can tell "tool never ran" apart
-// from "tool ran and found nothing".
-async function gatherCandidates(country, runYtDlp) {
-  const candidates = [];
-  let failedTerms = 0;
-  let lastError = null;
-  for (const term of country.terms) {
-    let out;
-    try {
-      out = await runYtDlp(term);
-    } catch (e) {
-      failedTerms += 1;
-      lastError = e.message;
-      console.warn(`  ! shorts ${country.country} "${term}": ${e.message}`);
-      continue;
-    }
-    candidates.push(...parseYtDlpJsonLines(out));
-  }
-  return { candidates, failedTerms, lastError };
-}
-
-// EMPTY_RE matches any string incl. "" — the shorts search term (e.g.
-// "Hàn Quốc #shorts") already scopes results to Korea, the same way an RSS
-// feed is Korea-scoped by its source, so no keyword gate is applied here.
-// (KOREA_REGEX is English/Korean-only and would drop local-language titles.)
-const EMPTY_RE = /(?:)/;
-
-export async function collectShorts(shortsSources, { runYtDlp = defaultRunYtDlp, now = new Date() } = {}) {
-  const items = [];
-  for (const country of shortsSources) {
-    const { candidates, failedTerms, lastError } = await gatherCandidates(country, runYtDlp);
-
-    // Every term threw → yt-dlp itself never produced results. Report that as a
-    // tool failure, not as "no qualifying video" (which reads as a real search).
-    if (country.terms.length > 0 && failedTerms === country.terms.length) {
-      items.push({
-        source: "shorts", keyword: "shorts",
-        country: country.country, lang: country.lang,
-        title: "", description: "", link: "", date: null,
-        channel: "", views: 0, duration: null,
-        note: "yt-dlp 실행 실패", error: lastError,
-      });
-      continue;
-    }
-
-    // ytsearch ranks by relevance, not recency — widen the window in tiers
-    // (7 → 14 → 90 days) against the SAME pool until we have 2.
-    let picks = [];
-    for (const maxAgeDays of [7, 14, 90]) {
-      picks = pickTopShorts(candidates, { maxAgeDays, limit: 2, koreaRegex: EMPTY_RE, now });
-      if (picks.length >= 2) break;
-    }
-
-    if (picks.length === 0) {
-      items.push({
-        source: "shorts", keyword: "shorts",
-        country: country.country, lang: country.lang,
-        title: "", description: "", link: "", date: null,
-        channel: "", views: 0, duration: null,
-        note: "최근 90일 내 조건 충족 영상 없음",
-      });
-      continue;
-    }
-
-    const short = picks.length < 2 ? "조건 충족 영상 부족" : undefined;
-    for (const p of picks) {
-      items.push({
-        source: "shorts", keyword: "shorts",
-        country: country.country, lang: country.lang,
-        title: p.title, description: "", link: p.link, date: p.date,
-        channel: p.channel, views: p.views, duration: p.duration,
-        ...(short ? { note: short } : {}),
-      });
-    }
-  }
-  return items;
-}
-
 // ── merge ────────────────────────────────────────────────────
 export function mergeAndDedupe(itemArrays) {
   const seen = new Set();
@@ -313,19 +195,19 @@ const EXA_SECTIONS = ["kpop", "kdrama", "dating"];
 
 /**
  * @param {string[]} argv  process.argv shaped
- * @param {{runMcporter?:Function, parser?:object, runYtDlp?:Function,
+ * @param {{runMcporter?:Function, parser?:object,
  *          kcultureDir?:string, now?:Date}} deps  injected for tests
  * @returns {Promise<number>} exit code (0 ok, 1 nothing collected)
  */
 export async function main(argv, deps = {}) {
-  const { runMcporter, parser, runYtDlp, kcultureDir = KCULTURE_DIR, now = new Date() } = deps;
+  const { runMcporter, parser, kcultureDir = KCULTURE_DIR, now = new Date() } = deps;
 
   const flags = new Set(argv.slice(2));
   const dryRun = flags.has("--dry-run");
   const sectionArg = [...flags].find((f) => f.startsWith("--section="));
   const only = sectionArg ? sectionArg.split("=")[1] : null;
 
-  const KNOWN_SECTIONS = [...EXA_SECTIONS, "exa", "rss", "shorts"];
+  const KNOWN_SECTIONS = [...EXA_SECTIONS, "exa", "rss"];
   if (only && !KNOWN_SECTIONS.includes(only)) {
     console.error(`unknown --section=${only} (expected: ${KNOWN_SECTIONS.join(" | ")})`);
     return 1;
@@ -355,17 +237,6 @@ export async function main(argv, deps = {}) {
     }
   }
 
-  if (!only || only === "shorts") {
-    const shortsSrc = dryRun
-      ? sources.shorts.map((s) => ({ ...s, terms: s.terms.slice(0, 1) }))
-      : sources.shorts;
-    try {
-      results.push(await collectShorts(shortsSrc, { runYtDlp, now }));
-    } catch (e) {
-      console.warn(`shorts section failed: ${e.message}`);
-    }
-  }
-
   const merged = mergeAndDedupe(results);
   console.log(`collected ${merged.length} items`);
 
@@ -376,8 +247,8 @@ export async function main(argv, deps = {}) {
   }
 
   // Health comes from the output, not from "a section was attempted": every
-  // collector swallows its own errors. note-only shorts placeholders (link: "")
-  // don't count — otherwise a run where every source failed still looks fine.
+  // collector swallows its own errors, so count only items that actually carry
+  // a link — otherwise a run where every source failed still looks fine.
   const collected = merged.filter((it) => it.link).length;
   if (collected === 0) {
     console.error(

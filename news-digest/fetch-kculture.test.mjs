@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss, parseYtDlpJsonLines, collectShorts, mergeAndDedupe, main } from "./fetch-kculture.mjs";
+import { KOREA_REGEX, parseExaOutput, withinDays, collectExa, collectRss, mergeAndDedupe, main } from "./fetch-kculture.mjs";
 
 const NOW = new Date("2026-08-29T00:00:00Z");
 
@@ -50,8 +50,6 @@ test("withinDays: ISO / YYYYMMDD / null / 범위", () => {
 });
 
 test("parseExaOutput: 결과 블록에서 title/link/date/description 추출", () => {
-  // Step 1 조사 결과가 '텍스트 경로'라는 가정의 픽스처. JSON 경로면 이 픽스처를
-  // 실제 JSON 형태로 바꾸고 아래 기대값은 유지한다.
   const sample = [
     "Title: Korea visa update 2026",
     "URL: https://example.com/a",
@@ -272,122 +270,6 @@ test("collectRss: 한 피드가 던져도 다른 피드는 계속", async () => 
   assert.deepEqual(items.map((i) => i.source), ["rss:good"]);
 });
 
-test("parseYtDlpJsonLines: JSON 줄만 파싱, 진행 로그 줄 무시", () => {
-  const out = [
-    "[youtube:search] Extracting URL",
-    JSON.stringify({ id: "v1", title: "Korea vlog", view_count: 5000, upload_date: "20260828", duration: 40, webpage_url: "https://youtu.be/v1", channel: "A" }),
-    "download progress 50%",
-    JSON.stringify({ id: "v2", title: "Seoul food", view_count: 900, upload_date: "20260827", duration: 55, webpage_url: "https://youtu.be/v2" }),
-  ].join("\n");
-  const rows = parseYtDlpJsonLines(out);
-  assert.deepEqual(rows.map((r) => r.id), ["v1", "v2"]);
-  assert.equal(rows[0].channel, "A");
-  assert.equal(rows[1].channel, "");
-});
-
-test("collectShorts: 나라별 상위 2개, 7일 우선", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  const runYtDlp = async (term) => {
-    // 모든 term에 대해 동일 후보 반환 (pickTopShorts가 dedupe/rank)
-    return [
-      JSON.stringify({ id: "hi", title: "Korea " + term, view_count: 9000, upload_date: "20260828", duration: 30, webpage_url: "https://youtu.be/hi", channel: "H" }),
-      JSON.stringify({ id: "mid", title: "korea " + term, view_count: 4000, upload_date: "20260827", duration: 30, webpage_url: "https://youtu.be/mid", channel: "M" }),
-      JSON.stringify({ id: "lo", title: "korea " + term, view_count: 10, upload_date: "20260827", duration: 30, webpage_url: "https://youtu.be/lo", channel: "L" }),
-    ].join("\n");
-  };
-
-  const items = await collectShorts(
-    [{ country: "vietnam", lang: "vi", terms: ["t1", "t2"] }],
-    { runYtDlp, now },
-  );
-
-  assert.equal(items.length, 2);
-  assert.deepEqual(items.map((i) => i.link), ["https://youtu.be/hi", "https://youtu.be/mid"]);
-  assert.equal(items[0].source, "shorts");
-  assert.equal(items[0].country, "vietnam");
-  assert.equal(items[0].views, 9000);
-  assert.equal(items[0].note, undefined);
-});
-
-test("collectShorts: 7일 내 0개면 더 넓은 창(14/90)으로 폴백", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  // 20260817 = 12일 전: 7일 창 밖, 14일 창 안 → 폴백이 성공해야 함
-  const runYtDlp = async () =>
-    JSON.stringify({ id: "old1", title: "Korea old", view_count: 50, upload_date: "20260817", duration: 30, webpage_url: "https://youtu.be/old1", channel: "O" });
-
-  const items = await collectShorts(
-    [{ country: "thailand", lang: "th", terms: ["t"] }],
-    { runYtDlp, now },
-  );
-
-  assert.equal(items.length, 1);
-  assert.equal(items[0].link, "https://youtu.be/old1");
-  assert.equal(items[0].note, "조건 충족 영상 부족");
-});
-
-test("collectShorts: 90일 내도 0개면 note-only 항목", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  // 20260101 = 90일보다 훨씬 오래됨 → 모든 창(7/14/90)에서 탈락
-  const runYtDlp = async () =>
-    JSON.stringify({ id: "ancient", title: "Korea", view_count: 5, upload_date: "20260101", duration: 30, webpage_url: "https://youtu.be/ancient" });
-
-  const items = await collectShorts(
-    [{ country: "indonesia", lang: "id", terms: ["t"] }],
-    { runYtDlp, now },
-  );
-
-  assert.equal(items.length, 1);
-  assert.equal(items[0].link, "");
-  assert.equal(items[0].country, "indonesia");
-  assert.equal(items[0].note, "최근 90일 내 조건 충족 영상 없음");
-});
-
-test("collectShorts: 한 term이 던져도 다른 term은 계속", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  const runYtDlp = async (term) => {
-    if (term === "boom") throw new Error("yt-dlp exited 1");
-    return JSON.stringify({ id: "ok", title: "Korea ok", view_count: 100, upload_date: "20260828", duration: 20, webpage_url: "https://youtu.be/ok", channel: "K" });
-  };
-  const items = await collectShorts(
-    [{ country: "philippines", lang: "fil", terms: ["boom", "good"] }],
-    { runYtDlp, now },
-  );
-  assert.equal(items.length, 1);
-  assert.equal(items[0].link, "https://youtu.be/ok");
-});
-
-test("collectShorts: 모든 term 이 실패하면 '검색 결과 없음'이 아니라 실행 실패 note", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  const runYtDlp = async () => { throw new Error("spawn python ENOENT"); };
-
-  const items = await quiet(() => collectShorts(
-    [{ country: "vietnam", lang: "vi", terms: ["t1", "t2"] }],
-    { runYtDlp, now },
-  ));
-
-  assert.equal(items.length, 1);
-  assert.equal(items[0].note, "yt-dlp 실행 실패");
-  assert.equal(items[0].error, "spawn python ENOENT");
-  assert.equal(items[0].link, "");
-  assert.equal(items[0].country, "vietnam");
-});
-
-test("collectShorts: 현지어 제목(한국 관련어 미포함)도 통과 — 검색어가 스코프를 잡음", async () => {
-  const now = new Date("2026-08-29T00:00:00Z");
-  // "Hàn Quốc" 은 KOREA_REGEX 에 안 걸리지만 쇼츠 경로는 키워드 게이트가 없어야 함
-  const runYtDlp = async () =>
-    JSON.stringify({ id: "vn", title: "Hàn Quốc đẹp quá", view_count: 800, upload_date: "20260828", duration: 25, webpage_url: "https://youtu.be/vn", channel: "V" });
-
-  const items = await collectShorts(
-    [{ country: "vietnam", lang: "vi", terms: ["Hàn Quốc #shorts"] }],
-    { runYtDlp, now },
-  );
-
-  assert.equal(items.length, 1);
-  assert.equal(items[0].link, "https://youtu.be/vn");
-  assert.equal(items[0].note, "조건 충족 영상 부족");
-});
-
 test("mergeAndDedupe: link 기준 중복 제거, 빈 link 보존, 순서 유지", () => {
   const a = [
     { source: "exa", link: "https://x/1", title: "one" },
@@ -395,13 +277,13 @@ test("mergeAndDedupe: link 기준 중복 제거, 빈 link 보존, 순서 유지"
   ];
   const b = [
     { source: "reddit:korea", link: "https://x/1", title: "dup" },
-    { source: "shorts", link: "", note: "n1" },
-    { source: "shorts", link: "", note: "n2" },
+    { source: "reddit:korea", link: "", title: "no-link-a" },
+    { source: "reddit:korea", link: "", title: "no-link-b" },
     { source: "tiktok", link: "https://x/3", title: "three" },
   ];
   const out = mergeAndDedupe([a, b]);
-  assert.deepEqual(out.map((i) => i.source),
-    ["exa", "rss:z", "shorts", "shorts", "tiktok"]);
+  assert.deepEqual(out.map((i) => i.title),
+    ["one", "two", "no-link-a", "no-link-b", "three"]);
   assert.equal(out.length, 5);
 });
 
@@ -413,7 +295,6 @@ const MAIN_SOURCES = {
     { section: "dating", query: "dating q1", freshnessDays: 90 },
   ],
   rss: [{ name: "demo", url: "https://feed.example/rss", section: "kpop", freshnessDays: 7, limit: 15 }],
-  shorts: [{ country: "vietnam", lang: "vi", terms: ["t1", "t2"] }],
 };
 
 const fakeMcporterOk = async (query) => [
@@ -430,13 +311,9 @@ const fakeParserOk = {
   },
 };
 
-const fakeYtDlpOk = async () =>
-  JSON.stringify({ id: "s1", title: "Korea shorts", view_count: 100, upload_date: "20260828", duration: 30, webpage_url: "https://youtu.be/s1", channel: "C" });
-
 const emptyDeps = {
   runMcporter: async () => "",
   parser: { async parseURL() { return { items: [] }; } },
-  runYtDlp: async () => "",
 };
 
 test("main: 전체 실행은 raw-kculture-<날짜>.json 을 쓰고 0 을 반환", async (t) => {
@@ -445,7 +322,6 @@ test("main: 전체 실행은 raw-kculture-<날짜>.json 을 쓰고 0 을 반환"
   const code = await quiet(() => main(["node", "fetch-kculture.mjs"], {
     runMcporter: fakeMcporterOk,
     parser: fakeParserOk,
-    runYtDlp: fakeYtDlpOk,
     kcultureDir: dir,
     now: NOW,
   }));
@@ -453,10 +329,9 @@ test("main: 전체 실행은 raw-kculture-<날짜>.json 을 쓰고 0 을 반환"
   assert.equal(code, 0);
   assert.deepEqual(rawFiles(dir), ["raw-kculture-2026-08-29.json"]);
   const saved = JSON.parse(readFileSync(path.join(dir, "raw-kculture-2026-08-29.json"), "utf-8"));
-  assert.ok(saved.length >= 3);
+  assert.ok(saved.length >= 2);
   assert.ok(saved.some((i) => i.source === "exa"));
   assert.ok(saved.some((i) => i.source === "rss:demo"));
-  assert.ok(saved.some((i) => i.source === "shorts"));
 });
 
 test("main: --section=rss 는 canonical raw 파일을 덮어쓰지 않는다", async (t) => {
@@ -486,7 +361,6 @@ test("main: --section=kpop 은 kpop exa 쿼리만 실행", async (t) => {
   const code = await quiet(() => main(["node", "fetch-kculture.mjs", "--section=kpop"], {
     runMcporter,
     parser: fakeParserOk,
-    runYtDlp: fakeYtDlpOk,
     kcultureDir: dir,
     now: NOW,
   }));
@@ -497,8 +371,6 @@ test("main: --section=kpop 은 kpop exa 쿼리만 실행", async (t) => {
 });
 
 test("main: 아무것도 못 모으면 파일을 쓰지 않고 1 을 반환", async (t) => {
-  // 이 경우에도 collectShorts 는 note-only placeholder(link: "")를 1건 만든다.
-  // placeholder 는 "수집됨"으로 치지 않아야 하므로 결과는 여전히 실패(1)여야 한다.
   const dir = makeKcultureDir(t, MAIN_SOURCES);
 
   const code = await quiet(() => main(["node", "fetch-kculture.mjs"], {
@@ -529,7 +401,6 @@ test("main: --dry-run 은 아무것도 쓰지 않고 0 을 반환", async (t) =>
   const code = await quiet(() => main(["node", "fetch-kculture.mjs", "--dry-run"], {
     runMcporter: fakeMcporterOk,
     parser: fakeParserOk,
-    runYtDlp: fakeYtDlpOk,
     kcultureDir: dir,
     now: NOW,
   }));
