@@ -29,7 +29,10 @@ export default function SignupPage() {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/onboarding` },
+        // The confirmation link comes back with a PKCE ?code that only the
+        // /auth/callback route can exchange for a session; it then forwards
+        // to /onboarding (or / if a profile already exists).
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
       });
       if (signUpError) throw signUpError;
       setDone(true);
