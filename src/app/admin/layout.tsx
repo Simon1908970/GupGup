@@ -7,6 +7,7 @@ const NAV = [
   { href: "/admin/reports", label: "신고 관리" },
   { href: "/admin/inquiries", label: "문의사항" },
   { href: "/admin/users", label: "회원 관리" },
+  { href: "/admin/news", label: "뉴스 관리" },
   { href: "/admin/posts", label: "게시글 관리" },
 ];
 
