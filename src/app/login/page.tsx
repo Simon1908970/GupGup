@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { AuthTabs } from "@/components/auth/AuthTabs";
@@ -11,6 +11,14 @@ import { FacebookIcon } from "@/components/auth/FacebookIcon";
 import { getErrorMessage } from "@/lib/utils";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
+  );
+}
+
+function LoginPageInner() {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();

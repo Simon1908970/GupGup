@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
@@ -24,6 +24,14 @@ function isValidCategory(v: string): v is CategorySlug {
 }
 
 export default function BoardListPage() {
+  return (
+    <Suspense fallback={null}>
+      <BoardListPageInner />
+    </Suspense>
+  );
+}
+
+function BoardListPageInner() {
   const { t } = useLanguage();
   const params = useParams<{ category: string }>();
   const searchParams = useSearchParams();

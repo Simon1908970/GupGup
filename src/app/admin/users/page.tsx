@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { NicknamePopup } from "@/components/common/NicknamePopup";
 import type { CountryCode } from "@/lib/types";
@@ -16,6 +16,14 @@ interface AdminUserRow {
 }
 
 export default function AdminUsersPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminUsersPageInner />
+    </Suspense>
+  );
+}
+
+function AdminUsersPageInner() {
   const searchParams = useSearchParams();
   const [q, setQ] = useState(searchParams.get("q") ?? "");
   const [users, setUsers] = useState<AdminUserRow[]>([]);
