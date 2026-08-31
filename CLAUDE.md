@@ -163,3 +163,39 @@
 수집해 `news-digest/kculture/raw-kculture-<날짜>.json`을 만들고(`.env.local`
 불필요), 요약 세션이 Reddit·TikTok을 보태 `news-digest/kculture/<날짜>.md`로 정리한다.
 생성물(raw json, 주간 .md)은 **로컬 전용 — git commit/push 하지 않는다.**
+
+## 뉴스 URL 가져오기 요청 (운영 지침 — Claude용)
+
+사용자가 뉴스 기사 URL을 주면서 "이 기사 뉴스에 올려줘" 류로 요청하면 아래 절차를 수행할 것.
+(배경: `news-digest/publish-news.mjs` 가 서비스 롤로 `posts`에 뉴스 글 1개를 쓰고 이미지를
+`news` Storage 버킷에 올린다. `.env.local` 에 `NEWS_AUTHOR_ID`(운영 admin의 profiles.id),
+`PEXELS_API_KEY` 필요. 마이그레이션 `0013` 적용 필요.)
+
+1. 본문 추출: `curl -s "https://r.jina.ai/<URL>"`. 실패하면 다른 경로 시도. 페이월/로그인
+   필요/JS 전용/비(非)기사(홈·섹션·태그 목록)면 "이 URL은 가져올 수 없습니다" 보고 후 중단.
+2. 초안 작성:
+   - **헤드라인**: 한국어, 사실 위주 한 줄
+   - **원문 발췌(`originalBody`)**: 기사 도입부 **2~4문장**만, 원문 언어 그대로, **700자 이내**.
+     전문·대량 인용 금지.
+   - **한국어 요약(`body`)**: **4~8문장**, 자기 표현으로 재작성. 원문·타 매체 문장을 그대로
+     옮기지 말고 사실관계만 정리. 불확실·미확인·광고성 내용 제외.
+   - **출처**: 매체명(`sourceName`, 도메인/사이트명에서 추정) + 원문 URL(`sourceUrl`)
+   - **원문 언어(`originalLang`)**: 추정 (`th`, `en`, `ja` …). 기본 `th`.
+   - **이미지 후보**: `curl -s -H "Authorization: $PEXELS_API_KEY" "https://api.pexels.com/v1/search?query=<주제 키워드>&per_page=8&orientation=landscape"`
+     로 검색. **사람·특정 인물·브랜드 로고가 주 피사체인 것은 후보에서 제외.** 3~5장의
+     `src.large` URL + 사진작가명(`photographer`)을 채팅에 제시.
+3. 초안 + 이미지 후보를 채팅에 표시하고 **승인 대기**. 임의 게시 금지. 사용자가 문구 수정
+   지시 / 이미지 번호 선택 / "이미지 없이" 를 고를 수 있음.
+4. 승인되면 draft JSON을 스크래치패드에 쓴다:
+   `{ title, sourceName, sourceUrl, originalLang, originalBody, body, imageUrl?, imageCredit? }`
+   - 이미지 선택 시 `imageUrl` = 그 Pexels `src.large`, `imageCredit` = `"Photo: <photographer> (Pexels)"`
+   그리고 실행: `node --env-file=.env.local news-digest/publish-news.mjs <draft.json>`
+   (먼저 `--dry-run` 으로 payload 확인 권장)
+5. 출력된 게시글 id와 `/board/news/<id>` URL을 사용자에게 보고.
+
+저작권 규칙(고정):
+- 원문 전문/대량 인용 금지 — 발췌(2~4문장, 700자)만.
+- 한국어 요약은 사실관계 재작성. 원문·타 매체 문장 복붙 금지.
+- 출처(매체명 + URL) 필수.
+- 이미지는 Pexels(무료 라이선스). 사람 이미지 금지. `image_credit` 표시.
+- AI 생성 이미지·영상 사용 안 함.
