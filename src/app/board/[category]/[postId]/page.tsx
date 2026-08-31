@@ -32,7 +32,11 @@ export default function PostDetailPage() {
   const [posting, setPosting] = useState(false);
   const viewCounted = useRef(false);
   const [showTranslation, setShowTranslation] = useState(false);
-  const [translated, setTranslated] = useState<{ title: string; body: string } | null>(null);
+  const [translated, setTranslated] = useState<{
+    locale: string;
+    title: string;
+    body: string;
+  } | null>(null);
   const [translating, setTranslating] = useState(false);
 
   const categorySlug = params.category;
@@ -73,13 +77,17 @@ export default function PostDetailPage() {
     );
   }
 
+  // A cached translation is only valid for the locale it was fetched in;
+  // switching languages must force a re-fetch on the next toggle.
+  const showTranslated = showTranslation && translated?.locale === locale;
+
   async function handleToggleTranslate() {
     if (!post) return;
-    if (showTranslation) {
+    if (showTranslated) {
       setShowTranslation(false);
       return;
     }
-    if (translated) {
+    if (translated && translated.locale === locale) {
       setShowTranslation(true);
       return;
     }
@@ -92,7 +100,7 @@ export default function PostDetailPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.translations) throw new Error(data.error ?? "translate failed");
-      setTranslated({ title: data.translations[0], body: data.translations[1] });
+      setTranslated({ locale, title: data.translations[0], body: data.translations[1] });
       setShowTranslation(true);
     } catch {
       // leave original text shown if translation fails
@@ -127,7 +135,7 @@ export default function PostDetailPage() {
       </div>
 
       <h1 className="mb-4 text-lg font-bold leading-snug">
-        {showTranslation && translated ? translated.title : post.title}
+        {showTranslated && translated ? translated.title : post.title}
       </h1>
 
       <div className="mb-5 flex items-center justify-between border-b border-[var(--color-border-gray-light)] pb-4">
@@ -144,7 +152,7 @@ export default function PostDetailPage() {
           )}
         </div>
         <TranslateToggle
-          showTranslation={showTranslation}
+          showTranslation={showTranslated}
           translating={translating}
           onClick={handleToggleTranslate}
         />
@@ -176,12 +184,12 @@ export default function PostDetailPage() {
             {t("news.summaryLabel")}
           </p>
           <div className="whitespace-pre-wrap">
-            {showTranslation && translated ? translated.body : post.body}
+            {showTranslated && translated ? translated.body : post.body}
           </div>
         </div>
       ) : (
         <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-          {showTranslation && translated ? translated.body : post.body}
+          {showTranslated && translated ? translated.body : post.body}
         </div>
       )}
 

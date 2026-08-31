@@ -6,7 +6,9 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 export function useTitleTranslation(titles: string[]) {
   const { locale } = useLanguage();
   const [showTranslation, setShowTranslation] = useState(false);
-  const [translated, setTranslated] = useState<string[] | null>(null);
+  const [translated, setTranslated] = useState<{ locale: string; values: string[] } | null>(
+    null,
+  );
   const [translating, setTranslating] = useState(false);
 
   const titlesKey = titles.join("|");
@@ -17,12 +19,16 @@ export function useTitleTranslation(titles: string[]) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [titlesKey]);
 
+  // A cached translation is only valid for the locale it was fetched in;
+  // switching languages must force a re-fetch on the next toggle.
+  const showTranslated = showTranslation && translated?.locale === locale;
+
   async function toggle() {
-    if (showTranslation) {
+    if (showTranslated) {
       setShowTranslation(false);
       return;
     }
-    if (translated) {
+    if (translated && translated.locale === locale) {
       setShowTranslation(true);
       return;
     }
@@ -36,7 +42,7 @@ export function useTitleTranslation(titles: string[]) {
       });
       const data = await res.json();
       if (!res.ok || !data.translations) throw new Error("translate failed");
-      setTranslated(data.translations);
+      setTranslated({ locale, values: data.translations });
       setShowTranslation(true);
     } catch {
       // leave original titles shown if translation fails
@@ -45,5 +51,10 @@ export function useTitleTranslation(titles: string[]) {
     }
   }
 
-  return { showTranslation, translating, translatedTitles: translated, toggle };
+  return {
+    showTranslation: showTranslated,
+    translating,
+    translatedTitles: showTranslated && translated ? translated.values : null,
+    toggle,
+  };
 }
