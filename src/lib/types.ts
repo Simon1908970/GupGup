@@ -58,6 +58,10 @@ export interface Post {
   viewCount: number;
   commentCount: number;
   thumbnailUrl?: string;
+  originalBody?: string;
+  originalLang?: string;
+  sourceName?: string;
+  sourceUrl?: string;
   pointsAwarded: number;
 }
 
