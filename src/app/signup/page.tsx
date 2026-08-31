@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { AuthTabs } from "@/components/auth/AuthTabs";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 import { getErrorMessage } from "@/lib/utils";
 
 export default function SignupPage() {
@@ -71,8 +72,7 @@ export default function SignupPage() {
           placeholder={t("auth.emailPlaceholder")}
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           minLength={8}
           value={password}
@@ -80,8 +80,7 @@ export default function SignupPage() {
           placeholder={t("auth.passwordPlaceholder")}
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}

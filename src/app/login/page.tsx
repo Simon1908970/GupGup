@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { AuthTabs } from "@/components/auth/AuthTabs";
 import { GoogleIcon } from "@/components/auth/GoogleIcon";
 import { FacebookIcon } from "@/components/auth/FacebookIcon";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 import { getErrorMessage } from "@/lib/utils";
 
 export default function LoginPage() {
@@ -99,8 +100,7 @@ function LoginPageInner() {
           placeholder={t("auth.emailPlaceholder")}
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}

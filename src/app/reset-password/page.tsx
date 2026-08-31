@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 import { getErrorMessage } from "@/lib/utils";
 
 export default function ResetPasswordPage() {
@@ -71,8 +72,7 @@ export default function ResetPasswordPage() {
     <div className="mx-auto flex max-w-sm flex-col gap-4 px-4 py-16">
       <h1 className="text-center text-xl font-bold">{t("resetPassword.title")}</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="password"
+        <PasswordInput
           required
           minLength={8}
           value={password}
@@ -80,8 +80,7 @@ export default function ResetPasswordPage() {
           placeholder={t("auth.passwordPlaceholder")}
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}

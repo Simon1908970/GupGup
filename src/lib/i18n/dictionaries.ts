@@ -116,6 +116,8 @@ const ko = {
   "auth.noFindId": "아이디(이메일)를 잊으셨다면 문의사항을 이용해주세요.",
   "auth.needVerification": "이메일 인증 후 이용할 수 있습니다.",
   "auth.withdrawnAccountError": "탈퇴 처리된 계정입니다.",
+  "auth.showPassword": "비밀번호 표시",
+  "auth.hidePassword": "비밀번호 숨기기",
 
   "onboarding.title": "프로필을 설정해주세요",
   "onboarding.nickname": "닉네임",
@@ -317,6 +319,8 @@ const en: Dictionary = {
   "auth.noFindId": "Forgot your email? Please contact Support.",
   "auth.needVerification": "Please verify your email to continue.",
   "auth.withdrawnAccountError": "This account has been deleted.",
+  "auth.showPassword": "Show password",
+  "auth.hidePassword": "Hide password",
 
   "onboarding.title": "Set up your profile",
   "onboarding.nickname": "Nickname",
@@ -584,6 +588,8 @@ const vi: Partial<Dictionary> = {
   "auth.noFindId": "Nếu quên email (ID) đăng nhập, vui lòng dùng mục Hỗ trợ.",
   "auth.needVerification": "Bạn cần xác minh email để sử dụng chức năng này.",
   "auth.withdrawnAccountError": "Tài khoản này đã bị xóa.",
+  "auth.showPassword": "Hiện mật khẩu",
+  "auth.hidePassword": "Ẩn mật khẩu",
 
   "onboarding.title": "Vui lòng thiết lập hồ sơ",
   "onboarding.nickname": "Biệt danh",
@@ -777,6 +783,8 @@ const th: Partial<Dictionary> = {
   "auth.noFindId": "หากลืมอีเมลที่ใช้เข้าสู่ระบบ กรุณาใช้เมนูติดต่อสอบถาม",
   "auth.needVerification": "ต้องยืนยันอีเมลก่อนจึงจะใช้งานได้",
   "auth.withdrawnAccountError": "บัญชีนี้ถูกลบแล้ว",
+  "auth.showPassword": "แสดงรหัสผ่าน",
+  "auth.hidePassword": "ซ่อนรหัสผ่าน",
 
   "onboarding.title": "กรุณาตั้งค่าโปรไฟล์",
   "onboarding.nickname": "ชื่อเล่น",
@@ -970,6 +978,8 @@ const id: Partial<Dictionary> = {
   "auth.noFindId": "Jika lupa email (ID) login, silakan gunakan menu Bantuan.",
   "auth.needVerification": "Verifikasi email diperlukan untuk menggunakan fitur ini.",
   "auth.withdrawnAccountError": "Akun ini telah dihapus.",
+  "auth.showPassword": "Tampilkan kata sandi",
+  "auth.hidePassword": "Sembunyikan kata sandi",
 
   "onboarding.title": "Silakan atur profil Anda",
   "onboarding.nickname": "Nama panggilan",
@@ -1163,6 +1173,8 @@ const tl: Partial<Dictionary> = {
   "auth.noFindId": "Kung nakalimutan mo ang email (ID) mo, gamitin ang Suporta.",
   "auth.needVerification": "Kailangan mo munang i-verify ang email para magamit ito.",
   "auth.withdrawnAccountError": "Na-delete na ang account na ito.",
+  "auth.showPassword": "Ipakita ang password",
+  "auth.hidePassword": "Itago ang password",
 
   "onboarding.title": "Mangyaring i-set up ang iyong profile",
   "onboarding.nickname": "Palayaw",
@@ -1356,6 +1368,8 @@ const lo: Partial<Dictionary> = {
   "auth.noFindId": "ຖ້າລືມອີເມວທີ່ໃຊ້ເຂົ້າສູ່ລະບົບ, ກະລຸນາໃຊ້ຕິດຕໍ່ສອບຖາມ.",
   "auth.needVerification": "ຕ້ອງຢືນຢັນອີເມວກ່ອນຈຶ່ງຈະໃຊ້ໄດ້.",
   "auth.withdrawnAccountError": "ບັນຊີນີ້ຖືກລຶບແລ້ວ.",
+  "auth.showPassword": "ສະແດງລະຫັດຜ່ານ",
+  "auth.hidePassword": "ເຊື່ອງລະຫັດຜ່ານ",
 
   "onboarding.title": "ກະລຸນາຕັ້ງໂປຣໄຟລ໌ຂອງທ່ານ",
   "onboarding.nickname": "ຊື່ຫຼິ້ນ",
@@ -1549,6 +1563,8 @@ const my: Partial<Dictionary> = {
   "auth.noFindId": "လော့ဂ်အင်ဝင်ရန် အီးမေးလ်ကို မေ့နေပါက အကူအညီကို အသုံးပြုပါ။",
   "auth.needVerification": "အသုံးပြုရန် အီးမေးလ်အတည်ပြုချက် လိုအပ်ပါသည်။",
   "auth.withdrawnAccountError": "ဤအကောင့်ကို ဖျက်ပြီးဖြစ်ပါသည်။",
+  "auth.showPassword": "စကားဝှက် ပြရန်",
+  "auth.hidePassword": "စကားဝှက် ဖျောက်ရန်",
 
   "onboarding.title": "သင့်ပရိုဖိုင်ကို သတ်မှတ်ပါ",
   "onboarding.nickname": "အမည်ပြောင်",
@@ -1742,6 +1758,8 @@ const mn: Partial<Dictionary> = {
   "auth.noFindId": "Нэвтрэх имэйлээ мартсан бол Тусламж хэсгийг ашиглана уу.",
   "auth.needVerification": "Ашиглахын тулд имэйлээ баталгаажуулах шаардлагатай.",
   "auth.withdrawnAccountError": "Энэ бүртгэл устгагдсан байна.",
+  "auth.showPassword": "Нууц үг харуулах",
+  "auth.hidePassword": "Нууц үг нуух",
 
   "onboarding.title": "Профайлаа тохируулна уу",
   "onboarding.nickname": "Хоч",
@@ -1935,6 +1953,8 @@ const ru: Partial<Dictionary> = {
   "auth.noFindId": "Если забыли email для входа, обратитесь в Поддержку.",
   "auth.needVerification": "Для использования требуется подтвердить email.",
   "auth.withdrawnAccountError": "Этот аккаунт был удалён.",
+  "auth.showPassword": "Показать пароль",
+  "auth.hidePassword": "Скрыть пароль",
 
   "onboarding.title": "Настройте свой профиль",
   "onboarding.nickname": "Никнейм",
