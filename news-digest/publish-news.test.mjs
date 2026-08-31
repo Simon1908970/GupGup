@@ -29,6 +29,10 @@ test("parseArgs: file plus flags in any order", () => {
   });
 });
 
+test("parseArgs: rejects an unknown flag", () => {
+  assert.throws(() => parseArgs(["node", "s", "d.json", "--dryrun"]), /unknown flag/);
+});
+
 test("validateDraft: a complete draft is valid", () => {
   assert.equal(validateDraft(VALID), null);
 });

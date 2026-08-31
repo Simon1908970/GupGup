@@ -181,7 +181,7 @@
      옮기지 말고 사실관계만 정리. 불확실·미확인·광고성 내용 제외.
    - **출처**: 매체명(`sourceName`, 도메인/사이트명에서 추정) + 원문 URL(`sourceUrl`)
    - **원문 언어(`originalLang`)**: 추정 (`th`, `en`, `ja` …). 기본 `th`.
-   - **이미지 후보**: `curl -s -H "Authorization: $PEXELS_API_KEY" "https://api.pexels.com/v1/search?query=<주제 키워드>&per_page=8&orientation=landscape"`
+   - **이미지 후보**: `curl -s -H "Authorization: $(grep -m1 '^PEXELS_API_KEY=' .env.local | cut -d= -f2-)" "https://api.pexels.com/v1/search?query=<주제 키워드>&per_page=8&orientation=landscape"`
      로 검색. **사람·특정 인물·브랜드 로고가 주 피사체인 것은 후보에서 제외.** 3~5장의
      `src.large` URL + 사진작가명(`photographer`)을 채팅에 제시.
 3. 초안 + 이미지 후보를 채팅에 표시하고 **승인 대기**. 임의 게시 금지. 사용자가 문구 수정

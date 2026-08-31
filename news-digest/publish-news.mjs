@@ -16,11 +16,23 @@ import { createClient } from "@supabase/supabase-js";
 const MAX_ORIGINAL_BODY = 700;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const REQUIRED = ["title", "sourceName", "sourceUrl", "originalBody", "body"];
+const IMAGE_EXT = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
 
 export function parseArgs(argv) {
   const rest = argv.slice(2);
+  const unknown = rest.filter(
+    (a) => a.startsWith("-") && a !== "--dry-run" && a !== "--force",
+  );
+  if (unknown.length) {
+    throw new Error(`unknown flag(s): ${unknown.join(", ")}`);
+  }
   return {
-    file: rest.find((a) => !a.startsWith("--")),
+    file: rest.find((a) => !a.startsWith("-")),
     dryRun: rest.includes("--dry-run"),
     force: rest.includes("--force"),
   };
@@ -58,34 +70,29 @@ export function buildInsertPayload(d, authorId, thumbnailUrl) {
     title: d.title.trim(),
     body: d.body.trim(),
     original_body: d.originalBody.trim(),
-    original_lang: (d.originalLang || "th").trim(),
+    original_lang: String(d.originalLang || "th").trim(),
     source_name: d.sourceName.trim(),
     source_url: d.sourceUrl.trim(),
     thumbnail_url: thumbnailUrl ?? null,
-    image_credit: d.imageUrl ? String(d.imageCredit).trim() : null,
+    image_credit: d.imageUrl ? String(d.imageCredit ?? "").trim() || null : null,
   };
-}
-
-function extFor(contentType) {
-  if (contentType.includes("png")) return "png";
-  if (contentType.includes("webp")) return "webp";
-  if (contentType.includes("gif")) return "gif";
-  return "jpg";
 }
 
 async function uploadImage(supabase, imageUrl) {
   const res = await fetch(imageUrl);
   if (!res.ok) throw new Error(`image fetch failed: ${res.status}`);
   const contentType = res.headers.get("content-type") || "";
-  if (!contentType.startsWith("image/")) throw new Error(`not an image: ${contentType}`);
+  const ext = IMAGE_EXT[contentType];
+  if (!ext) throw new Error(`unsupported image type: ${contentType}`);
   const bytes = Buffer.from(await res.arrayBuffer());
   if (bytes.byteLength > MAX_IMAGE_BYTES) throw new Error("image too large (>5MB)");
-  const name = `${randomUUID()}.${extFor(contentType)}`;
+  const name = `${randomUUID()}.${ext}`;
   const { error } = await supabase.storage
     .from("news")
     .upload(name, bytes, { contentType });
   if (error) throw error;
-  return supabase.storage.from("news").getPublicUrl(name).data.publicUrl;
+  const publicUrl = supabase.storage.from("news").getPublicUrl(name).data.publicUrl;
+  return { publicUrl, name };
 }
 
 async function main() {
@@ -134,12 +141,18 @@ async function main() {
 
   const supabase = createClient(url, key, { auth: { persistSession: false } });
 
-  const { data: dupe } = await supabase
+  const { data: dupes, error: dupeError } = await supabase
     .from("posts")
     .select("id")
     .eq("category", "news")
     .eq("source_url", draft.sourceUrl.trim())
-    .maybeSingle();
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if (dupeError) {
+    console.error(`dedupe check failed: ${dupeError.message}`);
+    process.exit(1);
+  }
+  const dupe = dupes?.[0];
   if (dupe && !force) {
     console.error(
       `already published: /board/news/${dupe.id}  (use --force to publish again)`,
@@ -148,8 +161,11 @@ async function main() {
   }
 
   let thumbnailUrl = null;
+  let uploadedName = null;
   if (draft.imageUrl) {
-    thumbnailUrl = await uploadImage(supabase, draft.imageUrl);
+    const up = await uploadImage(supabase, draft.imageUrl);
+    thumbnailUrl = up.publicUrl;
+    uploadedName = up.name;
   }
 
   const { data, error } = await supabase
@@ -158,6 +174,9 @@ async function main() {
     .select("id")
     .single();
   if (error) {
+    if (uploadedName) {
+      await supabase.storage.from("news").remove([uploadedName]).catch(() => {});
+    }
     console.error(`insert failed: ${error.message}`);
     process.exit(1);
   }
@@ -166,5 +185,8 @@ async function main() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+  main().catch((err) => {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(1);
+  });
 }
