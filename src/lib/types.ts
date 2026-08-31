@@ -62,6 +62,7 @@ export interface Post {
   originalLang?: string;
   sourceName?: string;
   sourceUrl?: string;
+  imageCredit?: string;
   pointsAwarded: number;
 }
 

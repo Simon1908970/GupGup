@@ -17,6 +17,7 @@ interface PostRow {
   original_lang: string | null;
   source_name: string | null;
   source_url: string | null;
+  image_credit: string | null;
   view_count: number;
   created_at: string;
   points_awarded: number;
@@ -31,7 +32,7 @@ interface PostRow {
 }
 
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, original_body, original_lang, source_name, source_url, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
 
 function mapPost(row: PostRow): Post {
   return {
@@ -58,6 +59,7 @@ function mapPost(row: PostRow): Post {
     originalLang: row.original_lang ?? undefined,
     sourceName: row.source_name ?? undefined,
     sourceUrl: row.source_url ?? undefined,
+    imageCredit: row.image_credit ?? undefined,
     pointsAwarded: row.points_awarded ?? 0,
   };
 }

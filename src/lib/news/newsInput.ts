@@ -5,6 +5,7 @@ export interface NewsArticleInput {
   originalBody: string;
   originalLang: string;
   body: string; // Korean summary
+  imageCredit?: string; // stock photo attribution, e.g. "Photo: Jane Doe (Pexels)"
 }
 
 export type NewsInputError =
@@ -27,6 +28,7 @@ export function validateNewsArticleInput(
   if (!input.sourceName?.trim()) return "sourceName";
   if (!isHttpUrl(input.sourceUrl)) return "sourceUrl";
   if (!input.originalBody?.trim()) return "originalBody";
+  if (input.originalBody.trim().length > 700) return "originalBody";
   if (!input.body?.trim()) return "body";
   return null;
 }

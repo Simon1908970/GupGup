@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       original_lang: input.originalLang?.trim() || "th",
       source_name: input.sourceName!.trim(),
       source_url: input.sourceUrl!.trim(),
+      image_credit: input.imageCredit?.trim() || null,
     })
     .select("id")
     .single();
