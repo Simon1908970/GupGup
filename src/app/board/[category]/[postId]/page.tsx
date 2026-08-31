@@ -160,6 +160,21 @@ export default function PostDetailPage() {
 
       {config.slug === "news" && post.originalBody ? (
         <div className="text-sm leading-relaxed text-gray-700">
+          {post.thumbnailUrl && (
+            <figure className="mb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={post.thumbnailUrl}
+                alt=""
+                className="w-full rounded-lg object-cover"
+              />
+              {post.imageCredit && (
+                <figcaption className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+                  {post.imageCredit}
+                </figcaption>
+              )}
+            </figure>
+          )}
           <p className="mb-1 text-xs font-semibold text-[var(--color-text-muted)]">
             {t("news.originalLabel")}
           </p>
