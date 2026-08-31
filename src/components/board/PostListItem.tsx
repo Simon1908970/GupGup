@@ -48,7 +48,7 @@ export function PostListItem({
             )}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[var(--color-text-muted)]">
-            <span>{post.author.nickname}</span>
+            <span>{post.category === "news" ? t("news.byline") : post.author.nickname}</span>
             <span>·</span>
             <span>{formatDate(post.createdAt)}</span>
             <span className="flex items-center gap-0.5">
