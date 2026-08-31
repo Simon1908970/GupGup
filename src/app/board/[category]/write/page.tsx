@@ -35,7 +35,7 @@ export default function WritePostPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!config) {
+  if (!config || config.slug === "news") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         {t("error.categoryNotFound")}

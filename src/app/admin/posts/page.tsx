@@ -126,24 +126,28 @@ export default function AdminPostsPage() {
             >
               보기
             </a>
-            <select
-              defaultValue=""
-              onChange={(e) => {
-                const target = e.target.value as CategorySlug;
-                e.target.value = "";
-                if (target) handleMove(p.id, target);
-              }}
-              className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
-            >
-              <option value="" disabled>
-                카테고리 이동
-              </option>
-              {CATEGORY_ORDER.filter((slug) => slug !== p.category).map((slug) => (
-                <option key={slug} value={slug}>
-                  {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+            {p.category !== "news" && (
+              <select
+                defaultValue=""
+                onChange={(e) => {
+                  const target = e.target.value as CategorySlug;
+                  e.target.value = "";
+                  if (target) handleMove(p.id, target);
+                }}
+                className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
+              >
+                <option value="" disabled>
+                  카테고리 이동
                 </option>
-              ))}
-            </select>
+                {CATEGORY_ORDER.filter((slug) => slug !== p.category && slug !== "news").map(
+                  (slug) => (
+                    <option key={slug} value={slug}>
+                      {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+                    </option>
+                  ),
+                )}
+              </select>
+            )}
             <button
               onClick={() => setDeleteTarget(p.id)}
               className="shrink-0 text-xs font-medium text-[var(--color-brand-red)]"

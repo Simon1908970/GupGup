@@ -31,7 +31,7 @@ export function validateNewsArticleInput(
   return null;
 }
 
-function isHttpUrl(value: string | undefined): boolean {
+export function isHttpUrl(value: string | undefined): boolean {
   if (!value?.trim()) return false;
   let url: URL;
   try {

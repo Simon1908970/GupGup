@@ -96,6 +96,13 @@ export async function PATCH(
     .maybeSingle();
   if (!post) return NextResponse.json({ error: "not found" }, { status: 404 });
 
+  if (category === "news" || post.category === "news") {
+    return NextResponse.json(
+      { error: "news posts are managed from 뉴스 관리, not moved here" },
+      { status: 400 },
+    );
+  }
+
   if (post.category === category && (post.sub_category ?? null) === (subCategory ?? null)) {
     return NextResponse.json({ ok: true, action: "unchanged" });
   }

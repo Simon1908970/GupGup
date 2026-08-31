@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { fetchPostById, incrementViewCount } from "@/lib/supabase/posts";
 import { createComment, fetchComments } from "@/lib/supabase/comments";
+import { isHttpUrl } from "@/lib/news/newsInput";
 import type { CategorySlug, Comment, Post } from "@/lib/types";
 import { formatCount, formatDate } from "@/lib/utils";
 import { Avatar } from "@/components/common/Avatar";
@@ -157,7 +158,7 @@ export default function PostDetailPage() {
           <div lang={post.originalLang} className="whitespace-pre-wrap">
             {post.originalBody}
           </div>
-          {post.sourceName && post.sourceUrl && (
+          {post.sourceName && post.sourceUrl && isHttpUrl(post.sourceUrl) && (
             <p className="mt-2 text-xs text-[var(--color-text-muted)]">
               {t("news.sourceLabel")}:{" "}
               <a
