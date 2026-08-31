@@ -137,7 +137,9 @@ export default function PostDetailPage() {
           {config.hasNicknamePopup ? (
             <NicknamePopup author={post.author} className="text-sm" />
           ) : (
-            <span className="text-sm font-medium">{post.author.nickname}</span>
+            <span className="text-sm font-medium">
+              {config.slug === "news" ? t("news.byline") : post.author.nickname}
+            </span>
           )}
         </div>
         <TranslateToggle
@@ -147,9 +149,40 @@ export default function PostDetailPage() {
         />
       </div>
 
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-        {showTranslation && translated ? translated.body : post.body}
-      </div>
+      {config.slug === "news" && post.originalBody ? (
+        <div className="text-sm leading-relaxed text-gray-700">
+          <p className="mb-1 text-xs font-semibold text-[var(--color-text-muted)]">
+            {t("news.originalLabel")}
+          </p>
+          <div lang={post.originalLang} className="whitespace-pre-wrap">
+            {post.originalBody}
+          </div>
+          {post.sourceName && post.sourceUrl && (
+            <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+              {t("news.sourceLabel")}:{" "}
+              <a
+                href={post.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="underline hover:text-[var(--color-brand-red)]"
+              >
+                {post.sourceName}
+              </a>
+            </p>
+          )}
+          <div className="my-4 border-t border-[var(--color-border-gray-light)]" />
+          <p className="mb-1 text-xs font-semibold text-[var(--color-text-muted)]">
+            {t("news.summaryLabel")}
+          </p>
+          <div className="whitespace-pre-wrap">
+            {showTranslation && translated ? translated.body : post.body}
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
+          {showTranslation && translated ? translated.body : post.body}
+        </div>
+      )}
 
       {config.hasMessageButton && (
         <button
