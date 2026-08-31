@@ -19,7 +19,7 @@ import { getErrorMessage } from "@/lib/utils";
 export default function OnboardingPage() {
   const { t } = useLanguage();
   const router = useRouter();
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
   const [nickname, setNickname] = useState("");
   const [country, setCountry] = useState<CountryCode>("vn");
   const [checkResult, setCheckResult] = useState<"idle" | "available" | "taken">("idle");
@@ -117,6 +117,9 @@ export default function OnboardingPage() {
         formData.append("file", avatarFile);
         await fetch("/api/avatar", { method: "POST", body: formData });
       }
+      // Pull the just-created profile into the auth context so the header
+      // shows the nickname without needing a manual page reload.
+      await refreshProfile();
       router.push("/");
       router.refresh();
     } catch (err) {
