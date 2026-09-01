@@ -218,7 +218,7 @@ export default function PostDetailPage() {
                   <img
                     src={a.url}
                     alt=""
-                    className="max-h-[240px] w-auto max-w-full cursor-zoom-in rounded-lg border border-[var(--color-border-gray-light)] transition hover:opacity-90"
+                    className="max-h-[300px] w-auto max-w-full cursor-zoom-in rounded-lg border border-[var(--color-border-gray-light)] transition hover:opacity-90"
                   />
                 </a>
               ) : (
