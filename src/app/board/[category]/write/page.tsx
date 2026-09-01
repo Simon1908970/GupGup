@@ -6,11 +6,12 @@ import { CATEGORIES } from "@/lib/constants/categories";
 import { SIGNUP_COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import type { CategorySlug, CountryCode } from "@/lib/types";
+import type { Attachment, CategorySlug, CountryCode } from "@/lib/types";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { createPost, InsufficientPointsError } from "@/lib/supabase/posts";
 import { isPremiumPostTarget, PREMIUM_POST_COST } from "@/lib/constants/points";
 import { getErrorMessage } from "@/lib/utils";
+import { PostAttachmentInput } from "@/components/board/PostAttachmentInput";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -32,6 +33,7 @@ export default function WritePostPage() {
   );
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +62,7 @@ export default function WritePostPage() {
         title: title.trim(),
         body: body.trim(),
         authorId: user.id,
+        attachments,
       });
       await refreshProfile();
       router.push(`/board/${config!.slug}/${postId}`);
@@ -142,6 +145,12 @@ export default function WritePostPage() {
           placeholder={t("placeholder.content")}
           rows={12}
           className="resize-none rounded-md border border-[var(--color-border-gray)] p-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
+        />
+
+        <PostAttachmentInput
+          value={attachments}
+          onChange={setAttachments}
+          onError={setError}
         />
 
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}

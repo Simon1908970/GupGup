@@ -20,6 +20,8 @@ export function PostListItem({
 }) {
   const { t } = useLanguage();
   const config = CATEGORIES[post.category];
+  const thumbnail =
+    post.thumbnailUrl ?? post.attachments.find((a) => a.type === "image")?.url;
 
   return (
     <li className="flex items-center border-b border-[var(--color-border-gray-light)] last:border-b-0">
@@ -59,10 +61,10 @@ export function PostListItem({
             </span>
           </div>
         </div>
-        {post.thumbnailUrl && (
+        {thumbnail && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={post.thumbnailUrl}
+            src={thumbnail}
             alt=""
             className="h-14 w-14 shrink-0 rounded object-cover"
           />

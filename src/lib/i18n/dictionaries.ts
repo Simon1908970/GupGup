@@ -224,6 +224,12 @@ const ko = {
   "points.premiumNotice": "이 카테고리는 글쓰기 시 200P가 차감됩니다.",
   "points.insufficientError": "포인트가 부족합니다. 다른 카테고리에 글을 쓰거나 댓글을 남겨 포인트를 모아주세요.",
   "points.deleteConfirmMessage": "삭제하면 포인트가 조정됩니다.",
+
+  "write.attachmentAdd": "사진·동영상 첨부",
+  "write.attachmentUploading": "업로드 중…",
+  "write.attachmentLimit": "첨부는 최대 5개까지 가능합니다.",
+  "write.attachmentTooLarge": "사진은 5MB, 동영상은 50MB까지 첨부할 수 있습니다.",
+  "write.attachmentType": "사진 또는 동영상 파일만 첨부할 수 있습니다.",
 };
 
 export type DictionaryKey = keyof typeof ko;
@@ -427,6 +433,12 @@ const en: Dictionary = {
   "points.premiumNotice": "Posting in this category costs 200P.",
   "points.insufficientError": "Not enough points. Earn more by posting or commenting in other categories.",
   "points.deleteConfirmMessage": "Deleting this will adjust your points.",
+
+  "write.attachmentAdd": "Add photo/video",
+  "write.attachmentUploading": "Uploading…",
+  "write.attachmentLimit": "You can attach up to 5 files.",
+  "write.attachmentTooLarge": "Photos can be up to 5MB, videos up to 50MB.",
+  "write.attachmentType": "Only photo or video files can be attached.",
 };
 
 const vi: Partial<Dictionary> = {
@@ -622,6 +634,12 @@ const vi: Partial<Dictionary> = {
   "inquiries.answered": "Đã trả lời",
   "inquiries.team": "Đội ngũ Gup Gup",
   "inquiries.empty": "Chưa có yêu cầu hỗ trợ nào.",
+
+  "write.attachmentAdd": "Thêm ảnh/video",
+  "write.attachmentUploading": "Đang tải lên…",
+  "write.attachmentLimit": "Bạn có thể đính kèm tối đa 5 tệp.",
+  "write.attachmentTooLarge": "Ảnh tối đa 5MB, video tối đa 50MB.",
+  "write.attachmentType": "Chỉ có thể đính kèm tệp ảnh hoặc video.",
 };
 
 const th: Partial<Dictionary> = {
@@ -817,6 +835,12 @@ const th: Partial<Dictionary> = {
   "inquiries.answered": "ตอบแล้ว",
   "inquiries.team": "ทีมงาน Gup Gup",
   "inquiries.empty": "ยังไม่มีคำถาม",
+
+  "write.attachmentAdd": "แนบรูปภาพ/วิดีโอ",
+  "write.attachmentUploading": "กำลังอัปโหลด…",
+  "write.attachmentLimit": "แนบไฟล์ได้สูงสุด 5 ไฟล์",
+  "write.attachmentTooLarge": "รูปภาพไม่เกิน 5MB วิดีโอไม่เกิน 50MB",
+  "write.attachmentType": "แนบได้เฉพาะไฟล์รูปภาพหรือวิดีโอเท่านั้น",
 };
 
 const id: Partial<Dictionary> = {
@@ -1012,6 +1036,12 @@ const id: Partial<Dictionary> = {
   "inquiries.answered": "Sudah dijawab",
   "inquiries.team": "Tim Gup Gup",
   "inquiries.empty": "Belum ada pertanyaan.",
+
+  "write.attachmentAdd": "Tambah foto/video",
+  "write.attachmentUploading": "Mengunggah…",
+  "write.attachmentLimit": "Anda dapat melampirkan hingga 5 file.",
+  "write.attachmentTooLarge": "Foto maksimal 5MB, video maksimal 50MB.",
+  "write.attachmentType": "Hanya file foto atau video yang dapat dilampirkan.",
 };
 
 const tl: Partial<Dictionary> = {
@@ -1207,6 +1237,12 @@ const tl: Partial<Dictionary> = {
   "inquiries.answered": "Nasagot na",
   "inquiries.team": "Koponan ng Gup Gup",
   "inquiries.empty": "Wala pang katanungan.",
+
+  "write.attachmentAdd": "Magdagdag ng larawan/video",
+  "write.attachmentUploading": "Ina-upload…",
+  "write.attachmentLimit": "Maaari kang maglakip ng hanggang 5 file.",
+  "write.attachmentTooLarge": "Hanggang 5MB ang larawan, hanggang 50MB ang video.",
+  "write.attachmentType": "Larawan o video na file lang ang maaaring ilakip.",
 };
 
 const lo: Partial<Dictionary> = {
@@ -1402,6 +1438,12 @@ const lo: Partial<Dictionary> = {
   "inquiries.answered": "ຕອບແລ້ວ",
   "inquiries.team": "ທີມງານ Gup Gup",
   "inquiries.empty": "ຍັງບໍ່ມີຄຳຖາມ.",
+
+  "write.attachmentAdd": "ແນບຮູບ/ວິດີໂອ",
+  "write.attachmentUploading": "ກຳລັງອັບໂຫຼດ…",
+  "write.attachmentLimit": "ທ່ານສາມາດແນບໄຟລ໌ໄດ້ສູງສຸດ 5 ໄຟລ໌.",
+  "write.attachmentTooLarge": "ຮູບບໍ່ເກີນ 5MB, ວິດີໂອບໍ່ເກີນ 50MB.",
+  "write.attachmentType": "ແນບໄດ້ສະເພາະໄຟລ໌ຮູບ ຫຼື ວິດີໂອເທົ່ານັ້ນ.",
 };
 
 const my: Partial<Dictionary> = {
@@ -1597,6 +1639,12 @@ const my: Partial<Dictionary> = {
   "inquiries.answered": "ဖြေကြားပြီး",
   "inquiries.team": "Gup Gup အဖွဲ့",
   "inquiries.empty": "မေးမြန်းချက် မရှိသေးပါ။",
+
+  "write.attachmentAdd": "ဓာတ်ပုံ/ဗီဒီယို ထည့်ရန်",
+  "write.attachmentUploading": "အပ်လုဒ်တင်နေသည်…",
+  "write.attachmentLimit": "ဖိုင် အများဆုံး ၅ ခုအထိ ပူးတွဲနိုင်ပါသည်။",
+  "write.attachmentTooLarge": "ဓာတ်ပုံ ၅MB၊ ဗီဒီယို ၅၀MB အထိ ပူးတွဲနိုင်ပါသည်။",
+  "write.attachmentType": "ဓာတ်ပုံ သို့မဟုတ် ဗီဒီယိုဖိုင်များသာ ပူးတွဲနိုင်ပါသည်။",
 };
 
 const mn: Partial<Dictionary> = {
@@ -1792,6 +1840,12 @@ const mn: Partial<Dictionary> = {
   "inquiries.answered": "Хариулсан",
   "inquiries.team": "Gup Gup баг",
   "inquiries.empty": "Асуулт алга байна.",
+
+  "write.attachmentAdd": "Зураг/бичлэг нэмэх",
+  "write.attachmentUploading": "Байршуулж байна…",
+  "write.attachmentLimit": "Хамгийн ихдээ 5 файл хавсаргаж болно.",
+  "write.attachmentTooLarge": "Зураг 5MB, бичлэг 50MB хүртэл байж болно.",
+  "write.attachmentType": "Зөвхөн зураг эсвэл бичлэгийн файл хавсаргаж болно.",
 };
 
 const ru: Partial<Dictionary> = {
@@ -1987,6 +2041,12 @@ const ru: Partial<Dictionary> = {
   "inquiries.answered": "Отвечено",
   "inquiries.team": "Команда Gup Gup",
   "inquiries.empty": "Обращений пока нет.",
+
+  "write.attachmentAdd": "Добавить фото/видео",
+  "write.attachmentUploading": "Загрузка…",
+  "write.attachmentLimit": "Можно прикрепить не более 5 файлов.",
+  "write.attachmentTooLarge": "Фото до 5 МБ, видео до 50 МБ.",
+  "write.attachmentType": "Можно прикреплять только фото или видео.",
 };
 
 export const DICTIONARIES: Record<Locale, Dictionary> = {

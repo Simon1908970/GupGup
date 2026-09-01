@@ -208,6 +208,23 @@ export default function PostDetailPage() {
         </div>
       )}
 
+      {post.attachments.length > 0 && (
+        <ul className="mt-4 flex flex-col gap-3">
+          {post.attachments.map((a) => (
+            <li key={a.url}>
+              {a.type === "image" ? (
+                <a href={a.url} target="_blank" rel="noopener noreferrer">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={a.url} alt="" className="w-full rounded-lg object-contain" />
+                </a>
+              ) : (
+                <video src={a.url} controls preload="metadata" className="w-full rounded-lg" />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
       {config.hasMessageButton && (
         <button
           onClick={() => router.push(`/messages/${post.author.id}`)}

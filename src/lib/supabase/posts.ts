@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
+import type { Attachment, CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
 import type { SearchScope } from "@/components/board/BoardSearchBar";
 import { isPremiumPostTarget, POST_REWARD, PREMIUM_POST_COST } from "@/lib/constants/points";
 import { fetchBlockedIds } from "@/lib/supabase/blocks";
@@ -13,6 +13,7 @@ interface PostRow {
   body: string;
   author_id: string;
   thumbnail_url: string | null;
+  attachments: Attachment[] | null;
   original_body: string | null;
   original_lang: string | null;
   source_name: string | null;
@@ -32,7 +33,7 @@ interface PostRow {
 }
 
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
 
 function mapPost(row: PostRow): Post {
   return {
@@ -55,6 +56,7 @@ function mapPost(row: PostRow): Post {
     viewCount: row.view_count,
     commentCount: row.comments?.[0]?.count ?? 0,
     thumbnailUrl: row.thumbnail_url ?? undefined,
+    attachments: Array.isArray(row.attachments) ? row.attachments : [],
     originalBody: row.original_body ?? undefined,
     originalLang: row.original_lang ?? undefined,
     sourceName: row.source_name ?? undefined,
@@ -188,6 +190,7 @@ export interface CreatePostInput {
   title: string;
   body: string;
   authorId: string;
+  attachments?: Attachment[];
 }
 
 export async function createPost(input: CreatePostInput): Promise<string> {
@@ -212,6 +215,7 @@ export async function createPost(input: CreatePostInput): Promise<string> {
       title: input.title,
       body: input.body,
       author_id: input.authorId,
+      attachments: input.attachments ?? [],
       points_awarded: delta,
     })
     .select("id")
@@ -237,6 +241,14 @@ export async function fetchPostsByAuthor(authorId: string): Promise<Post[]> {
 
 export async function deletePost(postId: string, authorId: string, pointsAwarded: number) {
   const supabase = createClient();
+
+  const { data: attachmentRow } = await supabase
+    .from("posts")
+    .select("attachments")
+    .eq("id", postId)
+    .eq("author_id", authorId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("posts")
     .delete()
@@ -245,6 +257,23 @@ export async function deletePost(postId: string, authorId: string, pointsAwarded
   if (error) throw error;
   if (pointsAwarded !== 0) {
     await supabase.rpc("adjust_points", { delta: -pointsAwarded });
+  }
+
+  const urls = Array.isArray(attachmentRow?.attachments)
+    ? (attachmentRow.attachments as Attachment[]).map((a) => a.url)
+    : [];
+  if (urls.length > 0) {
+    // Best effort — an orphaned Storage object is harmless, a failed post
+    // deletion is not.
+    try {
+      await fetch("/api/post-media", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls }),
+      });
+    } catch {
+      /* ignore */
+    }
   }
 }
 

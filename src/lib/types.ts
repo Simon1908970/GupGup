@@ -46,6 +46,28 @@ export interface Author {
   isWithdrawn?: boolean;
 }
 
+export type AttachmentType = "image" | "video";
+
+export interface Attachment {
+  url: string;
+  type: AttachmentType;
+}
+
+export const MAX_ATTACHMENTS = 5;
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+export const ATTACHMENT_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/gif",
+] as const;
+export const ATTACHMENT_VIDEO_TYPES = [
+  "video/mp4",
+  "video/quicktime",
+  "video/webm",
+] as const;
+
 export interface Post {
   id: string;
   category: CategorySlug;
@@ -58,6 +80,7 @@ export interface Post {
   viewCount: number;
   commentCount: number;
   thumbnailUrl?: string;
+  attachments: Attachment[];
   originalBody?: string;
   originalLang?: string;
   sourceName?: string;
