@@ -215,10 +215,19 @@ export default function PostDetailPage() {
               {a.type === "image" ? (
                 <a href={a.url} target="_blank" rel="noopener noreferrer">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={a.url} alt="" className="w-full rounded-lg object-contain" />
+                  <img
+                    src={a.url}
+                    alt=""
+                    className="max-h-[480px] w-auto max-w-full rounded-lg border border-[var(--color-border-gray-light)]"
+                  />
                 </a>
               ) : (
-                <video src={a.url} controls preload="metadata" className="w-full rounded-lg" />
+                <video
+                  src={a.url}
+                  controls
+                  preload="metadata"
+                  className="max-h-[480px] w-full rounded-lg"
+                />
               )}
             </li>
           ))}
