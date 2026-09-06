@@ -120,11 +120,15 @@ export function ExchangeRateTicker() {
                 setIndex(i);
               }}
               className={cn(
-                "flex h-5 w-5 items-center justify-center rounded-full text-xs transition-all",
-                i === index ? "scale-125 ring-2 ring-[var(--color-brand-red)]" : "opacity-50",
+                "flex h-5 w-6 items-center justify-center rounded-md bg-white text-xs transition-all",
+                i === index ? "scale-125 ring-2 ring-[var(--color-brand-red)]" : "",
               )}
             >
-              <CountryFlag code={r.country} />
+              {/* Dim only the flag itself (not the button) so an inactive
+                  chip fades against its own opaque white backdrop instead of
+                  blending with the pink card gradient behind it, which was
+                  washing the flag colors out. */}
+              <CountryFlag code={r.country} className={i === index ? undefined : "opacity-50"} />
             </button>
           ))}
         </div>
