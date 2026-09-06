@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { Coins, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
@@ -77,8 +77,9 @@ export function ExchangeRateTicker() {
     <>
       <div
         onClick={() => setModalOpen(true)}
-        className="relative mb-4 flex w-full cursor-pointer flex-col gap-2 overflow-hidden rounded-lg border border-[var(--color-border-gray)] bg-white px-4 py-2.5 gg-glossy-interactive"
+        className="relative mb-4 flex w-full cursor-pointer flex-col gap-2 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 px-4 py-2.5 gg-glossy-interactive gg-decorative-card"
       >
+        <Coins size={88} className="gg-card-watermark text-[var(--color-brand-red)]" />
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-[var(--color-text-muted)]">
             {t("exchange.title")}
