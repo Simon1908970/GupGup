@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+// SVG country flags -- most desktop browsers (Windows Chrome/Edge especially)
+// have no flag glyphs in their emoji font and silently fall back to plain
+// two-letter text instead of an actual flag, so we render real flags via
+// this package instead of relying on the 🇹🇭-style emoji everywhere.
+import "flag-icons/css/flag-icons.min.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { SiteHeader } from "@/components/layout/SiteHeader";

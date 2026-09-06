@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import type { CountryCode } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { CountryFlag } from "@/components/common/CountryFlag";
 
 export function CountryFilterChips({
   value,
@@ -30,7 +31,7 @@ export function CountryFilterChips({
               : "border-[var(--color-border-gray)] text-[var(--foreground)] hover:bg-[var(--color-border-gray-light)]",
           )}
         >
-          <span>{c.flag}</span>
+          <CountryFlag code={c.code} />
           {t(c.labelKey as DictionaryKey)}
         </button>
       ))}

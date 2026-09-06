@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 import type { CountryCode } from "@/lib/types";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import { ExchangeRateModal } from "@/components/board/ExchangeRateModal";
 
 export interface RateItem {
@@ -96,7 +97,7 @@ export function ExchangeRateTicker() {
         </div>
 
         <div key={current.code} className="gg-fade-in flex items-center justify-center gap-2 text-sm">
-          <span className="text-base">{countryOption?.flag}</span>
+          {countryOption && <CountryFlag code={countryOption.code} size={16} />}
           <span className="hidden font-medium sm:inline">
             {countryOption && t(countryOption.labelKey as DictionaryKey)}
           </span>
@@ -123,7 +124,7 @@ export function ExchangeRateTicker() {
                 i === index ? "scale-125 ring-2 ring-[var(--color-brand-red)]" : "opacity-50",
               )}
             >
-              {COUNTRIES.find((c) => c.code === r.country)?.flag}
+              <CountryFlag code={r.country} />
             </button>
           ))}
         </div>

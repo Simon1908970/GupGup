@@ -5,6 +5,7 @@ import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { formatDate } from "@/lib/utils";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import type { RateItem } from "@/components/board/ExchangeRateTicker";
 import { displayUnit } from "@/components/board/ExchangeRateTicker";
 
@@ -41,7 +42,7 @@ export function ExchangeRateModal({
             return (
               <li key={r.code} className="flex items-center justify-between gap-2 py-2 text-sm">
                 <span className="flex items-center gap-1.5">
-                  <span>{countryOption?.flag}</span>
+                  {countryOption && <CountryFlag code={countryOption.code} size={14} />}
                   <span>{countryOption && t(countryOption.labelKey as DictionaryKey)}</span>
                 </span>
                 <span className="flex items-center gap-1">

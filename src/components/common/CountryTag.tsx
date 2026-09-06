@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import type { CountryCode } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { CountryFlag } from "@/components/common/CountryFlag";
 
 export function CountryTag({
   country,
@@ -24,7 +25,7 @@ export function CountryTag({
         className,
       )}
     >
-      <span>{option.flag}</span>
+      <CountryFlag code={option.code} />
       <span>{t(option.labelKey as DictionaryKey)}</span>
     </span>
   );

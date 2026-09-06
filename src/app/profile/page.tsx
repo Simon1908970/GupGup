@@ -13,6 +13,7 @@ import { fetchPostCountByAuthor } from "@/lib/supabase/posts";
 import { fetchCommentCountByAuthor } from "@/lib/supabase/comments";
 import { fetchThreads } from "@/lib/supabase/messages";
 import { Avatar } from "@/components/common/Avatar";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import { EditableAvatar } from "@/components/common/EditableAvatar";
 import { DefaultAvatarPicker } from "@/components/common/DefaultAvatarPicker";
 import { PointsInfo } from "@/components/common/PointsInfo";
@@ -264,8 +265,9 @@ function ProfileHeader({
         <Avatar nickname={profile.nickname} avatarUrl={avatarUrl} size={64} />
         <div className="flex-1">
           <p className="text-lg font-bold">{profile.nickname}</p>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {countryOption?.flag} {countryOption && t(countryOption.labelKey as DictionaryKey)}
+          <p className="flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
+            {countryOption && <CountryFlag code={countryOption.code} />}
+            {countryOption && t(countryOption.labelKey as DictionaryKey)}
           </p>
           <p className="text-xs text-[var(--color-text-muted)]">{email}</p>
           <p className="mt-1 flex items-center gap-1 text-xs">

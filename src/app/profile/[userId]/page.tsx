@@ -13,6 +13,7 @@ import { fetchCommentsByAuthor, type CommentWithPost } from "@/lib/supabase/comm
 import { CATEGORIES } from "@/lib/constants/categories";
 import type { Author, Post } from "@/lib/types";
 import { Avatar } from "@/components/common/Avatar";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import { PostListItem } from "@/components/board/PostListItem";
 import { ReportModal } from "@/components/common/ReportModal";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
@@ -71,8 +72,9 @@ export default function OtherProfilePage() {
         <Avatar nickname={author.nickname} avatarUrl={author.avatarUrl} size={64} />
         <div>
           <p className="text-lg font-bold">{author.nickname}</p>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {countryOption?.flag} {countryOption && t(countryOption.labelKey as DictionaryKey)}
+          <p className="flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
+            {countryOption && <CountryFlag code={countryOption.code} />}
+            {countryOption && t(countryOption.labelKey as DictionaryKey)}
           </p>
           {joinedAt && (
             <p className="text-xs text-[var(--color-text-muted)]">
