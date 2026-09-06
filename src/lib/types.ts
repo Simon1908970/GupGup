@@ -79,6 +79,8 @@ export interface Post {
   createdAt: string;
   viewCount: number;
   commentCount: number;
+  likeCount: number;
+  likedByViewer: boolean;
   thumbnailUrl?: string;
   attachments: Attachment[];
   originalBody?: string;

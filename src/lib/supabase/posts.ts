@@ -3,6 +3,7 @@ import type { Attachment, CategorySlug, CountryCode, Post, SortOrder } from "@/l
 import type { SearchScope } from "@/components/board/BoardSearchBar";
 import { isPremiumPostTarget, POST_REWARD, PREMIUM_POST_COST } from "@/lib/constants/points";
 import { fetchBlockedIds } from "@/lib/supabase/blocks";
+import { fetchLikedPostIds } from "@/lib/supabase/likes";
 
 interface PostRow {
   id: string;
@@ -30,12 +31,13 @@ interface PostRow {
     is_withdrawn: boolean;
   } | null;
   comments: { count: number }[];
+  likes: { count: number }[];
 }
 
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)";
 
-function mapPost(row: PostRow): Post {
+function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
   return {
     id: row.id,
     category: row.category,
@@ -55,6 +57,8 @@ function mapPost(row: PostRow): Post {
     createdAt: row.created_at,
     viewCount: row.view_count,
     commentCount: row.comments?.[0]?.count ?? 0,
+    likeCount: row.likes?.[0]?.count ?? 0,
+    likedByViewer: likedPostIds?.has(row.id) ?? false,
     thumbnailUrl: row.thumbnail_url ?? undefined,
     attachments: Array.isArray(row.attachments) ? row.attachments : [],
     originalBody: row.original_body ?? undefined,
@@ -145,8 +149,11 @@ export async function fetchPosts({
   const { data, count, error } = await query;
   if (error) throw error;
 
+  const rows = (data ?? []) as unknown as PostRow[];
+  const likedPostIds = viewer ? await fetchLikedPostIds(viewer.id, rows.map((r) => r.id)) : undefined;
+
   return {
-    posts: (data ?? []).map((row) => mapPost(row as unknown as PostRow)),
+    posts: rows.map((row) => mapPost(row, likedPostIds)),
     total: count ?? 0,
   };
 }
@@ -159,11 +166,48 @@ export async function fetchLatestPosts(
   return posts;
 }
 
+export async function fetchPopularPosts(limit: number, days = 30): Promise<Post[]> {
+  const supabase = createClient();
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const blockedIds = viewer ? await fetchBlockedIds(viewer.id) : [];
+
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  let query = supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .neq("category", "news")
+    .gte("created_at", cutoff)
+    .order("created_at", { ascending: false })
+    .limit(500); // candidate pool -- PostgREST can't order by an embedded count, so rank client-side below
+  if (blockedIds.length > 0) {
+    query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  const rows = (data ?? []) as unknown as PostRow[];
+  const likedPostIds = viewer ? await fetchLikedPostIds(viewer.id, rows.map((r) => r.id)) : undefined;
+  const posts = rows.map((row) => mapPost(row, likedPostIds));
+
+  posts.sort((a, b) => {
+    const score = (p: Post) => p.likeCount * 2 + p.commentCount;
+    return score(b) - score(a) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  return posts.slice(0, limit);
+}
+
 export async function fetchPostById(
   category: CategorySlug,
   id: string,
 ): Promise<Post | null> {
   const supabase = createClient();
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .from("posts")
     .select(POST_SELECT)
@@ -172,7 +216,9 @@ export async function fetchPostById(
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  return mapPost(data as unknown as PostRow);
+  const row = data as unknown as PostRow;
+  const likedPostIds = viewer ? await fetchLikedPostIds(viewer.id, [row.id]) : undefined;
+  return mapPost(row, likedPostIds);
 }
 
 export async function incrementViewCount(id: string, currentViewCount: number) {

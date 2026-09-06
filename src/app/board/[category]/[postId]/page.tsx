@@ -16,6 +16,7 @@ import { CountryTag } from "@/components/common/CountryTag";
 import { NicknamePopup } from "@/components/common/NicknamePopup";
 import { CommentSection } from "@/components/board/CommentSection";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
+import { LikeButton } from "@/components/common/LikeButton";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -233,6 +234,10 @@ export default function PostDetailPage() {
           ))}
         </ul>
       )}
+
+      <div className="mt-5">
+        <LikeButton postId={post.id} initialLiked={post.likedByViewer} initialCount={post.likeCount} />
+      </div>
 
       {config.hasMessageButton && (
         <button

@@ -9,15 +9,17 @@ import {
 } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { fetchLatestPosts } from "@/lib/supabase/posts";
+import { fetchLatestPosts, fetchPopularPosts } from "@/lib/supabase/posts";
 import type { CategorySlug, Post } from "@/lib/types";
 import { CategoryBox } from "@/components/board/CategoryBox";
+import { PopularPostsWidget } from "@/components/board/PopularPostsWidget";
 
 export default function Home() {
   const { t } = useLanguage();
   const [postsByCategory, setPostsByCategory] = useState<Record<CategorySlug, Post[]>>(
     {} as Record<CategorySlug, Post[]>,
   );
+  const [popularPosts, setPopularPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,6 +33,13 @@ export default function Home() {
       if (cancelled) return;
       setPostsByCategory(Object.fromEntries(entries) as Record<CategorySlug, Post[]>);
     });
+    fetchPopularPosts(6, 30)
+      .then((posts) => {
+        if (!cancelled) setPopularPosts(posts);
+      })
+      .catch(() => {
+        if (!cancelled) setPopularPosts([]);
+      });
     return () => {
       cancelled = true;
     };
@@ -38,6 +47,8 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
+      <PopularPostsWidget posts={popularPosts} />
+
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {LARGE_BOX_CATEGORIES.map((slug) => (
           <CategoryBox
