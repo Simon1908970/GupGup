@@ -232,10 +232,10 @@ body {
   animation: gg-fade-in 0.4s ease;
 }
 
-/* Decorative gradient + moving sheen + watermark icon for the homepage's
-   exchange-rate and popular-posts cards, so they read as "special" widgets
-   rather than the plain white category boxes. Needs the element to also
-   have position:relative and overflow:hidden (set via className). */
+/* Decorative gradient + moving sheen for the homepage's exchange-rate and
+   popular-posts cards, so they read as "special" widgets rather than the
+   plain white category boxes. Needs the element to also have
+   position:relative and overflow:hidden (set via className). */
 .gg-decorative-card {
   background: linear-gradient(135deg, #ffffff 0%, var(--color-brand-red-light) 100%);
 }
@@ -258,15 +258,6 @@ body {
   100% {
     background-position: -60% 0;
   }
-}
-
-.gg-card-watermark {
-  position: absolute;
-  right: -14px;
-  bottom: -16px;
-  opacity: 0.09;
-  transform: rotate(-12deg);
-  pointer-events: none;
 }
 
 /* Dark mode is mobile-only sitewide (see the media query above) -- scope this

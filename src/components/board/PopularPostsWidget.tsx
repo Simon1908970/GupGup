@@ -16,7 +16,6 @@ export function PopularPostsWidget({ posts }: { posts: Post[] }) {
 
   return (
     <div className="relative mb-4 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 gg-glossy-interactive gg-decorative-card">
-      <Flame size={88} className="gg-card-watermark text-[var(--color-brand-red)]" />
       <div className="flex items-center justify-between border-b border-[var(--color-border-gray-light)] px-4 py-3">
         <span className="flex items-center gap-1.5 text-sm font-bold">
           <Flame size={16} className="gg-flame-pulse text-[var(--color-brand-red)]" />
