@@ -34,8 +34,12 @@ interface PostRow {
   likes: { count: number }[];
 }
 
+// author:profiles must disambiguate the FK -- post_likes also has a path to
+// profiles (via user_id), so once likes:post_likes(count) is embedded too,
+// plain "profiles" is ambiguous between posts_author_id_fkey and post_likes
+// (PostgREST returns HTTP 300 PGRST201 for every query using this select).
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)";
 
 function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
   return {
