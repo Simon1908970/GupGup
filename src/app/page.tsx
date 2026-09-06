@@ -13,6 +13,7 @@ import { fetchLatestPosts, fetchPopularPosts } from "@/lib/supabase/posts";
 import type { CategorySlug, Post } from "@/lib/types";
 import { CategoryBox } from "@/components/board/CategoryBox";
 import { PopularPostsWidget } from "@/components/board/PopularPostsWidget";
+import { ExchangeRateTicker } from "@/components/board/ExchangeRateTicker";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -47,6 +48,7 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
+      <ExchangeRateTicker />
       <PopularPostsWidget posts={popularPosts} />
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
