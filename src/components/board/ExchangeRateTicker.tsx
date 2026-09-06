@@ -78,7 +78,7 @@ export function ExchangeRateTicker() {
     <>
       <div
         onClick={() => setModalOpen(true)}
-        className="relative mb-4 flex w-full cursor-pointer flex-col gap-2 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 px-4 py-2.5 gg-glossy-interactive gg-decorative-card"
+        className="relative mb-4 flex w-full cursor-pointer flex-col justify-center gap-1.5 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 px-4 py-2 gg-glossy-interactive gg-decorative-card"
       >
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-[var(--color-text-muted)]">
