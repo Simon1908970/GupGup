@@ -81,10 +81,11 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchBusinesses(country), fetchMapPosts(country)]).then(([b, p]) => {
+    // 한쪽 조회가 실패해도 다른 쪽 핀은 그리도록 allSettled — 실패한 쪽은 빈 배열.
+    Promise.allSettled([fetchBusinesses(country), fetchMapPosts(country)]).then(([b, p]) => {
       if (cancelled) return;
-      setBusinesses(b);
-      setPosts(p);
+      setBusinesses(b.status === "fulfilled" ? b.value : []);
+      setPosts(p.status === "fulfilled" ? p.value : []);
     });
     return () => {
       cancelled = true;
