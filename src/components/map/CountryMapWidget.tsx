@@ -35,6 +35,39 @@ function loadGoogleMapsScript(): Promise<void> {
   });
 }
 
+// InfoWindow 내용은 HTML 문자열이 아니라 DOM 노드로 만든다 — setContent(string)은
+// 원시 HTML로 렌더링되므로, 회원이 쓴 글 제목이나 카카오에서 수집한 업체명/주소를
+// 문자열로 끼워 넣으면 저장형 XSS가 된다. 사용자/외부 데이터는 textContent로만 넣는다.
+function buildBusinessInfoContent(b: Business, categoryLabel: string): HTMLDivElement {
+  const container = document.createElement("div");
+  container.style.fontSize = "13px";
+  const name = document.createElement("strong");
+  name.textContent = b.name;
+  container.append(
+    name,
+    document.createElement("br"),
+    document.createTextNode(categoryLabel),
+    document.createElement("br"),
+    document.createTextNode(b.address),
+  );
+  if (b.phone) {
+    container.append(document.createElement("br"), document.createTextNode(b.phone));
+  }
+  return container;
+}
+
+function buildPostInfoContent(p: Post, linkLabel: string): HTMLDivElement {
+  const container = document.createElement("div");
+  container.style.fontSize = "13px";
+  const title = document.createElement("strong");
+  title.textContent = p.title;
+  const link = document.createElement("a");
+  link.href = `/board/life/${p.id}`;
+  link.textContent = linkLabel;
+  container.append(title, document.createElement("br"), link);
+  return container;
+}
+
 export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
   const [country, setCountry] = useState<CountryCode | "all">("all");
@@ -86,9 +119,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
       });
       marker.addListener("click", () => {
         infoWindow.setContent(
-          `<div style="font-size:13px"><strong>${b.name}</strong><br/>${t(
-            `map.category.${b.category}` as DictionaryKey,
-          )}<br/>${b.address}${b.phone ? `<br/>${b.phone}` : ""}</div>`,
+          buildBusinessInfoContent(b, t(`map.category.${b.category}` as DictionaryKey)),
         );
         infoWindow.open(mapRef.current!, marker);
       });
@@ -104,9 +135,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
         title: p.title,
       });
       marker.addListener("click", () => {
-        infoWindow.setContent(
-          `<div style="font-size:13px"><strong>${p.title}</strong><br/><a href="/board/life/${p.id}">${t("map.viewPost")}</a></div>`,
-        );
+        infoWindow.setContent(buildPostInfoContent(p, t("map.viewPost")));
         infoWindow.open(mapRef.current!, marker);
       });
       markersRef.current.push(marker);
