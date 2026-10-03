@@ -25,7 +25,7 @@ export async function GET(
   if (report.target_type === "post") {
     const { data } = await supabase
       .from("posts")
-      .select("id, title, body, category, author_id, author:profiles(nickname)")
+      .select("id, title, body, category, author_id, author:profiles!posts_author_id_fkey(nickname)")
       .eq("id", report.target_id)
       .maybeSingle();
     target = data;
