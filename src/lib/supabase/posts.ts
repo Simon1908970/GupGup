@@ -23,6 +23,11 @@ interface PostRow {
   view_count: number;
   created_at: string;
   points_awarded: number;
+  show_on_map: boolean;
+  business_address: string | null;
+  business_detail_address: string | null;
+  business_lat: number | null;
+  business_lng: number | null;
   author: {
     id: string;
     nickname: string;
@@ -39,7 +44,8 @@ interface PostRow {
 // plain "profiles" is ambiguous between posts_author_id_fkey and post_likes
 // (PostgREST returns HTTP 300 PGRST201 for every query using this select).
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)";
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)" +
+  ", show_on_map, business_address, business_detail_address, business_lat, business_lng";
 
 function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
   return {
@@ -71,6 +77,11 @@ function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
     sourceUrl: row.source_url ?? undefined,
     imageCredit: row.image_credit ?? undefined,
     pointsAwarded: row.points_awarded ?? 0,
+    showOnMap: row.show_on_map,
+    businessAddress: row.business_address ?? undefined,
+    businessDetailAddress: row.business_detail_address ?? undefined,
+    businessLat: row.business_lat ?? undefined,
+    businessLng: row.business_lng ?? undefined,
   };
 }
 
@@ -241,6 +252,11 @@ export interface CreatePostInput {
   body: string;
   authorId: string;
   attachments?: Attachment[];
+  showOnMap?: boolean;
+  businessAddress?: string;
+  businessDetailAddress?: string;
+  businessLat?: number;
+  businessLng?: number;
 }
 
 export async function createPost(input: CreatePostInput): Promise<string> {
@@ -267,6 +283,11 @@ export async function createPost(input: CreatePostInput): Promise<string> {
       author_id: input.authorId,
       attachments: input.attachments ?? [],
       points_awarded: delta,
+      show_on_map: input.showOnMap ?? false,
+      business_address: input.businessAddress ?? null,
+      business_detail_address: input.businessDetailAddress ?? null,
+      business_lat: input.businessLat ?? null,
+      business_lng: input.businessLng ?? null,
     })
     .select("id")
     .single();
@@ -325,6 +346,21 @@ export async function deletePost(postId: string, authorId: string, pointsAwarded
       /* ignore */
     }
   }
+}
+
+export async function fetchMapPosts(country: CountryCode | "all"): Promise<Post[]> {
+  const supabase = createClient();
+  let query = supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("category", "life")
+    .eq("show_on_map", true);
+  if (country !== "all") {
+    query = query.eq("country", country);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []).map((row) => mapPost(row as unknown as PostRow));
 }
 
 export async function fetchPostCountByAuthor(authorId: string): Promise<number> {
