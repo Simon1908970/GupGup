@@ -19,6 +19,26 @@ export type CategorySlug =
   | "university"
   | "meeting";
 
+export type BusinessCategory =
+  | "restaurant"
+  | "mart"
+  | "salon"
+  | "hospital"
+  | "mobile"
+  | "admin"
+  | "etc";
+
+export interface Business {
+  id: string;
+  name: string;
+  category: BusinessCategory;
+  country: CountryCode;
+  address: string;
+  lat: number;
+  lng: number;
+  phone?: string;
+}
+
 export type BoxStyle = "large" | "grid";
 
 export interface SubCategory {
@@ -89,6 +109,11 @@ export interface Post {
   sourceUrl?: string;
   imageCredit?: string;
   pointsAwarded: number;
+  showOnMap?: boolean;
+  businessAddress?: string;
+  businessDetailAddress?: string;
+  businessLat?: number;
+  businessLng?: number;
 }
 
 export interface Comment {
