@@ -74,7 +74,9 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const mapDivRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
+  // 지도 인스턴스는 ref가 아니라 state로 둔다 — 구글 스크립트보다 업체/글 데이터가
+  // 먼저 도착해도, 지도가 준비되는 순간 아래 마커 effect가 다시 실행되도록.
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
 
   useEffect(() => {
@@ -92,11 +94,13 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     let cancelled = false;
     loadGoogleMapsScript().then(() => {
-      if (cancelled || !mapDivRef.current || mapRef.current) return;
-      mapRef.current = new window.google!.maps.Map(mapDivRef.current, {
-        center: DEFAULT_CENTER,
-        zoom: 11,
-      });
+      if (cancelled || !mapDivRef.current) return;
+      setMap(
+        new window.google!.maps.Map(mapDivRef.current, {
+          center: DEFAULT_CENTER,
+          zoom: 11,
+        }),
+      );
     });
     return () => {
       cancelled = true;
@@ -104,7 +108,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!map || !window.google) return;
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
 
@@ -113,7 +117,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
     for (const b of businesses) {
       const marker = new window.google.maps.Marker({
         position: { lat: b.lat, lng: b.lng },
-        map: mapRef.current,
+        map,
         icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
         title: b.name,
       });
@@ -121,7 +125,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
         infoWindow.setContent(
           buildBusinessInfoContent(b, t(`map.category.${b.category}` as DictionaryKey)),
         );
-        infoWindow.open(mapRef.current!, marker);
+        infoWindow.open(map, marker);
       });
       markersRef.current.push(marker);
     }
@@ -130,17 +134,17 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
       if (p.businessLat == null || p.businessLng == null) continue;
       const marker = new window.google.maps.Marker({
         position: { lat: p.businessLat, lng: p.businessLng },
-        map: mapRef.current,
+        map,
         icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
         title: p.title,
       });
       marker.addListener("click", () => {
         infoWindow.setContent(buildPostInfoContent(p, t("map.viewPost")));
-        infoWindow.open(mapRef.current!, marker);
+        infoWindow.open(map, marker);
       });
       markersRef.current.push(marker);
     }
-  }, [businesses, posts, t]);
+  }, [map, businesses, posts, t]);
 
   return (
     <div className="mb-4 flex flex-col gap-2">
