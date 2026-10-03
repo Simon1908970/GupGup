@@ -12,6 +12,7 @@ import { createPost, InsufficientPointsError } from "@/lib/supabase/posts";
 import { isPremiumPostTarget, PREMIUM_POST_COST } from "@/lib/constants/points";
 import { getErrorMessage } from "@/lib/utils";
 import { PostAttachmentInput } from "@/components/board/PostAttachmentInput";
+import { AddressPicker } from "@/components/board/AddressPicker";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -36,6 +37,9 @@ export default function WritePostPage() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showOnMap, setShowOnMap] = useState(false);
+  const [businessAddress, setBusinessAddress] = useState("");
+  const [businessDetailAddress, setBusinessDetailAddress] = useState("");
 
   if (!config || config.slug === "news") {
     return (
@@ -52,8 +56,35 @@ export default function WritePostPage() {
       setError(t("points.insufficientError"));
       return;
     }
+    if (showOnMap && !businessAddress.trim()) {
+      setError(t("map.addressPlaceholder"));
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
+
+    let businessLat: number | undefined;
+    let businessLng: number | undefined;
+
+    if (showOnMap && businessAddress.trim()) {
+      try {
+        const res = await fetch("/api/geocode", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: businessAddress.trim() }),
+        });
+        if (!res.ok) throw new Error("geocode failed");
+        const coords = (await res.json()) as { lat: number; lng: number };
+        businessLat = coords.lat;
+        businessLng = coords.lng;
+      } catch {
+        setSubmitting(false);
+        setError(t("map.geocodeError"));
+        return;
+      }
+    }
+
     try {
       const postId = await createPost({
         category: config!.slug,
@@ -63,6 +94,11 @@ export default function WritePostPage() {
         body: body.trim(),
         authorId: user.id,
         attachments,
+        showOnMap,
+        businessAddress: showOnMap ? businessAddress.trim() : undefined,
+        businessDetailAddress: showOnMap ? businessDetailAddress.trim() || undefined : undefined,
+        businessLat,
+        businessLng,
       });
       await refreshProfile();
       router.push(`/board/${config!.slug}/${postId}`);
@@ -152,6 +188,40 @@ export default function WritePostPage() {
           onChange={setAttachments}
           onError={setError}
         />
+
+        {config.slug === "life" && (
+          <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border-gray-light)] p-3">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={showOnMap}
+                onChange={(e) => setShowOnMap(e.target.checked)}
+              />
+              {t("map.showOnMapLabel")}
+            </label>
+            {showOnMap && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={businessAddress}
+                    placeholder={t("map.addressPlaceholder")}
+                    className="min-w-0 flex-1 rounded-md border border-[var(--color-border-gray-light)] px-3 py-1.5 text-sm"
+                  />
+                  <AddressPicker onSelect={setBusinessAddress} />
+                </div>
+                <input
+                  type="text"
+                  value={businessDetailAddress}
+                  onChange={(e) => setBusinessDetailAddress(e.target.value)}
+                  placeholder={t("map.detailAddressLabel")}
+                  className="rounded-md border border-[var(--color-border-gray-light)] px-3 py-1.5 text-sm"
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
 
