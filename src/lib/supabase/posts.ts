@@ -350,11 +350,19 @@ export async function deletePost(postId: string, authorId: string, pointsAwarded
 
 export async function fetchMapPosts(country: CountryCode | "all"): Promise<Post[]> {
   const supabase = createClient();
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const blockedIds = viewer ? await fetchBlockedIds(viewer.id) : [];
+
   let query = supabase
     .from("posts")
     .select(POST_SELECT)
     .eq("category", "life")
     .eq("show_on_map", true);
+  if (blockedIds.length > 0) {
+    query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
+  }
   if (country !== "all") {
     query = query.eq("country", country);
   }
