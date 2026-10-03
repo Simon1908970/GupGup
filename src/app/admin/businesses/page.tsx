@@ -1,42 +1,55 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import type { Business } from "@/lib/types";
+import type { Business, BusinessCategory, CountryCode } from "@/lib/types";
 
 interface AdminBusinessRow extends Business {
   isActive: boolean;
+}
+
+interface BusinessApiRow {
+  id: string;
+  name: string;
+  category: BusinessCategory;
+  country: CountryCode;
+  address: string;
+  lat: number;
+  lng: number;
+  phone: string | null;
+  is_active: boolean;
 }
 
 export default function AdminBusinessesPage() {
   const [rows, setRows] = useState<AdminBusinessRow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function load() {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("businesses")
-      .select("id, name, category, country, address, lat, lng, phone, is_active")
-      .order("created_at", { ascending: false });
-    setRows(
-      (data ?? []).map((r) => ({
-        id: r.id,
-        name: r.name,
-        category: r.category,
-        country: r.country,
-        address: r.address,
-        lat: r.lat,
-        lng: r.lng,
-        phone: r.phone ?? undefined,
-        isActive: r.is_active,
-      })),
-    );
-    setLoading(false);
+  // businesses의 공개 RLS는 활성 행만 보여주므로, 비활성 행까지 보려면 서비스 롤
+  // 기반 관리자 API(/api/admin/businesses)로 읽어야 한다.
+  function load() {
+    fetch("/api/admin/businesses")
+      .then((r) => r.json())
+      .then((data: { businesses?: BusinessApiRow[] }) =>
+        setRows(
+          (data.businesses ?? []).map((r) => ({
+            id: r.id,
+            name: r.name,
+            category: r.category,
+            country: r.country,
+            address: r.address,
+            lat: r.lat,
+            lng: r.lng,
+            phone: r.phone ?? undefined,
+            isActive: r.is_active,
+          })),
+        ),
+      )
+      .catch(() => {
+        // 네트워크 오류 시 기존 목록을 그대로 둔다.
+      })
+      .finally(() => setLoading(false));
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(load, []);
 
   async function toggle(id: string, next: boolean) {
     await fetch(`/api/admin/businesses/${id}`, {
@@ -44,7 +57,7 @@ export default function AdminBusinessesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive: next }),
     });
-    await load();
+    load();
   }
 
   if (loading) return <p className="text-sm text-[var(--color-text-muted)]">로딩 중...</p>;
