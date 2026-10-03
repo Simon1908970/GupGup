@@ -42,6 +42,11 @@ export function CategoryNav() {
             );
           })}
           <li>
+            <Link href="/map" className={linkClass(!!pathname?.startsWith("/map"))}>
+              {t("nav.map")}
+            </Link>
+          </li>
+          <li>
             <Link href="/inquiries" className={linkClass(!!pathname?.startsWith("/inquiries"))}>
               {t("nav.inquiries")}
             </Link>
@@ -92,6 +97,15 @@ export function CategoryNav() {
                 </li>
               );
             })}
+            <li>
+              <Link
+                href="/map"
+                onClick={() => setExpanded(false)}
+                className={linkClass(!!pathname?.startsWith("/map"))}
+              >
+                {t("nav.map")}
+              </Link>
+            </li>
             <li>
               <Link
                 href="/inquiries"

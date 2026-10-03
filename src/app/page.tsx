@@ -14,6 +14,7 @@ import type { CategorySlug, Post } from "@/lib/types";
 import { CategoryBox } from "@/components/board/CategoryBox";
 import { PopularPostsWidget } from "@/components/board/PopularPostsWidget";
 import { ExchangeRateTicker } from "@/components/board/ExchangeRateTicker";
+import { CountryMapWidget } from "@/components/map/CountryMapWidget";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -50,6 +51,7 @@ export default function Home() {
     <div className="mx-auto max-w-6xl px-4 py-6">
       <ExchangeRateTicker />
       <PopularPostsWidget posts={popularPosts} />
+      <CountryMapWidget compact />
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {LARGE_BOX_CATEGORIES.map((slug) => (
