@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { parseKakaoAddressResponse } from "@/lib/kakaoGeocode";
 
 export async function POST(request: Request) {
+  // 로그인 사용자만 — 비로그인 호출로 KAKAO_REST_API_KEY 쿼터(수집 스크립트와 공용)가
+  // 소진되지 않도록. 이 라우트를 부르는 글쓰기 화면 자체가 로그인 필요.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
   const { address } = (await request.json()) as { address?: string };
   if (!address) {
     return NextResponse.json({ error: "address is required" }, { status: 400 });
