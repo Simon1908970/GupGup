@@ -247,7 +247,9 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Modify: `src/lib/supabase/posts.ts`
 
 **Interfaces:**
-- Consumes: Task 1의 `posts` 신규 컬럼
+- Consumes: Task 1의 `posts` 신규 컬럼, Task 2에서 `Post`에 추가한
+  `showOnMap`/`businessAddress`/`businessDetailAddress`/`businessLat`/`businessLng`
+  필드
 - Produces: `fetchMapPosts(country: CountryCode | "all"): Promise<Post[]>`,
   `CreatePostInput`에 `showOnMap?`, `businessAddress?`, `businessDetailAddress?`,
   `businessLat?`, `businessLng?` 추가 — Task 7(글쓰기 화면)과 Task 8(지도 위젯)이
