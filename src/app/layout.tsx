@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   description: "한국에 거주하는 외국인을 위한 커뮤니티, 줍줍",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
