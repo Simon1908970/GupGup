@@ -10,6 +10,11 @@ test("buildSearchQueries: 키워드 × 지역 조합으로 쿼리 문자열 생�
   ]);
 });
 
+test("buildSearchQueries: regions 없으면 키워드 그대로(전국 검색) 단일 쿼리 반환", () => {
+  const target = { country: "vn", category: "restaurant", keyword: "베트남 음식점" };
+  assert.deepEqual(buildSearchQueries(target), ["베트남 음식점"]);
+});
+
 test("mapKakaoPlaceToBusinessRow: 카카오 장소 객체를 businesses row로 변환", () => {
   const place = {
     id: "26338954",

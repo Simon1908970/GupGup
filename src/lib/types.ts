@@ -26,6 +26,7 @@ export type BusinessCategory =
   | "hospital"
   | "mobile"
   | "admin"
+  | "shipping"
   | "etc";
 
 export interface Business {

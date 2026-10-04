@@ -1,4 +1,5 @@
 export function buildSearchQueries(target) {
+  if (!target.regions || target.regions.length === 0) return [target.keyword];
   return target.regions.map((region) => `${target.keyword} ${region}`);
 }
 
