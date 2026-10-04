@@ -78,6 +78,9 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   // 먼저 도착해도, 지도가 준비되는 순간 아래 마커 effect가 다시 실행되도록.
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  // 처음 화면은 서울 고정(DEFAULT_CENTER/줌11)으로 보여주고, 사용자가 국가 탭을
+  // 직접 눌렀을 때만 그 데이터 분포에 맞춰 fitBounds로 움직인다.
+  const hasInteractedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,6 +148,21 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
       });
       markersRef.current.push(marker);
     }
+
+    // 전국 단위로 핀이 흩어져 있을 수 있으므로, 서울 고정 중심/줌 대신
+    // 실제 핀 분포에 맞춰 지도를 맞춘다. 핀이 하나(또는 한 지점에 몰려)면
+    // fitBounds가 과도하게 확대하므로 줌을 상한선으로 눌러준다.
+    if (hasInteractedRef.current && markersRef.current.length > 0) {
+      const bounds = new window.google.maps.LatLngBounds();
+      for (const marker of markersRef.current) {
+        const position = marker.getPosition();
+        if (position) bounds.extend(position);
+      }
+      map.fitBounds(bounds);
+      window.google.maps.event.addListenerOnce(map, "bounds_changed", () => {
+        if ((map.getZoom() ?? 0) > 15) map.setZoom(15);
+      });
+    }
   }, [map, businesses, posts, t]);
 
   return (
@@ -154,7 +172,10 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
           <button
             key={c.code}
             type="button"
-            onClick={() => setCountry(c.code)}
+            onClick={() => {
+              hasInteractedRef.current = true;
+              setCountry(c.code);
+            }}
             className={cn(
               "flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium",
               country === c.code
