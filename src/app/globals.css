@@ -232,6 +232,21 @@ body {
   animation: gg-fade-in 0.4s ease;
 }
 
+/* Side-slide between rotating slides — no opacity dip, so it reads as a
+   smooth glide instead of a blink (unlike gg-fade-in's opacity 0->1). */
+@keyframes gg-slide-in {
+  from {
+    transform: translateX(16px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.gg-slide-in {
+  animation: gg-slide-in 0.35s ease;
+}
+
 /* Decorative gradient + moving sheen for the homepage's exchange-rate and
    popular-posts cards, so they read as "special" widgets rather than the
    plain white category boxes. Needs the element to also have
@@ -258,6 +273,13 @@ body {
   100% {
     background-position: -60% 0;
   }
+}
+
+/* Opt out of the moving sheen on specific gg-decorative-card instances
+   (e.g. widgets with text the user needs to read) while keeping the
+   gradient background underneath it. */
+.gg-decorative-card.gg-no-sheen::after {
+  display: none;
 }
 
 /* Dark mode is mobile-only sitewide (see the media query above) -- scope this
