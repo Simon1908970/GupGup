@@ -187,6 +187,9 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
             {t(c.labelKey as DictionaryKey)}
           </button>
         ))}
+        <span className="ml-auto inline-block self-center rounded border border-black bg-[var(--color-badge-yellow)] px-2 py-0.5 text-xs font-semibold text-black">
+          {t("map.widgetTitle")}
+        </span>
       </div>
       <div
         ref={mapDivRef}

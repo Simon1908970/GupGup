@@ -40,6 +40,21 @@ export interface Business {
   phone?: string;
 }
 
+export type TopikLevel = "beginner" | "intermediate" | "advanced";
+export type TopikQuestionType = "vocab" | "grammar" | "reading";
+
+export interface TopikQuestion {
+  id: string;
+  displayDate: string;
+  level: TopikLevel;
+  type: TopikQuestionType;
+  passage?: string;
+  question: string;
+  choices: string[];
+  answerIndex: number;
+  explanation: string;
+}
+
 export type BoxStyle = "large" | "grid";
 
 export interface SubCategory {

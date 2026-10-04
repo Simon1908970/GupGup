@@ -244,6 +244,7 @@ const ko = {
   "map.detailAddressLabel": "상세주소 (선택)",
   "map.geocodeError": "주소를 좌표로 변환하지 못했습니다. 다시 검색해주세요.",
   "map.viewFullMap": "지도 전체화면 보기",
+  "map.widgetTitle": "업체 지도",
   "map.legendBusiness": "등록 업체",
   "map.legendPost": "회원 등록 글",
   "map.viewPost": "글 보기",
@@ -255,6 +256,13 @@ const ko = {
   "map.category.admin": "행정·법률",
   "map.category.shipping": "국제택배",
   "map.category.etc": "기타",
+  "topik.title": "오늘의 한국어 연습문제",
+  "topik.level.beginner": "초급",
+  "topik.level.intermediate": "중급",
+  "topik.level.advanced": "고급",
+  "topik.type.vocab": "어휘",
+  "topik.type.grammar": "문법",
+  "topik.type.reading": "읽기",
 };
 
 export type DictionaryKey = keyof typeof ko;
@@ -478,6 +486,7 @@ const en: Dictionary = {
   "map.detailAddressLabel": "Detailed address (optional)",
   "map.geocodeError": "Could not locate this address. Please search again.",
   "map.viewFullMap": "View full map",
+  "map.widgetTitle": "Business Map",
   "map.legendBusiness": "Listed businesses",
   "map.legendPost": "Member posts",
   "map.viewPost": "View post",
@@ -489,6 +498,13 @@ const en: Dictionary = {
   "map.category.admin": "Admin & legal",
   "map.category.shipping": "International shipping",
   "map.category.etc": "Other",
+  "topik.title": "Today's Korean Practice Question",
+  "topik.level.beginner": "Beginner",
+  "topik.level.intermediate": "Intermediate",
+  "topik.level.advanced": "Advanced",
+  "topik.type.vocab": "Vocabulary",
+  "topik.type.grammar": "Grammar",
+  "topik.type.reading": "Reading",
 };
 
 const vi: Partial<Dictionary> = {
@@ -704,6 +720,7 @@ const vi: Partial<Dictionary> = {
   "map.detailAddressLabel": "Địa chỉ chi tiết (không bắt buộc)",
   "map.geocodeError": "Không thể xác định vị trí địa chỉ này. Vui lòng tìm lại.",
   "map.viewFullMap": "Xem bản đồ toàn màn hình",
+  "map.widgetTitle": "Bản đồ cửa hàng",
   "map.legendBusiness": "Cửa hàng đã đăng ký",
   "map.legendPost": "Bài viết của thành viên",
   "map.viewPost": "Xem bài viết",
@@ -715,6 +732,13 @@ const vi: Partial<Dictionary> = {
   "map.category.admin": "Hành chính & pháp lý",
   "map.category.shipping": "Vận chuyển quốc tế",
   "map.category.etc": "Khác",
+  "topik.title": "Câu hỏi luyện tiếng Hàn hôm nay",
+  "topik.level.beginner": "Sơ cấp",
+  "topik.level.intermediate": "Trung cấp",
+  "topik.level.advanced": "Cao cấp",
+  "topik.type.vocab": "Từ vựng",
+  "topik.type.grammar": "Ngữ pháp",
+  "topik.type.reading": "Đọc hiểu",
 };
 
 const th: Partial<Dictionary> = {
@@ -930,6 +954,7 @@ const th: Partial<Dictionary> = {
   "map.detailAddressLabel": "ที่อยู่โดยละเอียด (ไม่บังคับ)",
   "map.geocodeError": "ไม่พบตำแหน่งของที่อยู่นี้ กรุณาค้นหาใหม่",
   "map.viewFullMap": "ดูแผนที่แบบเต็มจอ",
+  "map.widgetTitle": "แผนที่ร้านค้า",
   "map.legendBusiness": "ร้านค้าที่ลงทะเบียน",
   "map.legendPost": "โพสต์ของสมาชิก",
   "map.viewPost": "ดูโพสต์",
@@ -941,6 +966,13 @@ const th: Partial<Dictionary> = {
   "map.category.admin": "งานราชการ·กฎหมาย",
   "map.category.shipping": "ขนส่งระหว่างประเทศ",
   "map.category.etc": "อื่นๆ",
+  "topik.title": "คำถามฝึกภาษาเกาหลีวันนี้",
+  "topik.level.beginner": "ระดับต้น",
+  "topik.level.intermediate": "ระดับกลาง",
+  "topik.level.advanced": "ระดับสูง",
+  "topik.type.vocab": "คำศัพท์",
+  "topik.type.grammar": "ไวยากรณ์",
+  "topik.type.reading": "การอ่าน",
 };
 
 const id: Partial<Dictionary> = {
@@ -1156,6 +1188,7 @@ const id: Partial<Dictionary> = {
   "map.detailAddressLabel": "Alamat detail (opsional)",
   "map.geocodeError": "Tidak dapat menemukan lokasi alamat ini. Silakan cari lagi.",
   "map.viewFullMap": "Lihat peta layar penuh",
+  "map.widgetTitle": "Peta Usaha",
   "map.legendBusiness": "Usaha terdaftar",
   "map.legendPost": "Postingan anggota",
   "map.viewPost": "Lihat postingan",
@@ -1167,6 +1200,13 @@ const id: Partial<Dictionary> = {
   "map.category.admin": "Administrasi & hukum",
   "map.category.shipping": "Pengiriman internasional",
   "map.category.etc": "Lainnya",
+  "topik.title": "Soal Latihan Bahasa Korea Hari Ini",
+  "topik.level.beginner": "Pemula",
+  "topik.level.intermediate": "Menengah",
+  "topik.level.advanced": "Mahir",
+  "topik.type.vocab": "Kosakata",
+  "topik.type.grammar": "Tata bahasa",
+  "topik.type.reading": "Membaca",
 };
 
 const tl: Partial<Dictionary> = {
@@ -1382,6 +1422,7 @@ const tl: Partial<Dictionary> = {
   "map.detailAddressLabel": "Detalyadong address (opsyonal)",
   "map.geocodeError": "Hindi nahanap ang lokasyon ng address na ito. Pakihanap ulit.",
   "map.viewFullMap": "Tingnan ang buong mapa",
+  "map.widgetTitle": "Mapa ng Negosyo",
   "map.legendBusiness": "Nakalistang negosyo",
   "map.legendPost": "Post ng miyembro",
   "map.viewPost": "Tingnan ang post",
@@ -1393,6 +1434,13 @@ const tl: Partial<Dictionary> = {
   "map.category.admin": "Administrasyon at legal",
   "map.category.shipping": "International shipping",
   "map.category.etc": "Iba pa",
+  "topik.title": "Araling Koreano Ngayon",
+  "topik.level.beginner": "Baguhan",
+  "topik.level.intermediate": "Katamtaman",
+  "topik.level.advanced": "Mataas",
+  "topik.type.vocab": "Bokabularyo",
+  "topik.type.grammar": "Gramatika",
+  "topik.type.reading": "Pagbasa",
 };
 
 const lo: Partial<Dictionary> = {
@@ -1608,6 +1656,7 @@ const lo: Partial<Dictionary> = {
   "map.detailAddressLabel": "ທີ່ຢູ່ລະອຽດ (ບໍ່ບັງຄັບ)",
   "map.geocodeError": "ບໍ່ສາມາດຊອກຫາທີ່ຕັ້ງຂອງທີ່ຢູ່ນີ້ໄດ້. ກະລຸນາຄົ້ນຫາໃໝ່.",
   "map.viewFullMap": "ເບິ່ງແຜນທີ່ເຕັມຈໍ",
+  "map.widgetTitle": "ແຜນທີ່ຮ້ານ",
   "map.legendBusiness": "ຮ້ານທີ່ລົງທະບຽນ",
   "map.legendPost": "ໂພສຂອງສະມາຊິກ",
   "map.viewPost": "ເບິ່ງໂພສ",
@@ -1619,6 +1668,13 @@ const lo: Partial<Dictionary> = {
   "map.category.admin": "ບໍລິຫານ ແລະ ກົດໝາຍ",
   "map.category.shipping": "ການຂົນສົ່ງສາກົນ",
   "map.category.etc": "ອື່ນໆ",
+  "topik.title": "ຄຳຖາມຝຶກພາສາເກົາຫຼີມື້ນີ້",
+  "topik.level.beginner": "ລະດັບຕົ້ນ",
+  "topik.level.intermediate": "ລະດັບກາງ",
+  "topik.level.advanced": "ລະດັບສູງ",
+  "topik.type.vocab": "ຄຳສັບ",
+  "topik.type.grammar": "ໄວຍາກອນ",
+  "topik.type.reading": "ການອ່ານ",
 };
 
 const my: Partial<Dictionary> = {
@@ -1834,6 +1890,7 @@ const my: Partial<Dictionary> = {
   "map.detailAddressLabel": "အသေးစိတ်လိပ်စာ (ရွေးချယ်နိုင်)",
   "map.geocodeError": "ဤလိပ်စာကိုရှာမတွေ့ပါ။ ထပ်မံရှာဖွေပါ။",
   "map.viewFullMap": "မြေပုံကို full screen ဖြင့်ကြည့်ရန်",
+  "map.widgetTitle": "စီးပွားရေးမြေပုံ",
   "map.legendBusiness": "စာရင်းသွင်းထားသောစီးပွားရေးလုပ်ငန်းများ",
   "map.legendPost": "အသင်းဝင်ပို့စ်များ",
   "map.viewPost": "ပို့စ်ကိုကြည့်ရန်",
@@ -1845,6 +1902,13 @@ const my: Partial<Dictionary> = {
   "map.category.admin": "အုပ်ချုပ်ရေးနှင့်ဥပဒေ",
   "map.category.shipping": "နိုင်ငံတကာပို့ဆောင်ရေး",
   "map.category.etc": "အခြား",
+  "topik.title": "ဒီနေ့ကိုရီးယားစာလေ့ကျင့်ခန်း",
+  "topik.level.beginner": "အခြေခံ",
+  "topik.level.intermediate": "အလယ်အလတ်",
+  "topik.level.advanced": "အဆင့်မြင့်",
+  "topik.type.vocab": "ဝေါဟာရ",
+  "topik.type.grammar": "သဒ္ဒါ",
+  "topik.type.reading": "စာဖတ်ခြင်း",
 };
 
 const mn: Partial<Dictionary> = {
@@ -2060,6 +2124,7 @@ const mn: Partial<Dictionary> = {
   "map.detailAddressLabel": "Дэлгэрэнгүй хаяг (сайн дурын)",
   "map.geocodeError": "Энэ хаягийн байршлыг олж чадсангүй. Дахин хайж үзнэ үү.",
   "map.viewFullMap": "Бүтэн дэлгэцийн газрын зураг харах",
+  "map.widgetTitle": "Бизнесийн газрын зураг",
   "map.legendBusiness": "Бүртгэлтэй бизнесүүд",
   "map.legendPost": "Гишүүдийн нийтлэл",
   "map.viewPost": "Нийтлэл харах",
@@ -2071,6 +2136,13 @@ const mn: Partial<Dictionary> = {
   "map.category.admin": "Захиргаа & хууль",
   "map.category.shipping": "Олон улсын тээвэр",
   "map.category.etc": "Бусад",
+  "topik.title": "Өнөөдрийн солонгос хэлний дасгал",
+  "topik.level.beginner": "Анхан шат",
+  "topik.level.intermediate": "Дунд шат",
+  "topik.level.advanced": "Ахисан шат",
+  "topik.type.vocab": "Үгсийн сан",
+  "topik.type.grammar": "Дүрэм",
+  "topik.type.reading": "Унших",
 };
 
 const ru: Partial<Dictionary> = {
@@ -2286,6 +2358,7 @@ const ru: Partial<Dictionary> = {
   "map.detailAddressLabel": "Подробный адрес (необязательно)",
   "map.geocodeError": "Не удалось определить местоположение по этому адресу. Попробуйте снова.",
   "map.viewFullMap": "Посмотреть карту на весь экран",
+  "map.widgetTitle": "Карта бизнесов",
   "map.legendBusiness": "Зарегистрированные предприятия",
   "map.legendPost": "Публикации участников",
   "map.viewPost": "Посмотреть публикацию",
@@ -2297,6 +2370,13 @@ const ru: Partial<Dictionary> = {
   "map.category.admin": "Администрация и право",
   "map.category.shipping": "Международная доставка",
   "map.category.etc": "Другое",
+  "topik.title": "Сегодняшнее упражнение по корейскому",
+  "topik.level.beginner": "Начальный",
+  "topik.level.intermediate": "Средний",
+  "topik.level.advanced": "Продвинутый",
+  "topik.type.vocab": "Лексика",
+  "topik.type.grammar": "Грамматика",
+  "topik.type.reading": "Чтение",
 };
 
 export const DICTIONARIES: Record<Locale, Dictionary> = {
