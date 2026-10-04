@@ -50,8 +50,8 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
       <ExchangeRateTicker />
-      <PopularPostsWidget posts={popularPosts} />
       <CountryMapWidget compact />
+      <PopularPostsWidget posts={popularPosts} />
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {LARGE_BOX_CATEGORIES.map((slug) => (
