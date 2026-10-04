@@ -140,6 +140,11 @@ export default function WritePostPage() {
           {t("points.premiumNotice")}
         </p>
       )}
+      {insufficientPoints && (
+        <p className="mb-4 rounded-md border border-[var(--color-brand-red)] bg-[var(--color-brand-red-light)] px-3 py-2 text-xs font-medium text-[var(--color-brand-red)]">
+          {t("points.insufficientError")}
+        </p>
+      )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {config.subCategories && (
           <select
