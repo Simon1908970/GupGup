@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 
-const MOBILE_VISIBLE_COUNT = 4;
+const MOBILE_VISIBLE_COUNT = 3;
 
 export function CategoryNav() {
   const { t } = useLanguage();
@@ -31,6 +31,11 @@ export function CategoryNav() {
       {/* Desktop / tablet: unchanged, single scrollable row */}
       <nav className="relative hidden w-full overflow-x-auto bg-[var(--color-brand-red)] gg-glossy-bar sm:block">
         <ul className="mx-auto flex max-w-6xl min-w-max items-stretch px-2">
+          <li>
+            <Link href="/" className={linkClass(pathname === "/")}>
+              {t("nav.home")}
+            </Link>
+          </li>
           {CATEGORY_ORDER.map((slug) => {
             const href = `/board/${slug}`;
             return (
@@ -57,6 +62,11 @@ export function CategoryNav() {
       {/* Mobile: first few categories + a dropdown for the rest */}
       <nav className="relative w-full bg-[var(--color-brand-red)] gg-glossy-bar sm:hidden">
         <ul className="flex items-stretch px-2">
+          <li className="min-w-0 flex-1">
+            <Link href="/" className={cn(linkClass(pathname === "/"), "justify-center truncate px-2")}>
+              {t("nav.home")}
+            </Link>
+          </li>
           {visibleSlugs.map((slug) => {
             const href = `/board/${slug}`;
             return (

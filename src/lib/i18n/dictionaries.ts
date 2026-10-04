@@ -27,6 +27,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
 };
 
 const ko = {
+  "nav.home": "홈",
   "nav.news": "뉴스",
   "nav.community": "커뮤니티",
   "nav.housing": "룸메이트",
@@ -252,6 +253,7 @@ const ko = {
   "map.category.hospital": "병원",
   "map.category.mobile": "휴대폰",
   "map.category.admin": "행정·법률",
+  "map.category.shipping": "국제택배",
   "map.category.etc": "기타",
 };
 
@@ -259,6 +261,7 @@ export type DictionaryKey = keyof typeof ko;
 export type Dictionary = Record<DictionaryKey, string>;
 
 const en: Dictionary = {
+  "nav.home": "Home",
   "nav.news": "News",
   "nav.community": "Community",
   "nav.housing": "Roommate",
@@ -484,10 +487,12 @@ const en: Dictionary = {
   "map.category.hospital": "Hospital",
   "map.category.mobile": "Mobile phone",
   "map.category.admin": "Admin & legal",
+  "map.category.shipping": "International shipping",
   "map.category.etc": "Other",
 };
 
 const vi: Partial<Dictionary> = {
+  "nav.home": "Trang chủ",
   "nav.news": "Tin tức",
   "nav.community": "Cộng đồng",
   "nav.housing": "Bạn cùng phòng",
@@ -708,10 +713,12 @@ const vi: Partial<Dictionary> = {
   "map.category.hospital": "Bệnh viện",
   "map.category.mobile": "Điện thoại di động",
   "map.category.admin": "Hành chính & pháp lý",
+  "map.category.shipping": "Vận chuyển quốc tế",
   "map.category.etc": "Khác",
 };
 
 const th: Partial<Dictionary> = {
+  "nav.home": "หน้าแรก",
   "nav.news": "ข่าวสาร",
   "nav.community": "ชุมชน",
   "nav.housing": "เพื่อนร่วมห้อง",
@@ -932,10 +939,12 @@ const th: Partial<Dictionary> = {
   "map.category.hospital": "โรงพยาบาล",
   "map.category.mobile": "โทรศัพท์มือถือ",
   "map.category.admin": "งานราชการ·กฎหมาย",
+  "map.category.shipping": "ขนส่งระหว่างประเทศ",
   "map.category.etc": "อื่นๆ",
 };
 
 const id: Partial<Dictionary> = {
+  "nav.home": "Beranda",
   "nav.news": "Berita",
   "nav.community": "Komunitas",
   "nav.housing": "Teman Sekamar",
@@ -1156,10 +1165,12 @@ const id: Partial<Dictionary> = {
   "map.category.hospital": "Rumah sakit",
   "map.category.mobile": "Ponsel",
   "map.category.admin": "Administrasi & hukum",
+  "map.category.shipping": "Pengiriman internasional",
   "map.category.etc": "Lainnya",
 };
 
 const tl: Partial<Dictionary> = {
+  "nav.home": "Home",
   "nav.news": "Balita",
   "nav.community": "Komunidad",
   "nav.housing": "Roommate",
@@ -1380,10 +1391,12 @@ const tl: Partial<Dictionary> = {
   "map.category.hospital": "Ospital",
   "map.category.mobile": "Cellphone",
   "map.category.admin": "Administrasyon at legal",
+  "map.category.shipping": "International shipping",
   "map.category.etc": "Iba pa",
 };
 
 const lo: Partial<Dictionary> = {
+  "nav.home": "ໜ້າຫຼັກ",
   "nav.news": "ຂ່າວ",
   "nav.community": "ຊຸມຊົນ",
   "nav.housing": "ເພື່ອນຮ່ວມຫ້ອງ",
@@ -1604,10 +1617,12 @@ const lo: Partial<Dictionary> = {
   "map.category.hospital": "ໂຮງໝໍ",
   "map.category.mobile": "ໂທລະສັບມືຖື",
   "map.category.admin": "ບໍລິຫານ ແລະ ກົດໝາຍ",
+  "map.category.shipping": "ການຂົນສົ່ງສາກົນ",
   "map.category.etc": "ອື່ນໆ",
 };
 
 const my: Partial<Dictionary> = {
+  "nav.home": "ပင်မစာမျက်နှာ",
   "nav.news": "သတင်း",
   "nav.community": "အသိုင်းအဝိုင်း",
   "nav.housing": "အခန်းဖော်",
@@ -1828,10 +1843,12 @@ const my: Partial<Dictionary> = {
   "map.category.hospital": "ဆေးရုံ",
   "map.category.mobile": "လက်ကိုင်ဖုန်း",
   "map.category.admin": "အုပ်ချုပ်ရေးနှင့်ဥပဒေ",
+  "map.category.shipping": "နိုင်ငံတကာပို့ဆောင်ရေး",
   "map.category.etc": "အခြား",
 };
 
 const mn: Partial<Dictionary> = {
+  "nav.home": "Нүүр",
   "nav.news": "Мэдээ",
   "nav.community": "Нийгэмлэг",
   "nav.housing": "Өрөө хуваалцагч",
@@ -2052,10 +2069,12 @@ const mn: Partial<Dictionary> = {
   "map.category.hospital": "Эмнэлэг",
   "map.category.mobile": "Гар утас",
   "map.category.admin": "Захиргаа & хууль",
+  "map.category.shipping": "Олон улсын тээвэр",
   "map.category.etc": "Бусад",
 };
 
 const ru: Partial<Dictionary> = {
+  "nav.home": "Главная",
   "nav.news": "Новости",
   "nav.community": "Сообщество",
   "nav.housing": "Сосед по комнате",
@@ -2276,6 +2295,7 @@ const ru: Partial<Dictionary> = {
   "map.category.hospital": "Больница",
   "map.category.mobile": "Мобильный телефон",
   "map.category.admin": "Администрация и право",
+  "map.category.shipping": "Международная доставка",
   "map.category.etc": "Другое",
 };
 
