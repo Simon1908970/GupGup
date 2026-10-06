@@ -166,7 +166,33 @@ export default function TermsPage() {
         </ol>
       </Article>
 
-      <Article title="제16조 (면책조항)">
+      <Article title="제16조 (중고거래·모임 게시판 이용수칙)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            중고거래 게시판 이용 시 회원은 다음 각 호의 행위를 하여서는 안 됩니다.
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>실제 보유하지 않거나 거래 의사가 없는 허위 매물을 등록하는 행위</li>
+              <li>총기·마약·의약품 등 관련 법령상 거래가 금지되거나 제한된 물품을 게시·거래하는 행위</li>
+              <li>도난품, 장물로 의심되는 물품을 거래하는 행위</li>
+              <li>선입금을 유도한 후 물품을 발송하지 않는 등 사기적인 방법으로 거래하는 행위</li>
+              <li>사업자 등록 없이 상시적·반복적으로 대량의 물품을 판매하는 영리 목적 이용 행위</li>
+            </ol>
+          </li>
+          <li>
+            모임 게시판 이용 시 회원은 다음 각 호의 행위를 하여서는 안 됩니다.
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>만 19세 미만 청소년을 대상으로 만남을 시도하거나 유도하는 행위</li>
+              <li>성매매, 유흥업소 등 성(性)을 매개로 한 영업을 홍보·알선·권유하는 행위</li>
+              <li>실명, 혼인 여부 등 신상정보를 허위로 기재하여 상대방에게 접근하는 행위</li>
+              <li>금전·물품을 요구하거나 투자를 빙자하여 접근하는 등 사기적인 방법(로맨스 스캠 등)으로 상대방에게 접근하는 행위</li>
+              <li>상대방이 연락 중단 의사를 밝혔음에도 지속적으로 연락하거나 개인정보 제공을 강요하는 행위</li>
+            </ol>
+          </li>
+          <li>제1항 및 제2항을 위반한 게시물·회원에 대해서는 제7조(회원 탈퇴 및 자격 상실), 제13조(게시물의 관리)가 적용되며, 범죄 혐의가 있다고 판단되는 경우 운영자는 수사기관에 신고하거나 관련 자료를 제공할 수 있습니다.</li>
+        </ol>
+      </Article>
+
+      <Article title="제17조 (면책조항)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>운영자는 천재지변, 전쟁, 기간통신사업자의 서비스 중지 등 불가항력으로 인하여 서비스를 제공할 수 없는 경우 책임이 면제됩니다.</li>
           <li>운영자는 회원의 귀책사유로 인한 서비스 이용 장애에 대해 책임을 지지 않습니다.</li>
@@ -174,7 +200,7 @@ export default function TermsPage() {
         </ol>
       </Article>
 
-      <Article title="제17조 (분쟁 해결 및 재판관할)">
+      <Article title="제18조 (분쟁 해결 및 재판관할)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>이 약관은 대한민국 법령에 따라 규율되고 해석됩니다.</li>
           <li>서비스 이용과 관련하여 운영자와 회원 간에 분쟁이 발생한 경우, 양 당사자는 분쟁의 원만한 해결을 위해 성실히 협의합니다.</li>
@@ -182,7 +208,7 @@ export default function TermsPage() {
         </ol>
       </Article>
 
-      <Article title="제18조 (문의)">
+      <Article title="제19조 (문의)">
         이 약관 및 서비스 이용에 관한 문의는{" "}
         <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
           gupguptalk@gmail.com
