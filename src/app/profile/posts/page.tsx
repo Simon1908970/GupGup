@@ -10,6 +10,7 @@ import { PostListItem } from "@/components/board/PostListItem";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function MyPostsPage() {
   const { t } = useLanguage();
@@ -17,6 +18,7 @@ export default function MyPostsPage() {
   const { user, loading, refreshProfile } = useAuth();
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
     (posts ?? []).map((p) => p.title),
   );
@@ -34,9 +36,14 @@ export default function MyPostsPage() {
     if (!user || !pendingDelete) return;
     const postId = pendingDelete.id;
     setPendingDelete(null);
-    await deletePost(postId, user.id, pendingDelete.pointsAwarded);
-    setPosts((prev) => prev?.filter((p) => p.id !== postId) ?? null);
-    await refreshProfile();
+    setDeleteError(null);
+    try {
+      await deletePost(postId, user.id, pendingDelete.pointsAwarded);
+      setPosts((prev) => prev?.filter((p) => p.id !== postId) ?? null);
+      await refreshProfile();
+    } catch (err) {
+      setDeleteError(getErrorMessage(err));
+    }
   }
 
   if (loading || !user || posts === null) {
@@ -51,6 +58,9 @@ export default function MyPostsPage() {
           <TranslateToggle showTranslation={showTranslation} translating={translating} onClick={toggle} />
         )}
       </div>
+      {deleteError && (
+        <p className="mb-3 text-xs text-[var(--color-brand-red)]">{deleteError}</p>
+      )}
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {posts.length === 0 && (
           <li className="py-8 text-center text-sm text-[var(--color-text-muted)]">

@@ -327,7 +327,8 @@ export async function deletePost(postId: string, authorId: string, pointsAwarded
     .eq("author_id", authorId);
   if (error) throw error;
   if (pointsAwarded !== 0) {
-    await supabase.rpc("adjust_points", { delta: -pointsAwarded });
+    const { error: adjustError } = await supabase.rpc("adjust_points", { delta: -pointsAwarded });
+    if (adjustError) throw adjustError;
   }
 
   const urls = Array.isArray(attachmentRow?.attachments)
