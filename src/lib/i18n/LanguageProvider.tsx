@@ -15,10 +15,9 @@ import {
   type Locale,
 } from "@/lib/i18n/dictionaries";
 
-const STORAGE_KEY = "gupgup-locale";
-
-// 첫 방문(저장된 언어 선택이 없을 때)에만 쓰는 감지 로직 — 한 번이라도 지구본
-// 아이콘으로 직접 언어를 고르면 그 뒤로는 이 로직을 안 타고 저장된 값을 따른다.
+// 지구본 아이콘은 그 방문 동안만 유지되는 "일시적으로 다른 언어로 읽기" 기능이라
+// 선택을 저장하지 않는다 — 다시 들어오면(새로고침·재방문) 매번 아래 감지 로직으로
+// 기기 시스템 언어부터 다시 시작한다.
 function detectBrowserLocale(): Locale | null {
   if (typeof navigator === "undefined") return null;
   const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
@@ -46,29 +45,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("ko");
 
   useEffect(() => {
-    // Reads the persisted locale after the server-rendered "ko" markup has
-    // hydrated, so client and server output match on first paint.
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Locale | null;
-    if (stored && DICTIONARIES[stored]) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocaleState(stored);
-      return;
-    }
-    // No saved preference yet (first visit on this device/browser) -- follow
-    // the device's system language instead of defaulting everyone to Korean.
-    // This is intentionally not persisted to localStorage, so it keeps
-    // following the device's language on every visit until the person picks
-    // one explicitly via the globe icon, at which point setLocale() below
-    // takes over for good.
+    // Runs after the server-rendered "ko" markup hydrates, so client and
+    // server output match on first paint. Always re-detects on mount (no
+    // stored preference to check) so every fresh visit starts from the
+    // device's current system language.
     const detected = detectBrowserLocale();
     if (detected) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocaleState(detected);
     }
   }, []);
 
+  // Session-only override: picking a language via the globe icon changes
+  // what's shown for the rest of this visit, but isn't saved anywhere, so
+  // the next fresh visit goes back to following the device's language.
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
   }, []);
 
   const t = useCallback(
