@@ -32,7 +32,7 @@ export async function fetchThreads(userId: string): Promise<ThreadWithPartner[]>
   const supabase = createClient();
   const { data: threads, error } = await supabase
     .from("message_threads")
-    .select("id, participant_a, participant_b")
+    .select("id, participant_a, participant_b, deleted_by_a_at, deleted_by_b_at")
     .or(`participant_a.eq.${userId},participant_b.eq.${userId}`);
   if (error) throw error;
   if (!threads || threads.length === 0) return [];
@@ -54,6 +54,11 @@ export async function fetchThreads(userId: string): Promise<ThreadWithPartner[]>
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
+
+    // 내가 이 대화를 지운 적 있고, 그 뒤로 새 메시지가 없으면 목록에서 숨긴다.
+    const myDeletedAt = t.participant_a === userId ? t.deleted_by_a_at : t.deleted_by_b_at;
+    if (myDeletedAt && (!lastMsg || lastMsg.created_at <= myDeletedAt)) continue;
+
     results.push({
       threadId: t.id,
       partner,
@@ -61,6 +66,12 @@ export async function fetchThreads(userId: string): Promise<ThreadWithPartner[]>
     });
   }
   return results;
+}
+
+export async function deleteThread(threadId: string) {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("delete_my_thread", { p_thread_id: threadId });
+  if (error) throw error;
 }
 
 export async function findOrCreateThread(userId: string, partnerId: string): Promise<string> {
