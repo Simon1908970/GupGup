@@ -15,9 +15,11 @@ import {
   type Locale,
 } from "@/lib/i18n/dictionaries";
 
-// 지구본 아이콘은 그 방문 동안만 유지되는 "일시적으로 다른 언어로 읽기" 기능이라
-// 선택을 저장하지 않는다 — 다시 들어오면(새로고침·재방문) 매번 아래 감지 로직으로
-// 기기 시스템 언어부터 다시 시작한다.
+const STORAGE_KEY = "gupgup-locale";
+
+// 최초 방문 때 딱 한 번만 쓰는 감지 로직 — 그 결과를 저장해서 이후로는 계속
+// 그 언어로 고정한다. 지구본 아이콘으로 고르는 건 그 순간만 유지되는 임시
+// 전환이라 이 저장값을 덮어쓰지 않는다.
 function detectBrowserLocale(): Locale | null {
   if (typeof navigator === "undefined") return null;
   const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
@@ -46,19 +48,25 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Runs after the server-rendered "ko" markup hydrates, so client and
-    // server output match on first paint. Always re-detects on mount (no
-    // stored preference to check) so every fresh visit starts from the
-    // device's current system language.
-    const detected = detectBrowserLocale();
-    if (detected) {
+    // server output match on first paint.
+    const stored = window.localStorage.getItem(STORAGE_KEY) as Locale | null;
+    if (stored && DICTIONARIES[stored]) {
+      // Already locked in on a previous visit -- keep using it.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocaleState(detected);
+      setLocaleState(stored);
+      return;
     }
+    // First-ever visit on this device/browser: detect the system language
+    // once and lock it in for every future visit (falls back to Korean if
+    // the device's language isn't one we support).
+    const fixed = detectBrowserLocale() ?? "ko";
+    setLocaleState(fixed);
+    window.localStorage.setItem(STORAGE_KEY, fixed);
   }, []);
 
   // Session-only override: picking a language via the globe icon changes
-  // what's shown for the rest of this visit, but isn't saved anywhere, so
-  // the next fresh visit goes back to following the device's language.
+  // what's shown for the rest of this visit, but doesn't touch the locked-in
+  // language above, so the next fresh visit goes right back to it.
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
   }, []);
