@@ -14,14 +14,18 @@ export function CategoryBox({
   label,
   moreLabel,
   posts,
+  locked,
+  lockedLabel,
 }: {
   slug: CategorySlug;
   label: string;
   moreLabel: string;
   posts: Post[];
+  locked?: boolean;
+  lockedLabel?: string;
 }) {
   const config = CATEGORIES[slug];
-  const items = posts.slice(0, config.mainCount);
+  const items = locked ? [] : posts.slice(0, config.mainCount);
   const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
     items.map((p) => p.title),
   );
@@ -48,7 +52,12 @@ export function CategoryBox({
         </div>
       </div>
       <ul className="flex-1 divide-y divide-[var(--color-border-gray-light)] px-4">
-        {items.length === 0 && (
+        {locked && (
+          <li className="py-6 text-center text-xs text-[var(--color-text-muted)]">
+            {lockedLabel}
+          </li>
+        )}
+        {!locked && items.length === 0 && (
           <li className="py-6 text-center text-xs text-[var(--color-text-muted)]">
             —
           </li>
