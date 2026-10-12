@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { ChevronDown, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { cn } from "@/lib/utils";
 import type { CountryCode } from "@/lib/types";
 import { CountryFlag } from "@/components/common/CountryFlag";
 import { ExchangeRateModal } from "@/components/board/ExchangeRateModal";
@@ -78,60 +77,21 @@ export function ExchangeRateTicker() {
     <>
       <div
         onClick={() => setModalOpen(true)}
-        className="relative mb-4 flex w-full cursor-pointer flex-col justify-center gap-1.5 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 px-4 py-2 gg-glossy-interactive gg-decorative-card"
+        className="relative mb-4 flex h-9 w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--color-brand-red)]/40 px-4 text-sm gg-glossy-interactive gg-decorative-card gg-no-sheen"
       >
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-[var(--color-text-muted)]">
-            {t("exchange.title")}
-          </span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setModalOpen(true);
-            }}
-            className="text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
-          >
-            {t("board.viewMore")}
-          </button>
-        </div>
-
-        <div key={current.code} className="gg-fade-in flex items-center justify-center gap-2 text-sm">
-          {countryOption && <CountryFlag code={countryOption.code} size={16} />}
+        <span key={current.code} className="gg-slide-in flex items-center gap-1.5">
+          {countryOption && <CountryFlag code={countryOption.code} size={14} />}
           <span className="hidden font-medium sm:inline">
             {countryOption && t(countryOption.labelKey as DictionaryKey)}
           </span>
-          <span className="text-[var(--color-text-muted)]">{unit.toLocaleString()} ₩ =</span>
+          <span className="text-xs text-[var(--color-text-muted)]">{unit.toLocaleString()} ₩ =</span>
           <span className="font-bold text-[var(--color-brand-red)]">
             {(current.rate * unit).toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
             {current.code}
           </span>
           <TrendIcon trend={current.trend} />
-        </div>
-
-        <div className="flex items-center justify-center gap-1.5">
-          {rates.map((r, i) => (
-            <button
-              key={r.code}
-              type="button"
-              aria-label={r.code}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIndex(i);
-              }}
-              className={cn(
-                "flex h-5 w-6 items-center justify-center rounded-md bg-white text-xs transition-all",
-                i === index ? "scale-125 ring-2 ring-[var(--color-brand-red)]" : "",
-              )}
-            >
-              {/* Dim only the flag itself (not the button) so an inactive
-                  chip fades against its own opaque white backdrop instead of
-                  blending with the pink card gradient behind it, which was
-                  washing the flag colors out. */}
-              <CountryFlag code={r.country} className={i === index ? undefined : "opacity-50"} />
-            </button>
-          ))}
-        </div>
+        </span>
+        <ChevronDown size={14} className="text-[var(--color-text-muted)]" />
       </div>
 
       {modalOpen && (

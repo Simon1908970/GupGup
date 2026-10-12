@@ -19,6 +19,42 @@ export type CategorySlug =
   | "university"
   | "meeting";
 
+export type BusinessCategory =
+  | "restaurant"
+  | "mart"
+  | "salon"
+  | "hospital"
+  | "mobile"
+  | "admin"
+  | "shipping"
+  | "etc";
+
+export interface Business {
+  id: string;
+  name: string;
+  category: BusinessCategory;
+  country: CountryCode;
+  address: string;
+  lat: number;
+  lng: number;
+  phone?: string;
+}
+
+export type TopikLevel = "beginner" | "intermediate" | "advanced";
+export type TopikQuestionType = "vocab" | "grammar" | "reading";
+
+export interface TopikQuestion {
+  id: string;
+  displayDate: string;
+  level: TopikLevel;
+  type: TopikQuestionType;
+  passage?: string;
+  question: string;
+  choices: string[];
+  answerIndex: number;
+  explanation: string;
+}
+
 export type BoxStyle = "large" | "grid";
 
 export interface SubCategory {
@@ -89,6 +125,11 @@ export interface Post {
   sourceUrl?: string;
   imageCredit?: string;
   pointsAwarded: number;
+  showOnMap?: boolean;
+  businessAddress?: string;
+  businessDetailAddress?: string;
+  businessLat?: number;
+  businessLng?: number;
 }
 
 export interface Comment {

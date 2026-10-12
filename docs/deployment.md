@@ -125,14 +125,22 @@ Vercel → 프로젝트 → **Settings → Deployment Protection**
 
 - `supabase/migrations/*.sql` 은 **수동 적용**이다 (Supabase CLI 연동 안 돼 있음).
   Supabase SQL Editor 에서 **번호 순서대로** 실행한다.
-- 현재까지: `0001` ~ `0017` (프로덕션 DB에 `0001`~`0016` 적용 확인됨, 2026-10-12 감사 기준).
+- 현재까지: `0001` ~ `0021` (프로덕션 DB에 `0001`~`0016` 적용 확인됨, 2026-10-12 감사 기준.
+  `0017` 이후는 다른 세션이 master에 직접 커밋한 업체 지도/배송 카테고리/토픽 문제
+  작업과 이 세션의 보안 수정이 같은 날 합쳐지며 번호가 재배치됐다 — 적용 여부 재확인 필요).
 - `0013` 은 앱 공용 `POST_SELECT` 가 `image_credit` 컬럼을 무조건 참조하므로 필수다.
   `0013` 이 없는 DB 로 배포하면 뉴스뿐 아니라 모든 게시판 목록 / 홈 박스 / 게시글 상세 /
   프로필 작성글 목록이 전부 깨진다.
-- `0017` 은 `profiles.points` 에 대한 테이블 전체 UPDATE/INSERT 권한을 잠그는
-  보안 마이그레이션이다. 프로덕션 DB 감사 중 발견: `anon`/`authenticated` 가
-  REST API로 자신의 `points` 를 임의 값으로 직접 변경할 수 있는 상태였음
-  (0008 은 SELECT 만 막았고 UPDATE/INSERT 는 그대로였음). **배포 전 필수 적용.**
+- `0017_business_map.sql` 은 업체 지도 기능(`businesses` 테이블 + `posts` 위치 컬럼)에
+  필수다. 이게 없으면 메인 화면 지도 위젯이 데이터를 못 가져온다. **적용 여부 미확인 —
+  아래 "업체 지도" 절 참고.**
+- `0020_profiles_write_lockdown.sql` 은 `profiles.points` 에 대한 테이블 전체
+  UPDATE/INSERT 권한을 잠그는 보안 마이그레이션이다 (원래 `0017`로 번호가 겹쳐서
+  `0020`으로 재배치함). 프로덕션 DB 감사 중 발견: `anon`/`authenticated` 가 REST API로
+  자신의 `points` 를 임의 값으로 직접 변경할 수 있는 상태였음 (0008 은 SELECT 만 막았고
+  UPDATE/INSERT 는 그대로였음). **배포 전 필수 적용.**
+- `0021_translation_usage.sql` 은 관리자 대시보드의 번역 API 사용량 집계용 (원래
+  `0018`로 번호가 겹쳐서 `0021`로 재배치함).
 - 앞으로 새 마이그레이션을 추가하면 → 커밋 + **배포 전에** 프로덕션 DB에 실행할 것.
   코드가 없는 컬럼/정책을 참조하면 런타임 에러가 난다.
 
@@ -160,3 +168,19 @@ CLAUDE.md 기준 미완 항목 + 배포 관점 항목:
 - [ ] Google/Facebook OAuth 앱을 "테스트" → "프로덕션" 상태로 전환, 도메인 검증
 - [ ] 에러 모니터링 (Vercel 로그 / Sentry 등) 도입 여부 결정
 - [ ] `robots.txt` / 색인 정책 (스테이징은 `noindex`, 프로덕션은 허용)
+- [ ] 업체 지도 배포 준비 (아래 "업체 지도" 절 참고) — 로컬(`localhost:3000`)에서는
+      `.env.local`에 키가 있어 보이지만, **Vercel에는 아직 아무 키도 등록 안 돼 있어서
+      현재 프로덕션에서는 지도가 빈 화면으로 보임**
+
+### 업체 지도 (2026-10-12 발견, 별도 세션이 master에 직접 구현)
+
+- [ ] `supabase/migrations/0017_business_map.sql` 프로덕션 DB 적용 여부 확인
+      (`businesses` 테이블 + `posts.show_on_map` 등 위치 컬럼 — 지도 위젯이 이 컬럼들을
+      바로 참조하므로, 없으면 지도 데이터 조회가 전부 실패한다)
+- [ ] Vercel 환경변수에 아래 두 개 추가 (현재 미등록 확인됨, 추가 후 **재배포 필수** —
+      `NEXT_PUBLIC_*` 는 빌드 타임에 번들에 박히므로 변수만 추가하고 재배포 안 하면 반영 안 됨)
+  - `KAKAO_REST_API_KEY` — 카카오 로컬 API (지오코딩 `/api/geocode`, 업체 수집 스크립트)
+  - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` — 구글 Maps JS SDK (브라우저에서 지도 렌더링, 결제
+    활성화 + HTTP 리퍼러 제한 필요)
+- [ ] `node --env-file=.env.local map-data/sync-businesses.mjs` 로 초기 업체 데이터 수집
+      (로컬에서 실행 → 프로덕션 Supabase에 직접 insert)

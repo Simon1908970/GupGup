@@ -14,6 +14,8 @@ import type { CategorySlug, Post } from "@/lib/types";
 import { CategoryBox } from "@/components/board/CategoryBox";
 import { PopularPostsWidget } from "@/components/board/PopularPostsWidget";
 import { ExchangeRateTicker } from "@/components/board/ExchangeRateTicker";
+import { TopikQuestionWidget } from "@/components/board/TopikQuestionWidget";
+import { CountryMapWidget } from "@/components/map/CountryMapWidget";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -49,6 +51,8 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
       <ExchangeRateTicker />
+      <TopikQuestionWidget />
+      <CountryMapWidget compact />
       <PopularPostsWidget posts={popularPosts} />
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">

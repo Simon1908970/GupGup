@@ -227,7 +227,47 @@ function TermsKo() {
         </ol>
       </Article>
 
-      <Article title="제16조 (면책조항)">
+      <Article title="제16조 (중고거래·모임 게시판 이용수칙)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            중고거래 게시판 이용 시 회원은 다음 각 호의 행위를 하여서는 안 됩니다.
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>실제 보유하지 않거나 거래 의사가 없는 허위 매물을 등록하는 행위</li>
+              <li>
+                다음 각 목에 해당하는 물품을 게시·거래하는 행위
+                <ol className="list-[lower-alpha] space-y-1 pl-5 pt-1">
+                  <li>총기·도검류, 마약류 및 향정신성의약품</li>
+                  <li>처방이 필요한 의약품, 의료기기법상 거래가 제한된 의료기기</li>
+                  <li>주류, 담배(전자담배·니코틴 용액 포함)</li>
+                  <li>살아있는 동물</li>
+                  <li>위조품·모조품 등 타인의 상표권을 침해하는 물품(이른바 &ldquo;짝퉁&rdquo;)</li>
+                  <li>상품권, 선불카드 등을 현금화할 목적으로 거래하는 행위</li>
+                  <li>주민등록증, 여권, 외국인등록증 등 신분증 및 금융계좌·통장</li>
+                  <li>불법 복제된 소프트웨어, 영상물 등 저작권 침해 콘텐츠</li>
+                  <li>음란물 등 청소년 유해매체물 및 「청소년 보호법」상 청소년에게 판매가 제한된 물품</li>
+                  <li>기타 관련 법령에 따라 거래가 금지되거나 제한되는 물품</li>
+                </ol>
+              </li>
+              <li>도난품, 장물로 의심되는 물품을 거래하는 행위</li>
+              <li>선입금을 유도한 후 물품을 발송하지 않는 등 사기적인 방법으로 거래하는 행위</li>
+              <li>사업자 등록 없이 상시적·반복적으로 대량의 물품을 판매하는 영리 목적 이용 행위</li>
+            </ol>
+          </li>
+          <li>
+            모임 게시판 이용 시 회원은 다음 각 호의 행위를 하여서는 안 됩니다.
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>만 19세 미만 청소년을 대상으로 만남을 시도하거나 유도하는 행위</li>
+              <li>성매매, 유흥업소 등 성(性)을 매개로 한 영업을 홍보·알선·권유하는 행위</li>
+              <li>실명, 혼인 여부 등 신상정보를 허위로 기재하여 상대방에게 접근하는 행위</li>
+              <li>금전·물품을 요구하거나 투자를 빙자하여 접근하는 등 사기적인 방법(로맨스 스캠 등)으로 상대방에게 접근하는 행위</li>
+              <li>상대방이 연락 중단 의사를 밝혔음에도 지속적으로 연락하거나 개인정보 제공을 강요하는 행위</li>
+            </ol>
+          </li>
+          <li>제1항 및 제2항을 위반한 게시물·회원에 대해서는 제7조(회원 탈퇴 및 자격 상실), 제13조(게시물의 관리)가 적용되며, 범죄 혐의가 있다고 판단되는 경우 운영자는 수사기관에 신고하거나 관련 자료를 제공할 수 있습니다.</li>
+        </ol>
+      </Article>
+
+      <Article title="제17조 (면책조항)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>운영자는 천재지변, 전쟁, 기간통신사업자의 서비스 중지 등 불가항력으로 인하여 서비스를 제공할 수 없는 경우 책임이 면제됩니다.</li>
           <li>운영자는 회원의 귀책사유로 인한 서비스 이용 장애에 대해 책임을 지지 않습니다.</li>
@@ -235,7 +275,7 @@ function TermsKo() {
         </ol>
       </Article>
 
-      <Article title="제17조 (분쟁 해결 및 재판관할)">
+      <Article title="제18조 (분쟁 해결 및 재판관할)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>이 약관은 대한민국 법령에 따라 규율되고 해석됩니다.</li>
           <li>서비스 이용과 관련하여 운영자와 회원 간에 분쟁이 발생한 경우, 양 당사자는 분쟁의 원만한 해결을 위해 성실히 협의합니다.</li>
@@ -243,7 +283,7 @@ function TermsKo() {
         </ol>
       </Article>
 
-      <Article title="제18조 (문의)">
+      <Article title="제19조 (문의)">
         이 약관 및 서비스 이용에 관한 문의는{" "}
         <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
           gupguptalk@gmail.com
@@ -420,7 +460,47 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 16 (Disclaimer)">
+      <Article title="Article 16 (Marketplace and Meet Board Usage Rules)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            When using the Marketplace board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Listing a fake item the Member does not actually possess or has no intention of selling</li>
+              <li>
+                Posting or trading any of the following items:
+                <ol className="list-[lower-alpha] space-y-1 pl-5 pt-1">
+                  <li>Firearms, bladed weapons, narcotics, and psychotropic substances</li>
+                  <li>Prescription medicines and medical devices whose trade is restricted under the Medical Devices Act</li>
+                  <li>Alcohol and tobacco (including e-cigarettes and nicotine liquid)</li>
+                  <li>Live animals</li>
+                  <li>Counterfeit or imitation goods that infringe another party&rsquo;s trademark rights (so-called &ldquo;fakes&rdquo;)</li>
+                  <li>Gift certificates, prepaid cards, or similar items traded for the purpose of converting them to cash</li>
+                  <li>Identification documents such as resident registration cards, passports, and alien registration cards, and financial accounts or passbooks</li>
+                  <li>Illegally copied software, video content, or other copyright-infringing material</li>
+                  <li>Obscene material and other media harmful to youth, and items whose sale to minors is restricted under the Juvenile Protection Act</li>
+                  <li>Any other item whose trade is prohibited or restricted under applicable law</li>
+                </ol>
+              </li>
+              <li>Trading stolen goods or items suspected of being stolen</li>
+              <li>Inducing advance payment and then failing to ship the item, or otherwise trading by fraudulent means</li>
+              <li>Using the board for commercial purposes by regularly and repeatedly selling large volumes of goods without business registration</li>
+            </ol>
+          </li>
+          <li>
+            When using the Meet board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Attempting or inducing to meet with a minor under the age of 19</li>
+              <li>Advertising, brokering, or soliciting for prostitution, adult entertainment establishments, or other sex-mediated business</li>
+              <li>Approaching another Member using falsified personal information, such as one&rsquo;s real name or marital status</li>
+              <li>Approaching another Member by fraudulent means (such as romance scams), including demanding money or goods or approaching under the pretext of investment</li>
+              <li>Continuing to contact another Member after they have expressed a wish to stop communication, or coercing them to provide personal information</li>
+            </ol>
+          </li>
+          <li>Articles 7 (Withdrawal and Loss of Membership) and 13 (Management of Posts) apply to posts or Members that violate paragraphs 1 and 2 above, and where the Operator determines that criminal conduct may be involved, the Operator may report the matter to an investigative agency or provide it with relevant materials.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 17 (Disclaimer)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>The Operator is exempt from liability where it cannot provide the Service due to force majeure, such as natural disaster, war, or suspension of service by a telecommunications carrier.</li>
           <li>The Operator is not liable for service disruption caused by a Member&rsquo;s own fault.</li>
@@ -428,7 +508,7 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 17 (Dispute Resolution and Jurisdiction)">
+      <Article title="Article 18 (Dispute Resolution and Jurisdiction)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>These Terms are governed by and construed in accordance with the laws of the Republic of Korea.</li>
           <li>If a dispute arises between the Operator and a Member in connection with use of the Service, both parties shall negotiate in good faith to resolve it amicably.</li>
@@ -436,7 +516,7 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 18 (Contact)">
+      <Article title="Article 19 (Contact)">
         Inquiries regarding these Terms and use of the Service may be sent to{" "}
         <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
           gupguptalk@gmail.com

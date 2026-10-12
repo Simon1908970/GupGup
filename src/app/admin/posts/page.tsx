@@ -29,7 +29,7 @@ export default function AdminPostsPage() {
     const supabase = createClient();
     let query = supabase
       .from("posts")
-      .select("id, title, category, created_at, author:profiles(nickname)")
+      .select("id, title, category, created_at, author:profiles!posts_author_id_fkey(nickname)")
       .order("created_at", { ascending: false })
       .limit(50);
     if (category !== "all") query = query.eq("category", category);
