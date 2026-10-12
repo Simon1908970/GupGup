@@ -310,12 +310,16 @@ export default function MyProfilePage() {
 
   useEffect(() => {
     if (!user) return;
-    Promise.all([
+    Promise.allSettled([
       fetchPostCountByAuthor(user.id),
       fetchCommentCountByAuthor(user.id),
       fetchThreads(user.id),
     ]).then(([posts, comments, threads]) => {
-      setStats({ posts, comments, messages: threads.length });
+      setStats({
+        posts: posts.status === "fulfilled" ? posts.value : 0,
+        comments: comments.status === "fulfilled" ? comments.value : 0,
+        messages: threads.status === "fulfilled" ? threads.value.length : 0,
+      });
     });
   }, [user]);
 
