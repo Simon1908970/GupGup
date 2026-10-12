@@ -84,6 +84,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     hasCountryTag: true,
     hasMessageButton: true,
     hasNicknamePopup: true,
+    requiresAuth: true,
   },
 };
 

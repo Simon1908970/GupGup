@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { CATEGORIES } from "@/lib/constants/categories";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { fetchPosts } from "@/lib/supabase/posts";
@@ -33,6 +34,8 @@ export default function BoardListPage() {
 
 function BoardListPageInner() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const params = useParams<{ category: string }>();
   const searchParams = useSearchParams();
   const categorySlug = params.category;
@@ -46,6 +49,7 @@ function BoardListPageInner() {
 
   const valid = isValidCategory(categorySlug);
   const config = valid ? CATEGORIES[categorySlug] : null;
+  const gated = Boolean(config?.requiresAuth);
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
@@ -55,7 +59,11 @@ function BoardListPageInner() {
   );
 
   useEffect(() => {
-    if (!config) return;
+    if (gated && !authLoading && !user) router.replace("/login");
+  }, [gated, authLoading, user, router]);
+
+  useEffect(() => {
+    if (!config || (gated && !user)) return;
     let cancelled = false;
     // Marks the in-flight fetch below as loading; setting this outside the
     // effect would require duplicating the same filter/sort/page deps.
@@ -88,12 +96,20 @@ function BoardListPageInner() {
     return () => {
       cancelled = true;
     };
-  }, [config, subCategory, country, sort, searchQuery, searchScope, page]);
+  }, [config, gated, user, subCategory, country, sort, searchQuery, searchScope, page]);
 
   if (!config) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         {t("error.categoryNotFound")}
+      </div>
+    );
+  }
+
+  if (gated && !user) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("common.loading")}
       </div>
     );
   }
