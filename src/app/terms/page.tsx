@@ -460,7 +460,47 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 16 (Disclaimer)">
+      <Article title="Article 16 (Marketplace and Meet Board Usage Rules)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            When using the Marketplace board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Listing a fake item the Member does not actually possess or has no intention of selling</li>
+              <li>
+                Posting or trading any of the following items:
+                <ol className="list-[lower-alpha] space-y-1 pl-5 pt-1">
+                  <li>Firearms, bladed weapons, narcotics, and psychotropic substances</li>
+                  <li>Prescription medicines and medical devices whose trade is restricted under the Medical Devices Act</li>
+                  <li>Alcohol and tobacco (including e-cigarettes and nicotine liquid)</li>
+                  <li>Live animals</li>
+                  <li>Counterfeit or imitation goods that infringe another party&rsquo;s trademark rights (so-called &ldquo;fakes&rdquo;)</li>
+                  <li>Gift certificates, prepaid cards, or similar items traded for the purpose of converting them to cash</li>
+                  <li>Identification documents such as resident registration cards, passports, and alien registration cards, and financial accounts or passbooks</li>
+                  <li>Illegally copied software, video content, or other copyright-infringing material</li>
+                  <li>Obscene material and other media harmful to youth, and items whose sale to minors is restricted under the Juvenile Protection Act</li>
+                  <li>Any other item whose trade is prohibited or restricted under applicable law</li>
+                </ol>
+              </li>
+              <li>Trading stolen goods or items suspected of being stolen</li>
+              <li>Inducing advance payment and then failing to ship the item, or otherwise trading by fraudulent means</li>
+              <li>Using the board for commercial purposes by regularly and repeatedly selling large volumes of goods without business registration</li>
+            </ol>
+          </li>
+          <li>
+            When using the Meet board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Attempting or inducing to meet with a minor under the age of 19</li>
+              <li>Advertising, brokering, or soliciting for prostitution, adult entertainment establishments, or other sex-mediated business</li>
+              <li>Approaching another Member using falsified personal information, such as one&rsquo;s real name or marital status</li>
+              <li>Approaching another Member by fraudulent means (such as romance scams), including demanding money or goods or approaching under the pretext of investment</li>
+              <li>Continuing to contact another Member after they have expressed a wish to stop communication, or coercing them to provide personal information</li>
+            </ol>
+          </li>
+          <li>Articles 7 (Withdrawal and Loss of Membership) and 13 (Management of Posts) apply to posts or Members that violate paragraphs 1 and 2 above, and where the Operator determines that criminal conduct may be involved, the Operator may report the matter to an investigative agency or provide it with relevant materials.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 17 (Disclaimer)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>The Operator is exempt from liability where it cannot provide the Service due to force majeure, such as natural disaster, war, or suspension of service by a telecommunications carrier.</li>
           <li>The Operator is not liable for service disruption caused by a Member&rsquo;s own fault.</li>
@@ -468,7 +508,7 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 17 (Dispute Resolution and Jurisdiction)">
+      <Article title="Article 18 (Dispute Resolution and Jurisdiction)">
         <ol className="list-decimal space-y-1 pl-5">
           <li>These Terms are governed by and construed in accordance with the laws of the Republic of Korea.</li>
           <li>If a dispute arises between the Operator and a Member in connection with use of the Service, both parties shall negotiate in good faith to resolve it amicably.</li>
@@ -476,7 +516,7 @@ function TermsEn() {
         </ol>
       </Article>
 
-      <Article title="Article 18 (Contact)">
+      <Article title="Article 19 (Contact)">
         Inquiries regarding these Terms and use of the Service may be sent to{" "}
         <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
           gupguptalk@gmail.com
