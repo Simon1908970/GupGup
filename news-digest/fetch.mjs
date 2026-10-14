@@ -25,7 +25,7 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 const ENDPOINTS = ["news", "blog", "cafearticle"];
 const DISPLAY_PER_KEYWORD = 5;
 const MAX_AGE_DAYS = 3;
-const RAW_RETENTION_DAYS = 60;
+const RETENTION_DAYS = 10;
 
 // The news/blog/cafearticle search APIs share one free pool of 775,000
 // calls/month (NAVER API HUB). A normal run uses ~keywords.length * 3 calls
@@ -115,8 +115,13 @@ async function main() {
   mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, `raw-${today}.json`);
   writeFileSync(outPath, JSON.stringify(filtered, null, 2), "utf-8");
-  for (const name of purgeOldFiles(outDir, /^raw-\d{4}-\d{2}-\d{2}\.json$/, RAW_RETENTION_DAYS)) {
-    console.log(`Purged (> ${RAW_RETENTION_DAYS} days old): ${name}`);
+  for (const name of purgeOldFiles(outDir, /^raw-\d{4}-\d{2}-\d{2}\.json$/, RETENTION_DAYS)) {
+    console.log(`Purged (> ${RETENTION_DAYS} days old): ${name}`);
+  }
+  // 요약 .md도 같은 보관기간으로 자동 정리한다 (news-digest-local-only-no-commit 메모리 규칙상
+  // 이 파일들은 커밋 대상이 아니라 git rm이 아니라 그냥 지우면 된다).
+  for (const name of purgeOldFiles(outDir, /^\d{4}-\d{2}-\d{2}\.md$/, RETENTION_DAYS)) {
+    console.log(`Purged summary (> ${RETENTION_DAYS} days old): ${name}`);
   }
 
   console.log(`${all.length} results -> ${filtered.length} after dedupe/age filter`);
