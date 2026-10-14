@@ -72,6 +72,7 @@ export interface CategoryConfig {
   hasCountryTag: boolean;
   hasMessageButton: boolean;
   hasNicknamePopup: boolean;
+  requiresAuth?: boolean;
 }
 
 export interface Author {

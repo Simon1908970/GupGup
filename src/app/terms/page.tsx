@@ -1,16 +1,77 @@
 "use client";
 
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+
+type DocLang = "ko" | "en";
 
 export default function TermsPage() {
   const { t } = useLanguage();
+  const [lang, setLang] = useState<DocLang>("ko");
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 text-sm leading-relaxed">
-      <h1 className="mb-2 text-lg font-bold">이용약관</h1>
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h1 className="text-lg font-bold">
+          {lang === "ko" ? "이용약관" : "Terms of Service"}
+        </h1>
+        <LangToggle lang={lang} onChange={setLang} />
+      </div>
       <p className="mb-6 rounded-md bg-[var(--color-border-gray-light)] px-3 py-2 text-xs text-[var(--color-text-muted)]">
         {t("legal.translateNotice")}
       </p>
 
+      {lang === "ko" ? <TermsKo /> : <TermsEn />}
+
+      <p className="mt-8 text-xs text-[var(--color-text-muted)]">
+        {lang === "ko"
+          ? "부칙: 이 약관은 2026년 10월 1일부터 시행합니다."
+          : "Supplementary Provision: These Terms take effect on October 1, 2026."}
+      </p>
+    </div>
+  );
+}
+
+function LangToggle({
+  lang,
+  onChange,
+}: {
+  lang: DocLang;
+  onChange: (lang: DocLang) => void;
+}) {
+  return (
+    <div className="flex shrink-0 overflow-hidden rounded-md border border-[var(--color-border-gray)] text-xs">
+      <button
+        type="button"
+        onClick={() => onChange("ko")}
+        aria-pressed={lang === "ko"}
+        className={
+          lang === "ko"
+            ? "bg-[var(--color-brand-red)] px-3 py-1.5 text-white"
+            : "bg-white px-3 py-1.5 text-[var(--color-text-muted)]"
+        }
+      >
+        한국어
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("en")}
+        aria-pressed={lang === "en"}
+        className={
+          lang === "en"
+            ? "bg-[var(--color-brand-red)] px-3 py-1.5 text-white"
+            : "bg-white px-3 py-1.5 text-[var(--color-text-muted)]"
+        }
+      >
+        English
+      </button>
+    </div>
+  );
+}
+
+function TermsKo() {
+  return (
+    <>
       <Article title="제1조 (목적)">
         이 약관은 줍줍(이하 &ldquo;서비스&rdquo;)을 운영하는 개인사업자(이하 &ldquo;운영자&rdquo;)가 제공하는
         커뮤니티 서비스의 이용조건 및 절차, 운영자와 이용자의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.
@@ -229,11 +290,240 @@ export default function TermsPage() {
         </a>
         으로 접수합니다.
       </Article>
+    </>
+  );
+}
 
-      <p className="mt-8 text-xs text-[var(--color-text-muted)]">
-        부칙: 이 약관은 2026년 10월 1일부터 시행합니다.
-      </p>
-    </div>
+function TermsEn() {
+  return (
+    <>
+      <Article title="Article 1 (Purpose)">
+        These Terms set forth the conditions and procedures for use of the community service
+        provided by the individual business operator (the &ldquo;Operator&rdquo;) who operates
+        GupGup (the &ldquo;Service&rdquo;), as well as the rights, obligations, and
+        responsibilities of the Operator and users.
+      </Article>
+
+      <Article title="Article 2 (Definitions)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>&ldquo;Service&rdquo; means the GupGup website operated by the Operator and all related services.</li>
+          <li>&ldquo;Member&rdquo; means a person who has agreed to these Terms and registered for the Service, thereby being granted an account.</li>
+          <li>&ldquo;Post&rdquo; means any writing, comment, photo, file, or other content a Member posts in connection with using the Service.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 3 (Effect and Amendment of Terms)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>These Terms take effect upon being posted on the Service screen or otherwise announced.</li>
+          <li>
+            The Operator may amend these Terms to the extent not in violation of applicable law, and
+            shall announce any amendment&mdash;specifying the effective date and reason&mdash;at least
+            7 days before the effective date (at least 30 days before, if the amendment is
+            disadvantageous to users).
+          </li>
+          <li>
+            If a Member does not agree to the amended Terms, the Member may request to withdraw
+            membership. Continued use of the Service after the announcement is deemed acceptance of
+            the amended Terms.
+          </li>
+        </ol>
+      </Article>
+
+      <Article title="Article 4 (Membership Registration)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>A user applies for membership using an email address or a Google/Facebook account, following the registration form set by the Operator.</li>
+          <li>
+            The Operator may refuse an application or later terminate the service agreement in any of the following cases:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>The applicant is under 14 years of age</li>
+              <li>The applicant has stolen another person&rsquo;s information or provided false information</li>
+              <li>The applicant has previously lost membership qualification under these Terms</li>
+              <li>The Operator otherwise determines that registration would be inappropriate</li>
+            </ol>
+          </li>
+        </ol>
+      </Article>
+
+      <Article title="Article 5 (Content of the Service)">
+        The services provided by the Operator are as follows:
+        <ol className="list-decimal space-y-1 pl-5 pt-1">
+          <li>Community bulletin board services (News, Community, Roommate, Life in Korea, Marketplace, Korean Universities, Meet, etc.)</li>
+          <li>Direct messaging between Members</li>
+          <li>Inquiries (1:1 support) service</li>
+          <li>Any other service the Operator develops or provides through partnership</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 6 (Suspension of Service)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>The Operator may temporarily suspend the Service in the event of system maintenance, replacement, failure, communication outage, or similar cause.</li>
+          <li>The Operator may terminate the Service due to termination of an agreement with a partner relied upon to provide the Service, discontinuation of business, or similar reasons, and shall give advance notice in such a case.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 7 (Withdrawal and Loss of Membership)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>A Member may request withdrawal at any time through the profile screen, and the Operator shall process such request immediately.</li>
+          <li>Upon withdrawal, posts and comments written by the Member are not deleted and remain, with the author label replaced with &ldquo;Deleted user.&rdquo;</li>
+          <li>
+            If a Member engages in any of the following, the Operator may terminate the service agreement or restrict use of the Service without prior notice:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Stealing another person&rsquo;s personal information or account</li>
+              <li>Intentionally interfering with the operation of the Service</li>
+              <li>Engaging in any prohibited act set forth in Article 12</li>
+            </ol>
+          </li>
+        </ol>
+      </Article>
+
+      <Article title="Article 8 (Notices to Members)">
+        Notices from the Operator to a Member may be sent to the Member&rsquo;s registered email address, or substituted by posting a notice within the Service.
+      </Article>
+
+      <Article title="Article 9 (Protection of Personal Information)">
+        The Operator strives to protect Members&rsquo; personal information in accordance with
+        applicable law, and details regarding the collection, use, and retention of personal
+        information are governed by the separate{" "}
+        <a href="/privacy" className="text-[var(--color-brand-red)] underline">
+          Privacy Policy
+        </a>
+        .
+      </Article>
+
+      <Article title="Article 10 (Obligations of the Operator)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>The Operator shall not engage in any act prohibited by applicable law or these Terms, and shall strive to provide a stable Service.</li>
+          <li>The Operator shall strive to address a Member&rsquo;s opinions or complaints regarding use of the Service where the Operator determines them to be justified.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 11 (Management of Member Accounts)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>A Member is responsible for managing their own account (including email/password and social login credentials).</li>
+          <li>A Member who becomes aware that their account has been stolen or is being used by a third party must notify the Operator immediately.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 12 (Obligations of Users)">
+        A Member shall not engage in any of the following:
+        <ol className="list-decimal space-y-1 pl-5 pt-1">
+          <li>Registering false information when applying for membership or changing information</li>
+          <li>Stealing another person&rsquo;s information</li>
+          <li>Infringing the copyright or other intellectual property rights of the Operator or a third party</li>
+          <li>Defaming the Operator or a third party, or interfering with their business</li>
+          <li>Posting obscene or violent content, or other content contrary to public order and good morals</li>
+          <li>Harassing, threatening, or persistently bothering another Member</li>
+          <li>Using the Service for commercial purposes or posting spam advertisements</li>
+          <li>Engaging in conduct objectively deemed connected with a crime</li>
+          <li>Any other act in violation of applicable law</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 13 (Management of Posts)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            If a Member&rsquo;s post falls under any of the following, the Operator may delete or move it without prior notice:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>It constitutes a prohibited act under Article 12</li>
+              <li>It defames or damages the reputation of another person</li>
+              <li>It exposes personal information without authorization</li>
+              <li>It is spam or an advertisement</li>
+              <li>A report has been filed by another user or a third party and the Operator determines that review is necessary</li>
+            </ol>
+          </li>
+          <li>Upon receiving a report, the Operator reviews the grounds and processes it accordingly, and may give the reporter a brief notice of the outcome.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 14 (Copyright in Posts)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>Copyright in a post belongs to the Member who wrote it.</li>
+          <li>
+            A Member agrees that the Operator may use the Member&rsquo;s posts (reproduce, display,
+            transmit, etc.) on a non-exclusive basis for the purpose of operating and promoting the
+            Service. A Member who no longer wishes such use, including due to withdrawal, may request
+            deletion.
+          </li>
+        </ol>
+      </Article>
+
+      <Article title="Article 15 (Limitation of Liability for Activities Between Users)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            The Service merely provides bulletin boards for information sharing and communication
+            between Members, and the Operator is not a party to transactions in goods between Members
+            (e.g., through the Marketplace board), housing-related contact (e.g., through the Roommate
+            board), or offline meetings (e.g., through the Meet board).
+          </li>
+          <li>The Operator is not liable for damages arising from transactions, contact, or meetings between Members; such liability belongs to the parties involved.</li>
+          <li>Members should take care regarding exposure of personal information and personal safety when meeting offline or conducting transactions. Other than providing report and block features, the Operator does not intervene in individual transactions or meetings.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 16 (Marketplace and Meet Board Usage Rules)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            When using the Marketplace board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Listing a fake item the Member does not actually possess or has no intention of selling</li>
+              <li>
+                Posting or trading any of the following items:
+                <ol className="list-[lower-alpha] space-y-1 pl-5 pt-1">
+                  <li>Firearms, bladed weapons, narcotics, and psychotropic substances</li>
+                  <li>Prescription medicines and medical devices whose trade is restricted under the Medical Devices Act</li>
+                  <li>Alcohol and tobacco (including e-cigarettes and nicotine liquid)</li>
+                  <li>Live animals</li>
+                  <li>Counterfeit or imitation goods that infringe another party&rsquo;s trademark rights (so-called &ldquo;fakes&rdquo;)</li>
+                  <li>Gift certificates, prepaid cards, or similar items traded for the purpose of converting them to cash</li>
+                  <li>Identification documents such as resident registration cards, passports, and alien registration cards, and financial accounts or passbooks</li>
+                  <li>Illegally copied software, video content, or other copyright-infringing material</li>
+                  <li>Obscene material and other media harmful to youth, and items whose sale to minors is restricted under the Juvenile Protection Act</li>
+                  <li>Any other item whose trade is prohibited or restricted under applicable law</li>
+                </ol>
+              </li>
+              <li>Trading stolen goods or items suspected of being stolen</li>
+              <li>Inducing advance payment and then failing to ship the item, or otherwise trading by fraudulent means</li>
+              <li>Using the board for commercial purposes by regularly and repeatedly selling large volumes of goods without business registration</li>
+            </ol>
+          </li>
+          <li>
+            When using the Meet board, a Member shall not do any of the following:
+            <ol className="list-disc space-y-1 pl-5 pt-1">
+              <li>Attempting or inducing to meet with a minor under the age of 19</li>
+              <li>Advertising, brokering, or soliciting for prostitution, adult entertainment establishments, or other sex-mediated business</li>
+              <li>Approaching another Member using falsified personal information, such as one&rsquo;s real name or marital status</li>
+              <li>Approaching another Member by fraudulent means (such as romance scams), including demanding money or goods or approaching under the pretext of investment</li>
+              <li>Continuing to contact another Member after they have expressed a wish to stop communication, or coercing them to provide personal information</li>
+            </ol>
+          </li>
+          <li>Articles 7 (Withdrawal and Loss of Membership) and 13 (Management of Posts) apply to posts or Members that violate paragraphs 1 and 2 above, and where the Operator determines that criminal conduct may be involved, the Operator may report the matter to an investigative agency or provide it with relevant materials.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 17 (Disclaimer)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>The Operator is exempt from liability where it cannot provide the Service due to force majeure, such as natural disaster, war, or suspension of service by a telecommunications carrier.</li>
+          <li>The Operator is not liable for service disruption caused by a Member&rsquo;s own fault.</li>
+          <li>The Operator is not liable for the reliability or accuracy of information or material posted by Members.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 18 (Dispute Resolution and Jurisdiction)">
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>These Terms are governed by and construed in accordance with the laws of the Republic of Korea.</li>
+          <li>If a dispute arises between the Operator and a Member in connection with use of the Service, both parties shall negotiate in good faith to resolve it amicably.</li>
+          <li>If no agreement is reached, a lawsuit may be filed with the court of competent jurisdiction under the Civil Procedure Act.</li>
+        </ol>
+      </Article>
+
+      <Article title="Article 19 (Contact)">
+        Inquiries regarding these Terms and use of the Service may be sent to{" "}
+        <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
+          gupguptalk@gmail.com
+        </a>
+        .
+      </Article>
+    </>
   );
 }
 

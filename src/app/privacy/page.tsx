@@ -1,21 +1,92 @@
 "use client";
 
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+
+type DocLang = "ko" | "en";
 
 export default function PrivacyPage() {
   const { t } = useLanguage();
+  const [lang, setLang] = useState<DocLang>("ko");
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 text-sm leading-relaxed">
-      <h1 className="mb-2 text-lg font-bold">개인정보처리방침</h1>
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h1 className="text-lg font-bold">
+          {lang === "ko" ? "개인정보처리방침" : "Privacy Policy"}
+        </h1>
+        <LangToggle lang={lang} onChange={setLang} />
+      </div>
       <p className="mb-4 rounded-md bg-[var(--color-border-gray-light)] px-3 py-2 text-xs text-[var(--color-text-muted)]">
         {t("legal.translateNotice")}
       </p>
-      <p className="mb-6 text-[var(--color-text-muted)]">
-        줍줍(이하 &ldquo;운영자&rdquo;)은 이용자의 개인정보를 중요시하며, 「개인정보보호법」 등 관련 법령을
-        준수하고 있습니다. 운영자는 이 개인정보처리방침을 통해 이용자가 제공하는 개인정보가 어떠한 목적과
-        방식으로 이용되고 있으며, 개인정보보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
-      </p>
 
+      {lang === "ko" ? (
+        <p className="mb-6 text-[var(--color-text-muted)]">
+          줍줍(이하 &ldquo;운영자&rdquo;)은 이용자의 개인정보를 중요시하며, 「개인정보보호법」 등 관련 법령을
+          준수하고 있습니다. 운영자는 이 개인정보처리방침을 통해 이용자가 제공하는 개인정보가 어떠한 목적과
+          방식으로 이용되고 있으며, 개인정보보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
+        </p>
+      ) : (
+        <p className="mb-6 text-[var(--color-text-muted)]">
+          GupGup (the &ldquo;Operator&rdquo;) values users&rsquo; personal information and complies
+          with the Personal Information Protection Act and other related laws. Through this Privacy
+          Policy, the Operator informs users of the purposes and manner in which personal information
+          provided by users is used, and the measures taken to protect it.
+        </p>
+      )}
+
+      {lang === "ko" ? <PrivacyKo /> : <PrivacyEn />}
+
+      <p className="mt-8 text-xs text-[var(--color-text-muted)]">
+        {lang === "ko"
+          ? "공고일자: 2026년 10월 1일 / 시행일자: 2026년 10월 1일"
+          : "Announced: October 1, 2026 / Effective: October 1, 2026"}
+      </p>
+    </div>
+  );
+}
+
+function LangToggle({
+  lang,
+  onChange,
+}: {
+  lang: DocLang;
+  onChange: (lang: DocLang) => void;
+}) {
+  return (
+    <div className="flex shrink-0 overflow-hidden rounded-md border border-[var(--color-border-gray)] text-xs">
+      <button
+        type="button"
+        onClick={() => onChange("ko")}
+        aria-pressed={lang === "ko"}
+        className={
+          lang === "ko"
+            ? "bg-[var(--color-brand-red)] px-3 py-1.5 text-white"
+            : "bg-white px-3 py-1.5 text-[var(--color-text-muted)]"
+        }
+      >
+        한국어
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("en")}
+        aria-pressed={lang === "en"}
+        className={
+          lang === "en"
+            ? "bg-[var(--color-brand-red)] px-3 py-1.5 text-white"
+            : "bg-white px-3 py-1.5 text-[var(--color-text-muted)]"
+        }
+      >
+        English
+      </button>
+    </div>
+  );
+}
+
+function PrivacyKo() {
+  return (
+    <>
       <Section title="1. 수집하는 개인정보의 항목 및 수집방법">
         <p className="font-medium">가. 회원가입 시</p>
         <ul className="list-disc space-y-1 pl-5 pb-2">
@@ -143,11 +214,144 @@ export default function PrivacyPage() {
           시행일 최소 7일 전(중대한 변경 시 30일 전)부터 서비스 내 공지사항을 통해 고지합니다.
         </p>
       </Section>
+    </>
+  );
+}
 
-      <p className="mt-8 text-xs text-[var(--color-text-muted)]">
-        공고일자: 2026년 10월 1일 / 시행일자: 2026년 10월 1일
-      </p>
-    </div>
+function PrivacyEn() {
+  return (
+    <>
+      <Section title="1. Items of Personal Information Collected and Collection Methods">
+        <p className="font-medium">a. Upon registration</p>
+        <ul className="list-disc space-y-1 pl-5 pb-2">
+          <li>Email login: email address, password (stored encrypted)</li>
+          <li>Google/Facebook login: the social account&rsquo;s unique identifier, email address</li>
+          <li>Common: nickname, country (optional)</li>
+        </ul>
+        <p className="font-medium">b. Information generated while using the Service</p>
+        <ul className="list-disc space-y-1 pl-5 pb-2">
+          <li>Profile photo (optional upload; a default avatar is assigned automatically if not set)</li>
+          <li>Posts, comments, messages, and inquiry content</li>
+          <li>Access logs, access IP information, cookies, and service usage records</li>
+        </ul>
+        <p className="font-medium">c. Collection method</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Entered directly by the user during registration and use of the Service</li>
+          <li>Received from the relevant provider upon social login via Google, Facebook, etc. (each provider&rsquo;s own privacy policy also applies)</li>
+        </ul>
+      </Section>
+
+      <Section title="2. Purposes of Collection and Use of Personal Information">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Identifying members and confirming intent to register, and preventing fraudulent use</li>
+          <li>Providing the Service (bulletin boards, messaging, inquiries, etc.) and content</li>
+          <li>Operating the report/block features between Members, and sanctioning users for misconduct</li>
+          <li>Responding to inquiries and delivering notices</li>
+        </ul>
+      </Section>
+
+      <Section title="3. Retention and Use Period of Personal Information">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>In principle, personal information is retained until withdrawal of membership and destroyed immediately upon withdrawal.</li>
+          <li>However, posts and comments written by a Member are not deleted after withdrawal and remain, with only the author label replaced with &ldquo;Deleted user.&rdquo;</li>
+          <li>Where retention is required under applicable law, information is retained separately as follows:</li>
+        </ul>
+        <ul className="list-disc space-y-1 pl-9 pt-1">
+          <li>Service usage records and access logs under the Protection of Communications Secrets Act: 3 months</li>
+          <li>Records related to fraud prevention and report handling: up to 6 months after processing is complete</li>
+        </ul>
+      </Section>
+
+      <Section title="4. Provision of Personal Information to Third Parties">
+        <p>The Operator does not, in principle, provide users&rsquo; personal information to outside parties. The following are exceptions:</p>
+        <ul className="list-disc space-y-1 pl-5 pt-1">
+          <li>Where the user has given prior consent</li>
+          <li>Where required by law, or requested by an investigative agency under the procedures and methods prescribed by law for investigative purposes</li>
+        </ul>
+      </Section>
+
+      <Section title="5. Outsourcing of Personal Information Processing">
+        <p>The Operator outsources the following personal information processing tasks to ensure stable provision of the Service:</p>
+        <ul className="list-disc space-y-1 pl-5 pt-1">
+          <li>Processor: Supabase, Inc.</li>
+          <li>Outsourced tasks: storage and management of the member information and post database, login authentication processing, and storage of image files (such as profile photos)</li>
+          <li>Outsourcing period: for the duration of the Service (using an overseas cloud server)</li>
+        </ul>
+      </Section>
+
+      <Section title="6. Rights of Users and Legal Representatives and How to Exercise Them">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>A user may at any time view and edit their own personal information (nickname, country, profile photo, etc.) through the profile screen, and may end use of the Service by withdrawing membership.</li>
+          <li>Rights concerning the processing of personal information of a child under 14 years of age may be exercised on the child&rsquo;s behalf by their legal representative.</li>
+        </ul>
+      </Section>
+
+      <Section title="7. Procedures and Methods for Destruction of Personal Information">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Personal information for which the purpose of collection and use has been achieved, such as through membership withdrawal, is destroyed without delay.</li>
+          <li>Personal information stored in electronic file form is deleted using a technical method that prevents recovery.</li>
+        </ul>
+      </Section>
+
+      <Section title="8. Measures to Ensure the Security of Personal Information">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>Passwords are stored encrypted.</li>
+          <li>Access to personal information is controlled through access authorization management.</li>
+          <li>The service provider&rsquo;s (Supabase) database access controls and encrypted communication (HTTPS) are applied.</li>
+        </ul>
+      </Section>
+
+      <Section title="9. Operation of and Opting Out of Cookies">
+        <ul className="list-disc space-y-1 pl-5">
+          <li>The Operator may use cookies to provide a customized service to users.</li>
+          <li>Users may refuse to allow cookies through their web browser settings, in which case some features of the Service, such as staying logged in, may be limited.</li>
+        </ul>
+      </Section>
+
+      <Section title="10. Personal Information of Children Under 14">
+        <p>Only users aged 14 or older may register as a Member, and the Operator does not collect the personal information of children under the age of 14.</p>
+      </Section>
+
+      <Section title="11. Personal Information Protection Officer">
+        <p>
+          The Operator designates a Personal Information Protection Officer as follows, who takes
+          overall responsibility for personal information processing and handles users&rsquo;
+          complaints and requests for remedy.
+        </p>
+        <ul className="list-disc space-y-1 pl-5 pt-1">
+          <li>In charge: GupGup Operator</li>
+          <li>
+            Email:{" "}
+            <a href="mailto:gupguptalk@gmail.com" className="text-[var(--color-brand-red)] underline">
+              gupguptalk@gmail.com
+            </a>
+          </li>
+        </ul>
+        <p className="pt-1">
+          Users may direct any inquiry, complaint, or request for remedy related to personal
+          information protection that arises while using the Service to the above email address, and
+          the Operator will respond and address it without delay.
+        </p>
+      </Section>
+
+      <Section title="12. Remedies for Infringement of Rights">
+        <p>If you need to file a report or seek consultation regarding an infringement of personal information, you may contact the following organizations:</p>
+        <ul className="list-disc space-y-1 pl-5 pt-1">
+          <li>Personal Information Dispute Mediation Committee (1833-6972, www.kopico.go.kr)</li>
+          <li>Personal Information Infringement Report Center (118, privacy.kisa.or.kr)</li>
+          <li>Supreme Prosecutors&rsquo; Office Cyber Investigation Division (02-3480-3573, www.spo.go.kr)</li>
+          <li>National Police Agency Cyber Bureau (182, cyberbureau.police.go.kr)</li>
+        </ul>
+      </Section>
+
+      <Section title="13. Changes to This Privacy Policy">
+        <p>
+          This Privacy Policy may be added to, deleted from, or amended due to changes in law, policy,
+          or the Service, and any such change will be announced through a notice within the Service
+          at least 7 days before the effective date (at least 30 days before, for material changes).
+        </p>
+      </Section>
+    </>
   );
 }
 

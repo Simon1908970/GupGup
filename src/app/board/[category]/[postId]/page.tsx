@@ -25,7 +25,7 @@ function isValidCategory(v: string): v is CategorySlug {
 export default function PostDetailPage() {
   const { t, locale } = useLanguage();
   const router = useRouter();
-  const { user, refreshProfile } = useAuth();
+  const { user, loading: authLoading, refreshProfile } = useAuth();
   const params = useParams<{ category: string; postId: string }>();
   const [post, setPost] = useState<Post | null | undefined>(undefined);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -42,9 +42,14 @@ export default function PostDetailPage() {
 
   const categorySlug = params.category;
   const config = isValidCategory(categorySlug) ? CATEGORIES[categorySlug] : null;
+  const gated = Boolean(config?.requiresAuth);
 
   useEffect(() => {
-    if (!config) return;
+    if (gated && !authLoading && !user) router.replace("/login");
+  }, [gated, authLoading, user, router]);
+
+  useEffect(() => {
+    if (!config || (gated && !user)) return;
     let cancelled = false;
     fetchPostById(config.slug, params.postId).then((data) => {
       if (cancelled) return;
@@ -60,12 +65,20 @@ export default function PostDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [config, params.postId]);
+  }, [config, gated, user, params.postId]);
 
   if (!config || post === null) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
         {t("error.postNotFound")}
+      </div>
+    );
+  }
+
+  if (gated && !user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center text-sm text-[var(--color-text-muted)]">
+        {t("common.loading")}
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: Request) {
   const { texts, target } = (await request.json()) as { texts?: string[]; target?: string };
@@ -30,6 +31,13 @@ export async function POST(request: Request) {
   if (translations.length !== texts.length) {
     return NextResponse.json({ error: "unexpected translation response" }, { status: 502 });
   }
+
+  const charCount = texts.reduce((sum, t) => sum + t.length, 0);
+  createAdminClient()
+    .rpc("increment_translation_usage", { delta: charCount })
+    .then(({ error }) => {
+      if (error) console.error("translation usage tracking failed:", error);
+    });
 
   return NextResponse.json({ translations: translations.map((t) => t.translatedText) });
 }

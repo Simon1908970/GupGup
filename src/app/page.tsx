@@ -7,6 +7,7 @@ import {
   GRID_BOX_CATEGORIES,
   LARGE_BOX_CATEGORIES,
 } from "@/lib/constants/categories";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { fetchLatestPosts, fetchPopularPosts } from "@/lib/supabase/posts";
@@ -19,18 +20,22 @@ import { CountryMapWidget } from "@/components/map/CountryMapWidget";
 
 export default function Home() {
   const { t } = useLanguage();
+  const { user, loading: authLoading } = useAuth();
   const [postsByCategory, setPostsByCategory] = useState<Record<CategorySlug, Post[]>>(
     {} as Record<CategorySlug, Post[]>,
   );
   const [popularPosts, setPopularPosts] = useState<Post[]>([]);
 
   useEffect(() => {
+    if (authLoading) return;
     let cancelled = false;
     Promise.all(
       CATEGORY_ORDER.map((slug) =>
-        fetchLatestPosts(slug, CATEGORIES[slug].mainCount)
-          .then((posts) => [slug, posts] as const)
-          .catch(() => [slug, []] as const),
+        CATEGORIES[slug].requiresAuth && !user
+          ? Promise.resolve([slug, []] as const)
+          : fetchLatestPosts(slug, CATEGORIES[slug].mainCount)
+              .then((posts) => [slug, posts] as const)
+              .catch(() => [slug, []] as const),
       ),
     ).then((entries) => {
       if (cancelled) return;
@@ -46,7 +51,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authLoading, user]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
@@ -63,6 +68,8 @@ export default function Home() {
             label={t(CATEGORIES[slug].labelKey as DictionaryKey)}
             moreLabel={t("board.viewMore")}
             posts={postsByCategory[slug] ?? []}
+            locked={CATEGORIES[slug].requiresAuth && !user}
+            lockedLabel={t("board.loginRequired")}
           />
         ))}
       </section>
@@ -75,6 +82,8 @@ export default function Home() {
             label={t(CATEGORIES[slug].labelKey as DictionaryKey)}
             moreLabel={t("board.viewMore")}
             posts={postsByCategory[slug] ?? []}
+            locked={CATEGORIES[slug].requiresAuth && !user}
+            lockedLabel={t("board.loginRequired")}
           />
         ))}
       </section>

@@ -78,6 +78,7 @@ const ko = {
   "exchange.title": "환율",
   "exchange.asOf": "환율 기준",
   "board.noPosts": "등록된 게시글이 없습니다.",
+  "board.loginRequired": "로그인 후 이용 가능한 카테고리입니다.",
   "board.views": "조회",
   "board.comments": "댓글",
   "board.write": "글쓰기",
@@ -206,7 +207,7 @@ const ko = {
   "housing.noticeLabel": "공지사항",
   "housing.noticeText": "본 사이트는 거래 플랫폼이 아니며, 집주인 동의 없는 전대차 거래로 인한 피해는 당사자 책임입니다.",
 
-  "legal.translateNotice": "이 문서는 한국어 원문이 법적 효력을 가집니다. 다른 언어로 확인하시려면 브라우저의 번역 기능을 이용해주세요.",
+  "legal.translateNotice": "이 문서는 한국어 원문이 법적 효력을 가집니다. 영어 버전은 위 버튼으로 전환해 보실 수 있으며, 그 외 언어로 확인하시려면 브라우저의 번역 기능을 이용해주세요.",
 
   "onboarding.agreeAll": "전체 동의",
   "onboarding.agreeTerms": "이용약관 동의",
@@ -320,6 +321,7 @@ const en: Dictionary = {
   "exchange.title": "Exchange Rates",
   "exchange.asOf": "As of",
   "board.noPosts": "No posts yet.",
+  "board.loginRequired": "Log in to view this category.",
   "board.views": "Views",
   "board.comments": "Comments",
   "board.write": "Write",
@@ -448,7 +450,7 @@ const en: Dictionary = {
   "housing.noticeLabel": "Notice",
   "housing.noticeText": "This site is not a transaction platform. Any damage resulting from a sublease arrangement made without the landlord's consent is solely the responsibility of the parties involved.",
 
-  "legal.translateNotice": "The Korean original of this document is legally binding. To view it in another language, please use your browser's translation feature.",
+  "legal.translateNotice": "The Korean original of this document is legally binding. You can switch to the English version using the button above; for other languages, please use your browser's translation feature.",
 
   "onboarding.agreeAll": "Agree to all",
   "onboarding.agreeTerms": "Agree to Terms of Service",
