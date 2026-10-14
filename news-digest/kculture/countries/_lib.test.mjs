@@ -6,7 +6,9 @@ import {
   nextCountry,
   advanceRotation,
   filterNewItems,
+  filterRoundItems,
   markSeen,
+  canonicalizeUrl,
   renderCountrySection,
   appendCountryFile,
 } from "./_lib.mjs";
@@ -116,4 +118,84 @@ test("appendCountryFile: 기존 내용이 있으면 끝에 새 섹션만 이어�
   assert.ok(out.startsWith(existing.trimEnd()));
   assert.match(out, /## 2026-11-24 수집/);
   assert.equal(out.match(/^# 베트남/gm).length, 1, "헤더가 중복되면 안 된다");
+});
+
+test("canonicalizeUrl: 트래킹 파라미터(fb/ig/tiktok/utm) 제거, 호스트 소문자화, 끝 슬래시·해시 제거", () => {
+  assert.equal(
+    canonicalizeUrl("https://WWW.Facebook.com/reel/123/?__cft__[0]=abc&__tn__=xyz&mibextid=aaa"),
+    "https://www.facebook.com/reel/123",
+  );
+  assert.equal(
+    canonicalizeUrl("https://www.instagram.com/p/abc/?igsh=xyz123#comment"),
+    "https://www.instagram.com/p/abc",
+  );
+  assert.equal(
+    canonicalizeUrl("https://www.tiktok.com/@user/video/1?is_from_webapp=1&sender_device=pc"),
+    "https://www.tiktok.com/@user/video/1",
+  );
+  assert.equal(
+    canonicalizeUrl("https://example.com/a?utm_source=x&utm_medium=y&rdid=z&share_url=w"),
+    "https://example.com/a",
+  );
+});
+
+test("canonicalizeUrl: 파싱 불가능한 문자열은 그대로 반환, 빈 값은 null", () => {
+  assert.equal(canonicalizeUrl("not a url"), "not a url");
+  assert.equal(canonicalizeUrl(undefined), null);
+  assert.equal(canonicalizeUrl(""), null);
+});
+
+test("filterNewItems: 트래킹 파라미터만 다른 같은 URL은 중복으로 처리", () => {
+  const seen = { vi: { "https://www.facebook.com/reel/123": "2026-10-01" } };
+  const items = [{ url: "https://www.facebook.com/reel/123?__cft__[0]=abc", title: "같은 글, 파라미터만 다름" }];
+  assert.deepEqual(filterNewItems(seen, "vi", items), []);
+});
+
+test("filterNewItems / filterRoundItems: URL 없는 항목은 항상 통과(중복 판단 대상 아님)", () => {
+  const items = [
+    { title: "링크 못 받아온 글 1", summary: "s1" },
+    { title: "링크 못 받아온 글 2", summary: "s2" },
+  ];
+  assert.equal(filterNewItems({}, "vi", items).length, 2);
+  const { practical, fandom } = filterRoundItems({}, "vi", items, items);
+  assert.equal(practical.length, 2);
+  assert.equal(fandom.length, 2);
+});
+
+test("filterRoundItems: 같은 URL이 실용정보·연애팬덤 양쪽에 걸리면 한쪽에만 남는다", () => {
+  const dup = { url: "https://www.tiktok.com/@user/video/1", title: "비자 얘기도 하고 K팝 얘기도 함" };
+  const onlyFandom = { url: "https://www.tiktok.com/@user/video/2", title: "K팝 얘기만" };
+  const { practical, fandom } = filterRoundItems({}, "vi", [dup], [dup, onlyFandom]);
+  assert.deepEqual(practical, [dup]);
+  assert.deepEqual(fandom, [onlyFandom]);
+});
+
+test("filterRoundItems: 기존 seen 기록은 양쪽 축 모두에 적용된다", () => {
+  const seen = { vi: { "https://a.example/1": "2026-10-01" } };
+  const { practical, fandom } = filterRoundItems(
+    seen, "vi",
+    [{ url: "https://a.example/1", title: "실용정보 쪽" }],
+    [{ url: "https://a.example/1", title: "연애팬덤 쪽" }],
+  );
+  assert.deepEqual(practical, []);
+  assert.deepEqual(fandom, []);
+});
+
+test("markSeen: URL 없는 항목은 기록하지 않는다 ('undefined'/'' 키가 생기면 안 됨)", () => {
+  const items = [
+    { title: "링크 없음", summary: "s" },
+    { url: "https://a.example/1", title: "링크 있음" },
+  ];
+  const updated = markSeen({}, "vi", items, "2026-10-20");
+  assert.deepEqual(Object.keys(updated.vi), ["https://a.example/1"]);
+});
+
+test("renderCountrySection: URL 없는 항목은 '링크 미확보'로 표시", () => {
+  const md = renderCountrySection(
+    "2026-10-20",
+    [{ title: "링크 못 받아온 글", summary: "요약" }],
+    [],
+  );
+  assert.match(md, /- \*\*링크 못 받아온 글\*\* — 요약 \(⚠️ 링크 미확보\)/);
+  assert.doesNotMatch(md, /undefined/);
 });

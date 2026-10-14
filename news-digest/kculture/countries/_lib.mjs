@@ -31,27 +31,81 @@ export function advanceRotation(rotation, country, date) {
   };
 }
 
-export function filterNewItems(seen, country, items) {
-  const seenUrls = new Set(Object.keys(seen[country] || {}));
-  const batchUrls = new Set();
+const TRACKING_PARAMS = [
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+  "__cft__[0]", "__tn__", "mibextid", "rdid", "share_url",
+  "igsh", "is_from_webapp", "sender_device",
+];
+
+/**
+ * Normalize a post URL so platform tracking params (fb __cft__/__tn__, ig
+ * igsh, tiktok is_from_webapp/sender_device, generic utm_*) don't make the
+ * same post look like a new URL on a later search. Returns null for a
+ * missing/blank url (nothing to dedupe against); returns the input
+ * unchanged if it isn't a parseable absolute URL.
+ */
+export function canonicalizeUrl(url) {
+  if (!url) return null;
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return url;
+  }
+  u.hash = "";
+  for (const p of TRACKING_PARAMS) u.searchParams.delete(p);
+  const host = u.hostname.toLowerCase();
+  const pathname = u.pathname.replace(/\/+$/, "") || "/";
+  const query = u.searchParams.toString();
+  return `${u.protocol}//${host}${pathname}${query ? "?" + query : ""}`;
+}
+
+function takeNew(seenUrls, claimed, items) {
   const result = [];
   for (const item of items) {
-    if (seenUrls.has(item.url) || batchUrls.has(item.url)) continue;
-    batchUrls.add(item.url);
+    const key = canonicalizeUrl(item.url);
+    if (key) {
+      if (seenUrls.has(key) || claimed.has(key)) continue;
+      claimed.add(key);
+    }
     result.push(item);
   }
   return result;
 }
 
+export function filterNewItems(seen, country, items) {
+  const seenUrls = new Set(Object.keys(seen[country] || {}));
+  return takeNew(seenUrls, new Set(), items);
+}
+
+/**
+ * Like filterNewItems, but dedupes practicalItems and fandomItems against
+ * each other too (the same post can match both a practical-info query and
+ * a fandom query in the same round).
+ */
+export function filterRoundItems(seen, country, practicalItems, fandomItems) {
+  const seenUrls = new Set(Object.keys(seen[country] || {}));
+  const claimed = new Set();
+  return {
+    practical: takeNew(seenUrls, claimed, practicalItems),
+    fandom: takeNew(seenUrls, claimed, fandomItems),
+  };
+}
+
 export function markSeen(seen, country, items, date) {
   const updated = { ...seen, [country]: { ...(seen[country] || {}) } };
-  for (const item of items) updated[country][item.url] = date;
+  for (const item of items) {
+    const key = canonicalizeUrl(item.url);
+    if (key) updated[country][key] = date;
+  }
   return updated;
 }
 
 function renderItems(items) {
   return items.length
-    ? items.map((it) => `- **${it.title}** — ${it.summary} [출처](${it.url})`).join("\n")
+    ? items.map((it) => it.url
+        ? `- **${it.title}** — ${it.summary} [출처](${it.url})`
+        : `- **${it.title}** — ${it.summary} (⚠️ 링크 미확보)`).join("\n")
     : "- (이번 라운드엔 새로 찾은 항목 없음)";
 }
 
