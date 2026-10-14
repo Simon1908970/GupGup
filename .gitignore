@@ -54,5 +54,9 @@ next-env.d.ts
 /news-digest/kculture/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
 /news-digest/kculture/fetch.log
 
+# K-culture country SNS research — per-country content stays local, same as the dated digest
+# above (README/keywords.md/rotation.json/seen.json are bookkeeping and ARE committed)
+/news-digest/kculture/countries/[a-z][a-z].md
+
 # SDD tooling scratch
 /.superpowers/
