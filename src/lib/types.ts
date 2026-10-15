@@ -131,6 +131,7 @@ export interface Post {
   businessDetailAddress?: string;
   businessLat?: number;
   businessLng?: number;
+  isNotice?: boolean;
 }
 
 export interface Comment {

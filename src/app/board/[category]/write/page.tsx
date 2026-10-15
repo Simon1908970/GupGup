@@ -38,6 +38,7 @@ export default function WritePostPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showOnMap, setShowOnMap] = useState(false);
+  const [isNotice, setIsNotice] = useState(false);
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessDetailAddress, setBusinessDetailAddress] = useState("");
 
@@ -99,6 +100,7 @@ export default function WritePostPage() {
         businessDetailAddress: showOnMap ? businessDetailAddress.trim() || undefined : undefined,
         businessLat,
         businessLng,
+        isNotice: profile?.is_admin ? isNotice : false,
       });
       await refreshProfile();
       router.push(`/board/${config!.slug}/${postId}`);
@@ -158,6 +160,13 @@ export default function WritePostPage() {
               </option>
             ))}
           </select>
+        )}
+
+        {profile.is_admin && (
+          <label className="flex items-center gap-2 rounded-md border border-[var(--color-brand-red)] bg-[var(--color-brand-red-light)] px-3 py-2 text-sm font-medium text-[var(--color-brand-red)]">
+            <input type="checkbox" checked={isNotice} onChange={(e) => setIsNotice(e.target.checked)} />
+            {t("write.pinAsNotice")}
+          </label>
         )}
 
         {config.hasCountryTag && (

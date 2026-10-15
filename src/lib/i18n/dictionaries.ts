@@ -82,6 +82,7 @@ const ko = {
   "board.views": "조회",
   "board.comments": "댓글",
   "board.write": "글쓰기",
+  "board.pinnedLabel": "상단 고정 글",
   "board.search": "검색",
   "board.searchScope.titleContent": "제목+내용",
   "board.searchScope.title": "제목",
@@ -194,6 +195,7 @@ const ko = {
   "inquiries.contentPlaceholder": "문의 내용을 입력하세요",
 
   "write.needProfile": "프로필 설정을 먼저 완료해주세요.",
+  "write.pinAsNotice": "📌 목록 상단에 고정 (관리자 전용)",
   "write.goToOnboarding": "온보딩으로 이동",
 
   "resetPassword.title": "새 비밀번호 설정",
@@ -325,6 +327,7 @@ const en: Dictionary = {
   "board.views": "Views",
   "board.comments": "Comments",
   "board.write": "Write",
+  "board.pinnedLabel": "Pinned post",
   "board.search": "Search",
   "board.searchScope.titleContent": "Title + Content",
   "board.searchScope.title": "Title",
@@ -437,6 +440,7 @@ const en: Dictionary = {
   "inquiries.contentPlaceholder": "Enter your inquiry",
 
   "write.needProfile": "Please complete your profile setup first.",
+  "write.pinAsNotice": "📌 Pin to top of list (admin only)",
   "write.goToOnboarding": "Go to onboarding",
 
   "resetPassword.title": "Set a new password",

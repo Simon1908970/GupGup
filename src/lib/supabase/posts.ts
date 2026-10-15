@@ -28,6 +28,7 @@ interface PostRow {
   business_detail_address: string | null;
   business_lat: number | null;
   business_lng: number | null;
+  is_notice: boolean;
   author: {
     id: string;
     nickname: string;
@@ -45,7 +46,7 @@ interface PostRow {
 // (PostgREST returns HTTP 300 PGRST201 for every query using this select).
 const POST_SELECT =
   "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)" +
-  ", show_on_map, business_address, business_detail_address, business_lat, business_lng";
+  ", show_on_map, business_address, business_detail_address, business_lat, business_lng, is_notice";
 
 function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
   return {
@@ -82,6 +83,7 @@ function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
     businessDetailAddress: row.business_detail_address ?? undefined,
     businessLat: row.business_lat ?? undefined,
     businessLng: row.business_lng ?? undefined,
+    isNotice: row.is_notice ?? false,
   };
 }
 
@@ -112,7 +114,7 @@ export async function fetchPosts({
   searchScope = "titleContent",
   page = 1,
   pageSize = 20,
-}: FetchPostsParams): Promise<{ posts: Post[]; total: number }> {
+}: FetchPostsParams): Promise<{ posts: Post[]; notices: Post[]; total: number }> {
   const supabase = createClient();
 
   const {
@@ -127,7 +129,7 @@ export async function fetchPosts({
       .select("id")
       .ilike("nickname", `%${search}%`);
     authorIds = (data ?? []).map((p) => p.id);
-    if (authorIds.length === 0) return { posts: [], total: 0 };
+    if (authorIds.length === 0) return { posts: [], notices: [], total: 0 };
   }
 
   let query = supabase
@@ -140,6 +142,12 @@ export async function fetchPosts({
   }
   if (subCategory && subCategory !== "all") {
     query = query.eq("sub_category", subCategory);
+  }
+  // Notices are pinned separately above the list (see below), so keep them
+  // out of the paginated rows -- except while searching, where they are
+  // matched like any other post.
+  if (!search) {
+    query = query.eq("is_notice", false);
   }
   if (country && country !== "all") {
     query = query.eq("country", country);
@@ -161,14 +169,40 @@ export async function fetchPosts({
   const from = (page - 1) * pageSize;
   query = query.range(from, from + pageSize - 1);
 
-  const { data, count, error } = await query;
+  // Pinned notices: every page of the list, ignoring country filter and
+  // sort, but scoped to the selected sub-category tab. A notice without a
+  // sub-category shows under every tab.
+  let noticeQuery = search
+    ? null
+    : supabase
+        .from("posts")
+        .select(POST_SELECT)
+        .eq("category", category)
+        .eq("is_notice", true)
+        .order("created_at", { ascending: false })
+        .limit(10);
+  if (noticeQuery && subCategory && subCategory !== "all") {
+    noticeQuery = noticeQuery.or(`sub_category.eq.${subCategory},sub_category.is.null`);
+  }
+
+  const [{ data, count, error }, noticeResult] = await Promise.all([
+    query,
+    noticeQuery ?? Promise.resolve({ data: [], error: null }),
+  ]);
   if (error) throw error;
 
   const rows = (data ?? []) as unknown as PostRow[];
-  const likedPostIds = viewer ? await fetchLikedPostIds(viewer.id, rows.map((r) => r.id)) : undefined;
+  // A failed notice fetch should not take the whole board down -- just
+  // show no pinned rows. (Migration 0024 is still required: POST_SELECT
+  // reads is_notice for every list.)
+  const noticeRows = noticeResult.error ? [] : ((noticeResult.data ?? []) as unknown as PostRow[]);
+  const likedPostIds = viewer
+    ? await fetchLikedPostIds(viewer.id, [...rows, ...noticeRows].map((r) => r.id))
+    : undefined;
 
   return {
     posts: rows.map((row) => mapPost(row, likedPostIds)),
+    notices: noticeRows.map((row) => mapPost(row, likedPostIds)),
     total: count ?? 0,
   };
 }
@@ -257,6 +291,7 @@ export interface CreatePostInput {
   businessDetailAddress?: string;
   businessLat?: number;
   businessLng?: number;
+  isNotice?: boolean;
 }
 
 export async function createPost(input: CreatePostInput): Promise<string> {
@@ -288,6 +323,7 @@ export async function createPost(input: CreatePostInput): Promise<string> {
       business_detail_address: input.businessDetailAddress ?? null,
       business_lat: input.businessLat ?? null,
       business_lng: input.businessLng ?? null,
+      is_notice: input.isNotice ?? false,
     })
     .select("id")
     .single();

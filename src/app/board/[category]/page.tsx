@@ -52,6 +52,7 @@ function BoardListPageInner() {
   const gated = Boolean(config?.requiresAuth);
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [notices, setNotices] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const { showTranslation, translating, translatedTitles, toggle } = useTitleTranslation(
@@ -79,14 +80,16 @@ function BoardListPageInner() {
       page,
       pageSize: PAGE_SIZE,
     })
-      .then(({ posts: rows, total: count }) => {
+      .then(({ posts: rows, notices: noticeRows, total: count }) => {
         if (cancelled) return;
         setPosts(rows);
+        setNotices(noticeRows);
         setTotal(count);
       })
       .catch(() => {
         if (!cancelled) {
           setPosts([]);
+          setNotices([]);
           setTotal(0);
         }
       })
@@ -227,7 +230,9 @@ function BoardListPageInner() {
             {t("common.loading")}
           </li>
         )}
-        {!loading && posts.length === 0 && (
+        {!loading &&
+          notices.map((post) => <PostListItem key={`notice-${post.id}`} post={post} />)}
+        {!loading && posts.length === 0 && notices.length === 0 && (
           <li className="py-12 text-center text-sm text-[var(--color-text-muted)]">
             {t("board.noPosts")}
           </li>

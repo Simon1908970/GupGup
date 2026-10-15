@@ -7,7 +7,7 @@ import { formatCount, formatDate } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
-import { MessageSquare, Eye } from "lucide-react";
+import { MessageSquare, Eye, Pin } from "lucide-react";
 
 export function PostListItem({
   post,
@@ -24,7 +24,12 @@ export function PostListItem({
     post.thumbnailUrl ?? post.attachments.find((a) => a.type === "image")?.url;
 
   return (
-    <li className="flex items-center border-b border-[var(--color-border-gray-light)] last:border-b-0">
+    <li
+      className={
+        "flex items-center border-b border-[var(--color-border-gray-light)] last:border-b-0" +
+        (post.isNotice ? " bg-[var(--color-brand-red-light)]" : "")
+      }
+    >
       <Link
         href={`/board/${post.category}/${post.id}`}
         className="flex min-w-0 flex-1 items-center gap-3 px-1 py-3 hover:bg-[var(--color-border-gray-light)]/60"
@@ -40,7 +45,18 @@ export function PostListItem({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             {config.hasCountryTag && <CountryTag country={post.country} />}
-            <p className="truncate text-sm font-medium text-[var(--foreground)]">
+            {post.isNotice && (
+              <Pin
+                size={14}
+                aria-label={t("board.pinnedLabel")}
+                className="shrink-0 rotate-45 fill-[var(--color-brand-red)] text-[var(--color-brand-red)]"
+              />
+            )}
+            <p
+              className={
+                "truncate text-sm text-[var(--foreground)] " + (post.isNotice ? "font-bold" : "font-medium")
+              }
+            >
               {titleOverride ?? post.title}
             </p>
             {post.commentCount > 0 && (
