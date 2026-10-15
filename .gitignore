@@ -55,7 +55,9 @@ next-env.d.ts
 /news-digest/kculture/fetch.log
 
 # K-culture country SNS research — per-country content stays local, same as the dated digest
-# above (README/keywords.md/rotation.json/seen.json are bookkeeping and ARE committed)
+# above (README/keywords.md are docs and ARE committed; rotation.json/seen.json keep their
+# initial committed baseline but later updates stay local/uncommitted, same as seen-topics.json —
+# not gitignored outright so the tracked baseline survives a fresh clone)
 /news-digest/kculture/countries/[a-z][a-z].md
 
 # SDD tooling scratch

@@ -24,6 +24,8 @@ K컬처 "국가별 SNS 리서치" 레이어의 운영 절차. 전체 설계는
    `countries/<code>.md`를 갱신한다(파일이 없으면 새로 생성).
 6. `markSeen`으로 `seen.json`을 갱신하고, `advanceRotation`으로 `rotation.json`을 다음
    국가로 넘긴다.
-7. `countries/<code>.md`는 기존 kculture 규칙과 동일하게 **로컬 전용 — git 커밋 안 함**.
-   `rotation.json`/`seen.json`은 북키핑 상태 파일이라 커밋한다.
+7. `countries/<code>.md`뿐 아니라 `rotation.json`/`seen.json`도 **로컬 전용 — git 커밋 안 함**
+   (2026-10-15: 원래 계획은 이 두 파일을 북키핑 상태 파일로 커밋하는 것이었으나, 사용자가
+   `news-digest/seen-topics.json`과 동일하게 로컬 전용으로 두기로 함 — SNS 게시물 URL·
+   계정 정보가 쌓이는 파일이라 공개 저장소에 올리지 않는 쪽을 택함).
 8. 처리한 국가·건수를 대화창에 짧게 보고한다.
