@@ -1,0 +1,34 @@
+{
+  "vn": {
+    "nickname": "베트남지기",
+    "profileId": "ff6651aa-ec28-4f10-9714-0a1e9f7fb5a2"
+  },
+  "th": {
+    "nickname": "태국지기",
+    "profileId": "cb0fd3b6-1e0d-499c-946a-c530dd53195c"
+  },
+  "la": {
+    "nickname": "라오스지기",
+    "profileId": "09597fdb-ecca-4a18-80c7-142cee67f8f2"
+  },
+  "id": {
+    "nickname": "인니지기",
+    "profileId": "1ce674f1-e3fe-43b7-88c7-a315ac8bb44c"
+  },
+  "mm": {
+    "nickname": "미얀마지기",
+    "profileId": "497ba73b-674c-4fbf-afd0-d303dfb552c4"
+  },
+  "ph": {
+    "nickname": "필리핀지기",
+    "profileId": "40720cad-0459-455e-ac1a-022c366ed94d"
+  },
+  "mn": {
+    "nickname": "몽골지기",
+    "profileId": "fefa041b-bd63-48cd-bd26-7531fc1ea076"
+  },
+  "etc": {
+    "nickname": "줍줍지기",
+    "profileId": "b1da2feb-c94b-4190-93ff-64c5524bba7e"
+  }
+}

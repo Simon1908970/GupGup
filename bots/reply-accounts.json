@@ -1,0 +1,27 @@
+{
+  "r1": {
+    "nickname": "답변지기1",
+    "country": "vn",
+    "profileId": "8732ab9e-7034-4efa-b78b-9b610404897e"
+  },
+  "r2": {
+    "nickname": "답변지기2",
+    "country": "vn",
+    "profileId": "52310129-7cd8-428d-9c91-551eecd0451f"
+  },
+  "r3": {
+    "nickname": "답변지기3",
+    "country": "vn",
+    "profileId": "0d48e94c-5165-4eb8-8bab-62d687efa82e"
+  },
+  "r4": {
+    "nickname": "답변지기4",
+    "country": "vn",
+    "profileId": "162b0aee-304a-479f-8d12-70eaaa5f3839"
+  },
+  "r5": {
+    "nickname": "답변지기5",
+    "country": "vn",
+    "profileId": "435db5a5-935b-44f6-bff9-a2b9660d34e6"
+  }
+}
