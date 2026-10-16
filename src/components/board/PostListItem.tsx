@@ -91,7 +91,17 @@ export function PostListItem({
           />
         )}
       </Link>
-      {onDelete && <DeleteButton onClick={onDelete} className="mr-2" />}
+      {onDelete && (
+        <div className="mr-2 flex shrink-0 items-center gap-1.5">
+          <Link
+            href={`/board/${post.category}/${post.id}/edit`}
+            className="rounded border border-[var(--color-border-gray)] px-2 py-1 text-xs font-medium text-[var(--color-text-muted)] hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+          >
+            {t("common.edit")}
+          </Link>
+          <DeleteButton onClick={onDelete} />
+        </div>
+      )}
     </li>
   );
 }

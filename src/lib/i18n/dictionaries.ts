@@ -172,6 +172,7 @@ const ko = {
 
   "error.categoryNotFound": "존재하지 않는 카테고리입니다.",
   "error.postNotFound": "게시글을 찾을 수 없습니다.",
+  "error.notPostAuthor": "작성자만 수정할 수 있습니다.",
   "error.userNotFound": "사용자를 찾을 수 없습니다.",
   "error.inquiryNotFound": "문의를 찾을 수 없습니다.",
 
@@ -227,6 +228,7 @@ const ko = {
   "profile.withdrawComplete": "회원 탈퇴가 완료되었습니다.",
 
   "common.delete": "삭제",
+  "common.edit": "수정",
   "post.deleteConfirm": "정말 삭제하시겠습니까?",
   "board.commentDeleted": "삭제된 댓글입니다.",
   "board.noComments": "작성한 댓글이 없습니다.",
@@ -418,6 +420,7 @@ const en: Dictionary = {
 
   "error.categoryNotFound": "This category doesn't exist.",
   "error.postNotFound": "Post not found.",
+  "error.notPostAuthor": "Only the author can edit this post.",
   "error.userNotFound": "User not found.",
   "error.inquiryNotFound": "Inquiry not found.",
 
@@ -473,6 +476,7 @@ const en: Dictionary = {
   "profile.withdrawComplete": "Your account has been deleted.",
 
   "common.delete": "Delete",
+  "common.edit": "Edit",
   "post.deleteConfirm": "Are you sure you want to delete this?",
   "board.commentDeleted": "This comment has been deleted.",
   "board.noComments": "You haven't written any comments yet.",
@@ -577,6 +581,7 @@ const vi: Partial<Dictionary> = {
 
   "error.categoryNotFound": "Danh mục này không tồn tại.",
   "error.postNotFound": "Không tìm thấy bài viết.",
+  "error.notPostAuthor": "Chỉ tác giả mới có thể chỉnh sửa bài viết này.",
   "error.userNotFound": "Không tìm thấy người dùng.",
   "error.inquiryNotFound": "Không tìm thấy yêu cầu hỗ trợ.",
 
@@ -631,6 +636,7 @@ const vi: Partial<Dictionary> = {
   "profile.withdrawComplete": "Tài khoản của bạn đã được xóa.",
 
   "common.delete": "Xóa",
+  "common.edit": "Sửa",
   "post.deleteConfirm": "Bạn có chắc muốn xóa không?",
   "board.commentDeleted": "Bình luận này đã bị xóa.",
   "board.noComments": "Bạn chưa viết bình luận nào.",
@@ -810,6 +816,7 @@ const th: Partial<Dictionary> = {
 
   "error.categoryNotFound": "ไม่พบหมวดหมู่นี้",
   "error.postNotFound": "ไม่พบโพสต์",
+  "error.notPostAuthor": "เฉพาะผู้เขียนเท่านั้นที่สามารถแก้ไขโพสต์นี้ได้",
   "error.userNotFound": "ไม่พบผู้ใช้",
   "error.inquiryNotFound": "ไม่พบคำถาม",
 
@@ -864,6 +871,7 @@ const th: Partial<Dictionary> = {
   "profile.withdrawComplete": "บัญชีของคุณถูกลบแล้ว",
 
   "common.delete": "ลบ",
+  "common.edit": "แก้ไข",
   "post.deleteConfirm": "ยืนยันการลบหรือไม่?",
   "board.commentDeleted": "ความคิดเห็นนี้ถูกลบแล้ว",
   "board.noComments": "คุณยังไม่ได้แสดงความคิดเห็น",
@@ -1045,6 +1053,7 @@ const id: Partial<Dictionary> = {
 
   "error.categoryNotFound": "Kategori ini tidak ada.",
   "error.postNotFound": "Postingan tidak ditemukan.",
+  "error.notPostAuthor": "Hanya penulis yang dapat mengedit postingan ini.",
   "error.userNotFound": "Pengguna tidak ditemukan.",
   "error.inquiryNotFound": "Pertanyaan tidak ditemukan.",
 
@@ -1099,6 +1108,7 @@ const id: Partial<Dictionary> = {
   "profile.withdrawComplete": "Akun Anda telah dihapus.",
 
   "common.delete": "Hapus",
+  "common.edit": "Edit",
   "post.deleteConfirm": "Yakin ingin menghapus?",
   "board.commentDeleted": "Komentar ini telah dihapus.",
   "board.noComments": "Anda belum menulis komentar apa pun.",
@@ -1280,6 +1290,7 @@ const tl: Partial<Dictionary> = {
 
   "error.categoryNotFound": "Wala ang kategoryang ito.",
   "error.postNotFound": "Hindi nahanap ang post.",
+  "error.notPostAuthor": "Tanging ang may-akda lamang ang maaaring mag-edit ng post na ito.",
   "error.userNotFound": "Hindi nahanap ang user.",
   "error.inquiryNotFound": "Hindi nahanap ang inquiry.",
 
@@ -1334,6 +1345,7 @@ const tl: Partial<Dictionary> = {
   "profile.withdrawComplete": "Na-delete na ang iyong account.",
 
   "common.delete": "Tanggalin",
+  "common.edit": "I-edit",
   "post.deleteConfirm": "Sigurado ka bang gusto mong tanggalin ito?",
   "board.commentDeleted": "Tinanggal na ang komentong ito.",
   "board.noComments": "Wala ka pang isinulat na komento.",
@@ -1517,6 +1529,7 @@ const lo: Partial<Dictionary> = {
 
   "error.categoryNotFound": "ບໍ່ມີໝວດໝູ່ນີ້.",
   "error.postNotFound": "ບໍ່ພົບໂພສ.",
+  "error.notPostAuthor": "ມີແຕ່ຜູ້ຂຽນເທົ່ານັ້ນທີ່ສາມາດແກ້ໄຂໂພສນີ້ໄດ້.",
   "error.userNotFound": "ບໍ່ພົບຜູ້ໃຊ້.",
   "error.inquiryNotFound": "ບໍ່ພົບຄຳຖາມ.",
 
@@ -1571,6 +1584,7 @@ const lo: Partial<Dictionary> = {
   "profile.withdrawComplete": "ບັນຊີຂອງທ່ານຖືກລຶບແລ້ວ.",
 
   "common.delete": "ລຶບ",
+  "common.edit": "ແກ້ໄຂ",
   "post.deleteConfirm": "ທ່ານແນ່ໃຈບໍ່ວ່າຈະລຶບ?",
   "board.commentDeleted": "ຄວາມຄິດເຫັນນີ້ຖືກລຶບແລ້ວ.",
   "board.noComments": "ທ່ານຍັງບໍ່ໄດ້ຂຽນຄວາມຄິດເຫັນ.",
@@ -1752,6 +1766,7 @@ const my: Partial<Dictionary> = {
 
   "error.categoryNotFound": "ဤအမျိုးအစား မရှိပါ။",
   "error.postNotFound": "ပို့စ်ကို ရှာမတွေ့ပါ။",
+  "error.notPostAuthor": "ပို့စ်ရေးသားသူသာ ဤပို့စ်ကို ပြင်ဆင်နိုင်ပါသည်။",
   "error.userNotFound": "အသုံးပြုသူကို ရှာမတွေ့ပါ။",
   "error.inquiryNotFound": "မေးမြန်းချက်ကို ရှာမတွေ့ပါ။",
 
@@ -1806,6 +1821,7 @@ const my: Partial<Dictionary> = {
   "profile.withdrawComplete": "သင့်အကောင့်ကို ဖျက်ပြီးပါပြီ။",
 
   "common.delete": "ဖျက်ရန်",
+  "common.edit": "ပြင်ဆင်ရန်",
   "post.deleteConfirm": "ဖျက်မှာသေချာပါသလား?",
   "board.commentDeleted": "ဤမှတ်ချက်ကို ဖျက်ပြီးပါပြီ။",
   "board.noComments": "သင် မှတ်ချက်တစ်ခုမှ မရေးရသေးပါ။",
@@ -1987,6 +2003,7 @@ const mn: Partial<Dictionary> = {
 
   "error.categoryNotFound": "Энэ ангилал байхгүй байна.",
   "error.postNotFound": "Пост олдсонгүй.",
+  "error.notPostAuthor": "Зөвхөн зохиогч энэ нийтлэлийг засах боломжтой.",
   "error.userNotFound": "Хэрэглэгч олдсонгүй.",
   "error.inquiryNotFound": "Асуулт олдсонгүй.",
 
@@ -2041,6 +2058,7 @@ const mn: Partial<Dictionary> = {
   "profile.withdrawComplete": "Таны бүртгэл устгагдлаа.",
 
   "common.delete": "Устгах",
+  "common.edit": "Засах",
   "post.deleteConfirm": "Устгахдаа итгэлтэй байна уу?",
   "board.commentDeleted": "Энэ сэтгэгдэл устгагдсан байна.",
   "board.noComments": "Та одоогоор сэтгэгдэл бичээгүй байна.",
@@ -2222,6 +2240,7 @@ const ru: Partial<Dictionary> = {
 
   "error.categoryNotFound": "Такой категории не существует.",
   "error.postNotFound": "Пост не найден.",
+  "error.notPostAuthor": "Редактировать этот пост может только автор.",
   "error.userNotFound": "Пользователь не найден.",
   "error.inquiryNotFound": "Обращение не найдено.",
 
@@ -2276,6 +2295,7 @@ const ru: Partial<Dictionary> = {
   "profile.withdrawComplete": "Ваш аккаунт удалён.",
 
   "common.delete": "Удалить",
+  "common.edit": "Редактировать",
   "post.deleteConfirm": "Вы уверены, что хотите удалить?",
   "board.commentDeleted": "Этот комментарий удалён.",
   "board.noComments": "Вы ещё не оставили ни одного комментария.",
@@ -2541,6 +2561,7 @@ const km: Partial<Dictionary> = {
 
   "error.categoryNotFound": "ប្រភេទនេះមិនមានទេ។",
   "error.postNotFound": "រកមិនឃើញប្រកាស។",
+  "error.notPostAuthor": "មានតែអ្នកនិពន្ធប៉ុណ្ណោះដែលអាចកែសម្រួលការប្រកាសនេះបាន។",
   "error.userNotFound": "រកមិនឃើញអ្នកប្រើប្រាស់។",
   "error.inquiryNotFound": "រកមិនឃើញសំណួរ។",
 
@@ -2596,6 +2617,7 @@ const km: Partial<Dictionary> = {
   "profile.withdrawComplete": "គណនីរបស់អ្នកត្រូវបានលុបរួចរាល់។",
 
   "common.delete": "លុប",
+  "common.edit": "កែសម្រួល",
   "post.deleteConfirm": "តើអ្នកពិតជាចង់លុបវាមែនទេ?",
   "board.commentDeleted": "មតិយោបល់នេះត្រូវបានលុប។",
   "board.noComments": "អ្នកមិនទាន់បានសរសេរមតិយោបល់ណាមួយនៅឡើយទេ។",

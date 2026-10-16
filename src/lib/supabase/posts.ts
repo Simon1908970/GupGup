@@ -35,6 +35,7 @@ interface PostRow {
     country: CountryCode;
     avatar_url: string | null;
     is_withdrawn: boolean;
+    is_supporter: boolean;
   } | null;
   comments: { count: number }[];
   likes: { count: number }[];
@@ -45,7 +46,7 @@ interface PostRow {
 // plain "profiles" is ambiguous between posts_author_id_fkey and post_likes
 // (PostgREST returns HTTP 300 PGRST201 for every query using this select).
 const POST_SELECT =
-  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn), comments(count), likes:post_likes(count)" +
+  "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn, is_supporter), comments(count), likes:post_likes(count)" +
   ", show_on_map, business_address, business_detail_address, business_lat, business_lng, is_notice";
 
 function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
@@ -63,6 +64,7 @@ function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
           country: row.author.country,
           avatarUrl: row.author.avatar_url ?? undefined,
           isWithdrawn: row.author.is_withdrawn,
+          isSupporter: row.author.is_supporter,
         }
       : { id: row.author_id, nickname: "알 수 없음", country: "etc" },
     createdAt: row.created_at,
@@ -333,6 +335,41 @@ export async function createPost(input: CreatePostInput): Promise<string> {
   if (adjustError) throw adjustError;
 
   return data.id;
+}
+
+export interface UpdatePostInput {
+  id: string;
+  authorId: string;
+  country: CountryCode;
+  title: string;
+  body: string;
+  attachments?: Attachment[];
+  showOnMap?: boolean;
+  businessAddress?: string;
+  businessDetailAddress?: string;
+  businessLat?: number;
+  businessLng?: number;
+}
+
+export async function updatePost(input: UpdatePostInput): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("posts")
+    .update({
+      country: input.country,
+      title: input.title,
+      body: input.body,
+      attachments: input.attachments ?? [],
+      show_on_map: input.showOnMap ?? false,
+      business_address: input.businessAddress ?? null,
+      business_detail_address: input.businessDetailAddress ?? null,
+      business_lat: input.businessLat ?? null,
+      business_lng: input.businessLng ?? null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", input.id)
+    .eq("author_id", input.authorId);
+  if (error) throw error;
 }
 
 export async function fetchPostsByAuthor(authorId: string): Promise<Post[]> {
