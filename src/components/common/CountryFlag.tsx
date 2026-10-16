@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 // back to plain two-letter text (e.g. "TH") instead of an actual flag.
 // "all"/"etc" aren't countries, so they keep their globe emoji, which is a
 // regular (non flag-sequence) emoji that renders fine everywhere.
-const FLAG_ICON_CODES = new Set<CountryCode>(["vn", "th", "la", "id", "mm", "ph", "mn", "kr"]);
+const FLAG_ICON_CODES = new Set<CountryCode>(["vn", "th", "la", "id", "mm", "ph", "mn", "kh", "kr"]);
 
 export function CountryFlag({
   code,

@@ -7,6 +7,7 @@ export type CountryCode =
   | "mm"
   | "ph"
   | "mn"
+  | "kh"
   | "kr"
   | "etc";
 
@@ -81,6 +82,7 @@ export interface Author {
   country: CountryCode;
   avatarUrl?: string;
   isWithdrawn?: boolean;
+  isSupporter?: boolean;
 }
 
 export type AttachmentType = "image" | "video";

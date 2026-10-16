@@ -5,7 +5,7 @@ export interface ExchangeTarget {
   code: string; // ISO 4217
 }
 
-// Matches the site's 7 target countries (see constants/countries.ts) --
+// Matches the site's 8 target countries (see constants/countries.ts) --
 // "etc"/"all"/"kr" have no single home currency, so they're excluded.
 export const EXCHANGE_TARGETS: ExchangeTarget[] = [
   { country: "vn", code: "VND" },
@@ -15,4 +15,5 @@ export const EXCHANGE_TARGETS: ExchangeTarget[] = [
   { country: "mm", code: "MMK" },
   { country: "ph", code: "PHP" },
   { country: "mn", code: "MNT" },
+  { country: "kh", code: "KHR" },
 ];
