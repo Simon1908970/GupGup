@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { deleteThread, fetchThreads, type ThreadWithPartner } from "@/lib/supabase/messages";
 import { Avatar } from "@/components/common/Avatar";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { DeleteButton } from "@/components/common/DeleteButton";
 import { formatDate, getErrorMessage } from "@/lib/utils";
 
 export default function MessagesListPage() {
@@ -80,12 +81,7 @@ export default function MessagesListPage() {
                     </span>
                   )}
                 </Link>
-                <button
-                  onClick={() => setPendingDelete(thread)}
-                  className="shrink-0 px-3 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
-                >
-                  {t("common.delete")}
-                </button>
+                <DeleteButton onClick={() => setPendingDelete(thread)} className="mr-3" />
               </li>
             );
           })}

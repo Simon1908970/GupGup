@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { DeleteButton } from "@/components/common/DeleteButton";
 import { cn, formatDate } from "@/lib/utils";
 
 interface InquiryMessage {
@@ -62,13 +63,7 @@ export default function AdminInquiryThreadPage() {
         <Link href="/admin/inquiries" className="text-xs text-[var(--color-text-muted)]">
           ← 목록으로
         </Link>
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)] disabled:opacity-50"
-        >
-          삭제
-        </button>
+        <DeleteButton onClick={handleDelete} disabled={deleting} label="삭제" />
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto py-2">

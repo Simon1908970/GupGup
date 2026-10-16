@@ -16,6 +16,7 @@ import { CATEGORIES } from "@/lib/constants/categories";
 import { COMMENT_REWARD } from "@/lib/constants/points";
 import { formatDate } from "@/lib/utils";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { DeleteButton } from "@/components/common/DeleteButton";
 
 export default function MyCommentsPage() {
   const { t } = useLanguage();
@@ -74,14 +75,7 @@ export default function MyCommentsPage() {
               </p>
               <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">{formatDate(c.createdAt)}</p>
             </Link>
-            {!c.isDeleted && (
-              <button
-                onClick={() => setPendingDelete(c)}
-                className="shrink-0 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
-              >
-                {t("common.delete")}
-              </button>
-            )}
+            {!c.isDeleted && <DeleteButton onClick={() => setPendingDelete(c)} />}
           </li>
         ))}
       </ul>

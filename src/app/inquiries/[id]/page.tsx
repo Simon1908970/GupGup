@@ -13,6 +13,7 @@ import {
   type InquiryRow,
 } from "@/lib/supabase/inquiries";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { DeleteButton } from "@/components/common/DeleteButton";
 import { cn, formatDate } from "@/lib/utils";
 
 export default function InquiryDetailPage() {
@@ -81,13 +82,7 @@ export default function InquiryDetailPage() {
           <p className="text-sm font-semibold">{inquiry.title}</p>
           <p className="text-xs text-[var(--color-text-muted)]">{t("inquiries.team")}</p>
         </div>
-        <button
-          onClick={() => setConfirmingDelete(true)}
-          disabled={deleting}
-          className="shrink-0 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)] disabled:opacity-50"
-        >
-          {t("common.delete")}
-        </button>
+        <DeleteButton onClick={() => setConfirmingDelete(true)} disabled={deleting} />
       </div>
 
       {confirmingDelete && (
