@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -14,9 +14,11 @@ interface InquiryMessage {
 
 export default function AdminInquiryThreadPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const [messages, setMessages] = useState<InquiryMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   function load() {
     fetch(`/api/admin/inquiries/${params.id}/messages`)
@@ -25,6 +27,17 @@ export default function AdminInquiryThreadPage() {
   }
 
   useEffect(load, [params.id]);
+
+  async function handleDelete() {
+    if (!confirm("이 문의를 삭제하시겠습니까?")) return;
+    setDeleting(true);
+    try {
+      await fetch(`/api/admin/inquiries/${params.id}`, { method: "DELETE" });
+      router.push("/admin/inquiries");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -45,9 +58,18 @@ export default function AdminInquiryThreadPage() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col gap-3">
-      <Link href="/admin/inquiries" className="text-xs text-[var(--color-text-muted)]">
-        ← 목록으로
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/admin/inquiries" className="text-xs text-[var(--color-text-muted)]">
+          ← 목록으로
+        </Link>
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)] disabled:opacity-50"
+        >
+          삭제
+        </button>
+      </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto py-2">
         {messages.map((m) => {

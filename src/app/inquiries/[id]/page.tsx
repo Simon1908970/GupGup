@@ -1,31 +1,48 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import {
+  deleteInquiry,
   fetchInquiry,
   fetchInquiryMessages,
   sendInquiryMessage,
   type InquiryMessageRow,
   type InquiryRow,
 } from "@/lib/supabase/inquiries";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { cn, formatDate } from "@/lib/utils";
 
 export default function InquiryDetailPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const { user } = useAuth();
   const [inquiry, setInquiry] = useState<InquiryRow | null | undefined>(undefined);
   const [messages, setMessages] = useState<InquiryMessageRow[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchInquiry(params.id).then(setInquiry);
     fetchInquiryMessages(params.id).then(setMessages);
   }, [params.id]);
+
+  async function handleDelete() {
+    if (!user) return;
+    setConfirmingDelete(false);
+    setDeleting(true);
+    try {
+      await deleteInquiry(params.id, user.id);
+      router.push("/inquiries");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   if (inquiry === null) {
     return (
@@ -59,10 +76,27 @@ export default function InquiryDetailPage() {
 
   return (
     <div className="mx-auto flex h-[calc(100vh-7rem)] max-w-2xl flex-col px-4 py-4">
-      <div className="mb-3 border-b border-[var(--color-border-gray-light)] pb-3">
-        <p className="text-sm font-semibold">{inquiry.title}</p>
-        <p className="text-xs text-[var(--color-text-muted)]">{t("inquiries.team")}</p>
+      <div className="mb-3 flex items-start justify-between border-b border-[var(--color-border-gray-light)] pb-3">
+        <div>
+          <p className="text-sm font-semibold">{inquiry.title}</p>
+          <p className="text-xs text-[var(--color-text-muted)]">{t("inquiries.team")}</p>
+        </div>
+        <button
+          onClick={() => setConfirmingDelete(true)}
+          disabled={deleting}
+          className="shrink-0 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)] disabled:opacity-50"
+        >
+          {t("common.delete")}
+        </button>
       </div>
+
+      {confirmingDelete && (
+        <ConfirmModal
+          message={t("post.deleteConfirm")}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirmingDelete(false)}
+        />
+      )}
 
       <div className="flex-1 space-y-3 overflow-y-auto py-2">
         {messages.map((m) => {

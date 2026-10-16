@@ -87,6 +87,16 @@ export async function createInquiry(
   return inquiry.id;
 }
 
+export async function deleteInquiry(id: string, userId: string): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("inquiries")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId);
+  if (error) throw error;
+}
+
 export async function sendInquiryMessage(inquiryId: string, userId: string, body: string) {
   const supabase = createClient();
   const { error } = await supabase.from("inquiry_messages").insert({
