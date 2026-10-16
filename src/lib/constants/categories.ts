@@ -52,7 +52,6 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
       { slug: "hospital", labelKey: "sub.life.hospital" },
       { slug: "mobile", labelKey: "sub.life.mobile" },
       { slug: "admin", labelKey: "sub.life.admin" },
-      { slug: "law", labelKey: "sub.life.law" },
     ],
   },
   marketplace: {
