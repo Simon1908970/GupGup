@@ -82,11 +82,15 @@ export async function PATCH(
   if (!admin) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
   const { id } = await params;
-  const { category, subCategory } = (await request.json()) as {
+  const { category, subCategory, title, body } = (await request.json()) as {
     category?: CategorySlug;
     subCategory?: string | null;
+    title?: string;
+    body?: string;
   };
-  if (!category) return NextResponse.json({ error: "category required" }, { status: 400 });
+  if (!category && title === undefined && body === undefined) {
+    return NextResponse.json({ error: "nothing to update" }, { status: 400 });
+  }
 
   const supabase = createAdminClient();
   const { data: post } = await supabase
@@ -96,7 +100,34 @@ export async function PATCH(
     .maybeSingle();
   if (!post) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  if (category === "news" || post.category === "news") {
+  if (post.category === "news") {
+    return NextResponse.json(
+      { error: "news posts are managed from 뉴스 관리" },
+      { status: 400 },
+    );
+  }
+
+  if (title !== undefined || body !== undefined) {
+    const contentUpdates: { title?: string; body?: string } = {};
+    if (title !== undefined) {
+      if (!title.trim()) return NextResponse.json({ error: "title required" }, { status: 400 });
+      contentUpdates.title = title.trim();
+    }
+    if (body !== undefined) {
+      if (!body.trim()) return NextResponse.json({ error: "body required" }, { status: 400 });
+      contentUpdates.body = body.trim();
+    }
+    const { error: contentError } = await supabase
+      .from("posts")
+      .update(contentUpdates)
+      .eq("id", id);
+    if (contentError) return NextResponse.json({ error: contentError.message }, { status: 500 });
+    if (!category) return NextResponse.json({ ok: true, action: "edited" });
+  }
+
+  if (!category) return NextResponse.json({ ok: true, action: "unchanged" });
+
+  if (category === "news") {
     return NextResponse.json(
       { error: "news posts are managed from 뉴스 관리, not moved here" },
       { status: 400 },

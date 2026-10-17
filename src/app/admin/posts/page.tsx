@@ -12,6 +12,7 @@ import { formatDate } from "@/lib/utils";
 interface AdminPostRow {
   id: string;
   title: string;
+  body: string;
   category: CategorySlug;
   created_at: string;
   author: { nickname: string } | null;
@@ -24,12 +25,16 @@ export default function AdminPostsPage() {
   const [posts, setPosts] = useState<AdminPostRow[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [moveNotice, setMoveNotice] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState<AdminPostRow | null>(null);
+  const [editForm, setEditForm] = useState({ title: "", body: "" });
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editSubmitting, setEditSubmitting] = useState(false);
 
   function load() {
     const supabase = createClient();
     let query = supabase
       .from("posts")
-      .select("id, title, category, created_at, author:profiles!posts_author_id_fkey(nickname)")
+      .select("id, title, body, category, created_at, author:profiles!posts_author_id_fkey(nickname)")
       .order("created_at", { ascending: false })
       .limit(50);
     if (category !== "all") query = query.eq("category", category);
@@ -44,6 +49,37 @@ export default function AdminPostsPage() {
     await fetch(`/api/admin/posts/${deleteTarget}`, { method: "DELETE" });
     setDeleteTarget(null);
     load();
+  }
+
+  function openEdit(p: AdminPostRow) {
+    setEditTarget(p);
+    setEditForm({ title: p.title, body: p.body });
+    setEditError(null);
+  }
+
+  async function handleEditSave() {
+    if (!editTarget) return;
+    if (!editForm.title.trim() || !editForm.body.trim()) {
+      setEditError("제목과 내용을 모두 입력해주세요.");
+      return;
+    }
+    setEditSubmitting(true);
+    setEditError(null);
+    try {
+      const res = await fetch(`/api/admin/posts/${editTarget.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editForm.title, body: editForm.body }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "failed");
+      setEditTarget(null);
+      load();
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "수정에 실패했습니다.");
+    } finally {
+      setEditSubmitting(false);
+    }
   }
 
   async function handleMove(postId: string, targetCategory: CategorySlug) {
@@ -148,6 +184,14 @@ export default function AdminPostsPage() {
                 )}
               </select>
             )}
+            {p.category !== "news" && (
+              <button
+                onClick={() => openEdit(p)}
+                className="shrink-0 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
+              >
+                수정
+              </button>
+            )}
             <button
               onClick={() => setDeleteTarget(p.id)}
               className="shrink-0 text-xs font-medium text-[var(--color-brand-red)]"
@@ -164,6 +208,45 @@ export default function AdminPostsPage() {
           onConfirm={handleDelete}
           onCancel={() => setDeleteTarget(null)}
         />
+      )}
+
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="flex w-full max-w-lg flex-col gap-3 rounded-lg bg-white p-5 shadow-xl">
+            <h2 className="text-sm font-bold">게시글 수정</h2>
+            <input
+              className="h-10 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
+              placeholder="제목"
+              value={editForm.title}
+              onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+            />
+            <textarea
+              className="resize-none rounded-md border border-[var(--color-border-gray)] p-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
+              rows={8}
+              placeholder="내용"
+              value={editForm.body}
+              onChange={(e) => setEditForm({ ...editForm, body: e.target.value })}
+            />
+            {editError && <p className="text-xs text-[var(--color-brand-red)]">{editError}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditTarget(null)}
+                className="h-10 rounded-md border border-[var(--color-border-gray)] px-5 text-sm font-medium"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                disabled={editSubmitting}
+                onClick={handleEditSave}
+                className="relative h-10 rounded-md bg-[var(--color-brand-red)] px-5 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
+              >
+                저장
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

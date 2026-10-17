@@ -8,7 +8,7 @@
 //
 // draft.json:
 //   { country, category, subCategory?, title, body, imageUrl? }
-//   - country: one of vn/th/la/id/mm/ph/mn/etc (must have a profileId set
+//   - country: one of vn/th/la/id/mm/ph/mn/kh/etc (must have a profileId set
 //     in accounts.json -- run setup-accounts.mjs first)
 //   - category: community/housing/life/marketplace/university/meeting
 //     (never "news" -- that is a separate, operator-content category)
@@ -19,7 +19,7 @@ import { pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { loadAccounts } from "./setup-accounts.mjs";
 
-const COUNTRIES = ["vn", "th", "la", "id", "mm", "ph", "mn", "etc"];
+const COUNTRIES = ["vn", "th", "la", "id", "mm", "ph", "mn", "kh", "etc"];
 const CATEGORIES = ["community", "housing", "life", "marketplace", "university", "meeting"];
 const REQUIRED = ["country", "category", "title", "body"];
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
