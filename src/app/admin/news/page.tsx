@@ -10,6 +10,10 @@ interface NewsRow {
   id: string;
   title: string;
   source_name: string | null;
+  source_url: string | null;
+  original_lang: string | null;
+  original_body: string | null;
+  body: string;
   created_at: string;
 }
 
@@ -24,6 +28,7 @@ const EMPTY = {
 
 export default function AdminNewsPage() {
   const [form, setForm] = useState(EMPTY);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<NewsRow[]>([]);
@@ -33,7 +38,7 @@ export default function AdminNewsPage() {
     const supabase = createClient();
     supabase
       .from("posts")
-      .select("id, title, source_name, created_at")
+      .select("id, title, source_name, source_url, original_lang, original_body, body, created_at")
       .eq("category", "news")
       .order("created_at", { ascending: false })
       .limit(50)
@@ -41,6 +46,26 @@ export default function AdminNewsPage() {
   }
 
   useEffect(load, []);
+
+  function handleEdit(r: NewsRow) {
+    setEditingId(r.id);
+    setForm({
+      title: r.title,
+      sourceName: r.source_name ?? "",
+      sourceUrl: r.source_url ?? "",
+      originalLang: r.original_lang ?? "th",
+      originalBody: r.original_body ?? "",
+      body: r.body,
+    });
+    setError(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null);
+    setForm(EMPTY);
+    setError(null);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -52,17 +77,23 @@ export default function AdminNewsPage() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/news", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await fetch(
+        editingId ? `/api/admin/news/${editingId}` : "/api/admin/news",
+        {
+          method: editingId ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "failed");
       setForm(EMPTY);
+      setEditingId(null);
       load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "등록에 실패했습니다.");
+      setError(
+        err instanceof Error ? err.message : editingId ? "수정에 실패했습니다." : "등록에 실패했습니다.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -83,6 +114,12 @@ export default function AdminNewsPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-lg font-bold">뉴스 관리</h1>
+
+      {editingId && (
+        <p className="text-xs text-[var(--color-text-muted)]">
+          뉴스 글을 수정하는 중입니다. 취소하면 새 글 등록 폼으로 돌아갑니다.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -126,13 +163,22 @@ export default function AdminNewsPage() {
           onChange={(e) => setForm({ ...form, body: e.target.value })}
         />
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {editingId && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="rounded-md border border-[var(--color-border-gray)] px-5 py-2 text-sm font-medium"
+            >
+              취소
+            </button>
+          )}
           <button
             type="submit"
             disabled={submitting}
             className="relative rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
           >
-            등록
+            {editingId ? "수정" : "등록"}
           </button>
         </div>
       </form>
@@ -160,6 +206,12 @@ export default function AdminNewsPage() {
             >
               보기
             </a>
+            <button
+              onClick={() => handleEdit(r)}
+              className="shrink-0 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"
+            >
+              수정
+            </button>
             <button
               onClick={() => setDeleteTarget(r.id)}
               className="shrink-0 text-xs font-medium text-[var(--color-brand-red)]"
