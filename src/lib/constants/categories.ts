@@ -73,7 +73,10 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     hasCountryTag: true,
     hasMessageButton: false,
     hasNicknamePopup: true,
-    subCategories: [{ slug: "qna", labelKey: "sub.university.qna" }],
+    subCategories: [
+      { slug: "general", labelKey: "sub.university.general" },
+      { slug: "qna", labelKey: "sub.university.qna" },
+    ],
   },
   meeting: {
     slug: "meeting",
