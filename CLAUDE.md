@@ -203,3 +203,31 @@
 - 출처(매체명 + URL) 필수.
 - 이미지는 Pexels(무료 라이선스). 사람 이미지 금지. `image_credit` 표시.
 - AI 생성 이미지·영상 사용 안 함.
+
+## 국가별 커뮤니티 봇 (운영 지침 — Claude용)
+
+8개국(베트남/태국/라오스/인도네시아/미얀마/필리핀/몽골/기타) 각각에 글 포스팅용 계정 1개를
+운영자가 만들어 두고, 사용자가 검수를 마친 글을 "이거 올려줘"처럼 요청하면 그 국가 계정으로
+발행한다. 계정은 `profiles.is_supporter = true`로 표시되고, 닉네임 옆에 작게 "서포터" 라벨이
+붙어 일반 회원과 구분된다(완전 비공개 위장 아님 — 사용자와 합의된 타협안).
+
+**범위 — 지금 구현된 것은 포스팅뿐.** 범용 정보성 질문에 자동으로 댓글을 다는 기능(국가별
+댓글용 계정, 자연스러운 말투)은 아직 설계/구현되지 않았다. 사용자가 명시적으로 요청하기 전엔
+만들지 말 것 — 특히 비자/법률/병원 등 민감 카테고리에는 절대 자동 댓글을 달지 않는다.
+
+1. **계정 설정(최초 1회, 사용자 승인 필요)**: `bots/accounts.json`에 8개국 닉네임이 미리
+   정의되어 있다. `node --env-file=.env.local bots/setup-accounts.mjs [--dry-run]`을 실행하면
+   비어있는 국가에 대해 실제 Supabase auth 계정 + profiles row(`is_supporter: true`)를 만들고
+   그 결과 `profileId`를 accounts.json에 기록한다. 실제 운영 DB에 계정을 만드는 행위이므로
+   매번 먼저 사용자에게 실행 여부를 확인할 것 — 이미 `profileId`가 있는 국가는 건너뜀(재실행 안전).
+2. **글 발행**: 사용자가 채팅으로 국가/카테고리(+소분류)/제목/본문(+선택: 이미지 URL)을 주면
+   draft JSON `{ country, category, subCategory?, title, body, imageUrl? }`을 스크래치패드에 쓰고
+   `node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]` 실행. category는
+   `community`(sub: free/qna/travel/dating) / `housing` / `life`(sub: marriage-childcare/
+   restaurant/hospital/mobile/admin/law) / `marketplace` / `university` / `meeting` 중 하나 —
+   `news`는 운영자 전용 카테고리라 여기서 쓰지 않음. 먼저 `--dry-run`으로 payload 확인 권장.
+3. 출력된 게시글 id와 `/board/<category>/<id>` URL을 사용자에게 보고.
+
+**DB**: `0025_supporter_accounts.sql` 마이그레이션(컬럼 `profiles.is_supporter`)이 실제 Supabase
+프로젝트에 적용되어 있어야 함(SQL 에디터에 붙여넣기, 기존 마이그레이션들과 동일한 방식). 적용
+전에는 `is_supporter`를 조회하는 모든 게시판 쿼리가 400 에러를 낸다.

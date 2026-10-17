@@ -17,11 +17,12 @@ interface CommentRow {
     country: CountryCode;
     avatar_url: string | null;
     is_withdrawn: boolean;
+    is_supporter: boolean;
   } | null;
 }
 
 const COMMENT_SELECT =
-  "id, post_id, parent_id, body, created_at, author_id, is_deleted, author:profiles(id, nickname, country, avatar_url, is_withdrawn)";
+  "id, post_id, parent_id, body, created_at, author_id, is_deleted, author:profiles(id, nickname, country, avatar_url, is_withdrawn, is_supporter)";
 
 function mapComment(row: CommentRow): Comment {
   return {
@@ -38,6 +39,7 @@ function mapComment(row: CommentRow): Comment {
           country: row.author.country,
           avatarUrl: row.author.avatar_url ?? undefined,
           isWithdrawn: row.author.is_withdrawn,
+          isSupporter: row.author.is_supporter,
         }
       : { id: row.author_id, nickname: "알 수 없음", country: "etc" },
   };

@@ -10,7 +10,7 @@ export async function fetchPublicProfile(id: string): Promise<PublicProfile | nu
   const supabase = createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, nickname, country, avatar_url, is_withdrawn, created_at")
+    .select("id, nickname, country, avatar_url, is_withdrawn, is_supporter, created_at")
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
@@ -22,6 +22,7 @@ export async function fetchPublicProfile(id: string): Promise<PublicProfile | nu
       country: data.country as CountryCode,
       avatarUrl: data.avatar_url ?? undefined,
       isWithdrawn: data.is_withdrawn,
+      isSupporter: data.is_supporter,
     },
     joinedAt: data.created_at,
   };

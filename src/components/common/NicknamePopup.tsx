@@ -9,6 +9,7 @@ import { blockUser } from "@/lib/supabase/blocks";
 import type { Author } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ReportModal } from "@/components/common/ReportModal";
+import { SupporterBadge } from "@/components/common/SupporterBadge";
 
 export function NicknamePopup({
   author,
@@ -55,6 +56,7 @@ export function NicknamePopup({
         className={cn("font-medium hover:underline", className)}
       >
         {children ?? author.nickname}
+        {!children && author.isSupporter && <SupporterBadge />}
       </button>
 
       {open && !isSelf && (
