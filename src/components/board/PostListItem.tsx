@@ -7,7 +7,6 @@ import { formatCount, formatDate } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
-import { SupporterBadge } from "@/components/common/SupporterBadge";
 import { DeleteButton } from "@/components/common/DeleteButton";
 import { MessageSquare, Eye, Pin } from "lucide-react";
 
@@ -68,10 +67,7 @@ export function PostListItem({
             )}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[var(--color-text-muted)]">
-            <span>
-              {post.category === "news" ? t("news.byline") : post.author.nickname}
-              {post.category !== "news" && post.author.isSupporter && <SupporterBadge />}
-            </span>
+            <span>{post.category === "news" ? t("news.byline") : post.author.nickname}</span>
             <span>·</span>
             <span>{formatDate(post.createdAt)}</span>
             <span className="flex items-center gap-0.5">

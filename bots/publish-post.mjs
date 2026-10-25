@@ -7,17 +7,26 @@
 //   node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]
 //
 // draft.json:
-//   { country, category, subCategory?, title, body, imageUrl? }
+//   { country, category, subCategory?, title, body, imageUrl?, membersOnly?, author? }
 //   - country: one of vn/th/la/id/mm/ph/mn/kh/etc (must have a profileId set
 //     in accounts.json -- run setup-accounts.mjs first)
 //   - category: community/housing/life/marketplace/university/meeting
 //     (never "news" -- that is a separate, operator-content category)
+//   - membersOnly: true hides the post from logged-out visitors (RLS-enforced,
+//     see migration 0029). Use for sensitive topics flagged in CLAUDE.md's
+//     country-bot section (illegal stay, etc).
+//   - author: optional -- a key into question-accounts.json (e.g. "vn-q2"),
+//     for a question-persona draft from generate-question.mjs. Its account's
+//     own country must match `country`. Omit it for a plain general post,
+//     which still resolves to accounts.json's single country account as
+//     before.
 
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { loadAccounts } from "./setup-accounts.mjs";
+import { loadQuestionAccounts } from "./setup-question-accounts.mjs";
 
 const COUNTRIES = ["vn", "th", "la", "id", "mm", "ph", "mn", "kh", "etc"];
 const CATEGORIES = ["community", "housing", "life", "marketplace", "university", "meeting"];
@@ -52,7 +61,31 @@ export function validateDraft(d) {
   if (d.imageUrl != null && (typeof d.imageUrl !== "string" || !d.imageUrl.trim())) {
     return "invalid: imageUrl";
   }
+  if (d.membersOnly != null && typeof d.membersOnly !== "boolean") {
+    return "invalid: membersOnly";
+  }
+  if (d.author != null && (typeof d.author !== "string" || !d.author.trim())) {
+    return "invalid: author";
+  }
   return null;
+}
+
+export function resolveAuthorAccount(d, accounts, questionAccounts) {
+  if (d.author) {
+    const account = { ...accounts, ...questionAccounts }[d.author];
+    if (!account?.profileId) {
+      return { error: `no bot account set up for author "${d.author}" -- run setup-question-accounts.mjs first` };
+    }
+    if (account.country !== d.country) {
+      return { error: `author "${d.author}" belongs to country "${account.country}", not "${d.country}"` };
+    }
+    return { profileId: account.profileId };
+  }
+  const account = accounts[d.country];
+  if (!account?.profileId) {
+    return { error: `no bot account set up for country "${d.country}" -- run setup-accounts.mjs first` };
+  }
+  return { profileId: account.profileId };
 }
 
 export function buildInsertPayload(d, authorId, attachmentUrl) {
@@ -65,6 +98,7 @@ export function buildInsertPayload(d, authorId, attachmentUrl) {
     title: d.title.trim(),
     body: d.body.trim(),
     attachments: attachmentUrl ? [{ url: attachmentUrl, type: "image" }] : [],
+    members_only: d.membersOnly === true,
   };
 }
 
@@ -109,18 +143,17 @@ async function main() {
   }
 
   const accounts = loadAccounts();
-  const account = accounts[draft.country];
-  if (!account?.profileId) {
-    console.error(
-      `no bot account set up for country "${draft.country}" -- run setup-accounts.mjs first`,
-    );
+  const questionAccounts = loadQuestionAccounts();
+  const { profileId: authorId, error: authorError } = resolveAuthorAccount(draft, accounts, questionAccounts);
+  if (authorError) {
+    console.error(authorError);
     process.exit(1);
   }
 
   if (dryRun) {
     console.log(
       JSON.stringify(
-        buildInsertPayload(draft, account.profileId, draft.imageUrl ? "<uploaded-on-publish>" : null),
+        buildInsertPayload(draft, authorId, draft.imageUrl ? "<uploaded-on-publish>" : null),
         null,
         2,
       ),
@@ -146,7 +179,7 @@ async function main() {
 
   const { data, error } = await supabase
     .from("posts")
-    .insert(buildInsertPayload(draft, account.profileId, attachmentUrl))
+    .insert(buildInsertPayload(draft, authorId, attachmentUrl))
     .select("id")
     .single();
   if (error) {

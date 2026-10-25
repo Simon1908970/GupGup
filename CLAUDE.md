@@ -206,27 +206,93 @@
 
 ## 국가별 커뮤니티 봇 (운영 지침 — Claude용)
 
-9개국(베트남/태국/라오스/인도네시아/미얀마/필리핀/몽골/캄보디아/기타) 각각에 글 포스팅용 계정 1개를
-운영자가 만들어 두고, 사용자가 검수를 마친 글을 "이거 올려줘"처럼 요청하면 그 국가 계정으로
-발행한다. 계정은 `profiles.is_supporter = true`로 표시되고, 닉네임 옆에 작게 "서포터" 라벨이
-붙어 일반 회원과 구분된다(완전 비공개 위장 아님 — 사용자와 합의된 타협안).
+9개국(베트남/태국/라오스/인도네시아/미얀마/필리핀/몽골/캄보디아/기타) 각각에 **용도별로 분리된
+봇 계정 풀**이 있다 — 질문 계정과 답변 계정이 같은 사람처럼 보이지 않도록 항상 분리한다:
 
-**범위 — 지금 구현된 것은 포스팅뿐.** 범용 정보성 질문에 자동으로 댓글을 다는 기능(국가별
-댓글용 계정, 자연스러운 말투)은 아직 설계/구현되지 않았다. 사용자가 명시적으로 요청하기 전엔
-만들지 말 것 — 특히 비자/법률/병원 등 민감 카테고리에는 절대 자동 댓글을 달지 않는다.
+| 파일 | 국가당 개수 | 용도 | 트리거 |
+|---|---|---|---|
+| `bots/accounts.json` | 1개 | 일반 글 (문구 가공 없음, 그대로 발행) | "이거 올려줘" |
+| `bots/question-accounts.json` | 3개 (q1~q3) | 질문 글 — 질문자 페르소나 3종 | "질문으로 올려줘" |
+| `bots/reply-accounts.json` | 5개 (r1~r5) | 질문/정보글에 대한 답변 댓글 — 답변자 페르소나 5종 | "답변 만들어줘" |
 
-1. **계정 설정(최초 1회, 사용자 승인 필요)**: `bots/accounts.json`에 8개국 닉네임이 미리
-   정의되어 있다. `node --env-file=.env.local bots/setup-accounts.mjs [--dry-run]`을 실행하면
-   비어있는 국가에 대해 실제 Supabase auth 계정 + profiles row(`is_supporter: true`)를 만들고
-   그 결과 `profileId`를 accounts.json에 기록한다. 실제 운영 DB에 계정을 만드는 행위이므로
-   매번 먼저 사용자에게 실행 여부를 확인할 것 — 이미 `profileId`가 있는 국가는 건너뜀(재실행 안전).
-2. **글 발행**: 사용자가 채팅으로 국가/카테고리(+소분류)/제목/본문(+선택: 이미지 URL)을 주면
-   draft JSON `{ country, category, subCategory?, title, body, imageUrl? }`을 스크래치패드에 쓰고
-   `node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]` 실행. category는
-   `community`(sub: free/qna/travel/dating) / `housing` / `life`(sub: marriage-childcare/
-   restaurant/hospital/mobile/admin/law) / `marketplace` / `university` / `meeting` 중 하나 —
-   `news`는 운영자 전용 카테고리라 여기서 쓰지 않음. 먼저 `--dry-run`으로 payload 확인 권장.
-3. 출력된 게시글 id와 `/board/<category>/<id>` URL을 사용자에게 보고.
+모든 계정은 `profiles.is_supporter = true`로 표시되고 닉네임 옆에 작게 "서포터" 라벨이 붙어
+일반 회원과 구분된다(완전 비공개 위장 아님 — 사용자와 합의된 타협안).
+
+### 1. 계정 설정 (최초 1회, 사용자 승인 필요)
+
+```
+node --env-file=.env.local bots/setup-accounts.mjs [--dry-run]
+node --env-file=.env.local bots/setup-question-accounts.mjs [--dry-run]
+node --env-file=.env.local bots/setup-reply-accounts.mjs [--dry-run]
+```
+
+각각 비어있는 항목만 실제 Supabase auth 계정 + profiles row(`is_supporter: true`)를 만들고
+그 결과 `profileId`를 해당 json에 기록한다. 이미 `profileId`가 있는 항목은 건너뜀(재실행 안전).
+**실제 운영 DB에 계정을 만드는 행위이므로 매번 먼저 사용자에게 실행 여부를 확인할 것.**
+
+### 2. 일반 글 발행 ("이거 올려줘")
+
+사용자가 채팅으로 국가/카테고리(+소분류)/제목/본문(+선택: 이미지 URL)을 주면
+draft JSON `{ country, category, subCategory?, title, body, imageUrl?, membersOnly? }`을
+스크래치패드에 쓰고 `node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]`
+실행. category는 `community`(sub: free/qna/travel/dating) / `housing` / `life`(sub:
+marriage-childcare/restaurant/hospital/mobile/admin/law) / `marketplace` / `university` /
+`meeting` 중 하나 — `news`는 운영자 전용 카테고리라 여기서 쓰지 않음. 사용자가 준 제목/본문을
+그대로 쓴다 — 문구 가공 없음. 먼저 `--dry-run`으로 payload 확인 권장.
+
+### 3. 질문 글 발행 ("질문으로 올려줘" / "질문 올려달라")
+
+- `question-accounts.json`에서 해당 국가의 q1~q3 중 하나를 **매번 무작위로** 골라 쓴다(다양한
+  말투 확보). 사용자가 특정 페르소나를 지정하면 그걸 따른다.
+- `node --env-file=.env.local bots/generate-question.mjs --country <국가> --category <카테고리>
+  [--subCategory <서브>] --topic "<주제>" --author <고른 키, 예: vn-q2> [--out <path>]`
+- 반드시 해당 국가 언어로 작성 (vn=베트남어, th=태국어, la=라오어, id=인도네시아어, mm=미얀마어,
+  ph=필리핀어/타갈로그어, mn=몽골어, kh=크메르어, etc=영어 또는 사용자 지정 언어) — 번역 API
+  없이 Claude가 그 언어로 직접 작성한다. 사용자가 준 주제만 질문 형식으로 바꿔 쓴다 — 주제를
+  확장하거나 지어내지 않는다.
+- 초안(현지어 본문 + 참고용 한국어 대역)을 채팅에 보여주고 **승인 대기** — 임의 게시 금지.
+- 승인되면 `generate-question.mjs`가 출력한 draft(`author` 필드 포함)를 그대로
+  `bots/publish-post.mjs`에 넘긴다 — `author`가 있으면 그 페르소나 계정으로 발행된다(해당
+  계정의 country가 draft의 country와 다르면 발행이 거부됨).
+- 여러 국가에 같은 주제로 요청하면 국가마다 각각 그 나라 말로 새로 작성하고 각각 승인받는다
+  (기계 번역 복붙 아님).
+
+### 4. 답변 댓글 생성 ("답변 만들어줘" / "답변 하나 더 달아줘")
+
+3번에서 self-seed한 질문 글이나 완결된 정보글에 대한 답변 전용이다 — **실제 회원이 올린 글에는
+자동으로 답변을 달지 않는다.** 대상 카테고리는 아래로 한정 — 그 외(housing, life/\*,
+marketplace, meeting 전부)는 `generate-answer.mjs` 자체가 거부한다:
+- **반응형** (가벼운 반응 댓글): `news`, `community/free`, `community/travel`,
+  `community/dating`, `university/general`
+- **QnA 답변** (경험자 선배 페르소나): `community/qna`, `university/qna`
+
+**글을 특정하지 않고 요청하면(예: 그냥 "답변 만들어줘")**: 바로 아무 글이나 골라서 진행하지
+않는다. 먼저 Supabase에서 후보 목록을 조회해서 채팅에 보여주고, 사용자가 그중 하나씩 직접
+지목하면 그때 아래 절차를 그 글에 대해 수행한다 (배치 자동 처리 아님 — 한 번에 한 글씩, 매번
+사람이 고름):
+- "답변 만들어줘" → 대상 카테고리 안에서 `reply-accounts.json` 계정이 쓴 댓글이 하나도 없는 글
+- "답변 하나 더 달아줘" → 이미 1~4개 답변이 달려서 아직 페르소나가 남아있는 글(5개 다 찼으면
+  후보에서 제외)
+
+**글이 특정되면(목록에서 골랐거나, URL/id를 바로 줬을 때)**:
+1. 그 postId로 `posts` row를 직접 조회해서 title/body/category/subCategory/country를 가져온다
+   (사용자가 다시 타이핑할 필요 없음). 카테고리가 허용 목록 밖이면 중단하고 보고.
+2. 그 글에 이미 어떤 `reply-accounts.json` 계정(country가 일치하는 r1~r5)이 댓글을 달았는지
+   조회하고, **아직 안 쓰인 페르소나 중 하나를 무작위로** 고른다. 5개 다 썼으면 "이미 다
+   달렸다"고 보고하고 중단.
+3. `node --env-file=.env.local bots/generate-answer.mjs --postId <uuid> --author <고른 키, 예:
+   vn-r3> --category <카테고리> [--subCategory <서브>] --title "<제목>" --body "<본문>"`
+4. QnA 답변은 Anthropic `web_search` 툴로 수수료/기간/절차 같은 사실을 실제 검색해서 확인한 뒤
+   답한다(기억에 의존한 추측 금지 — 과거에 "3만원"이라고 지어냈다가 실제론 35,000원이었던 사고가
+   있었음). 검색 출처는 콘솔에만 표시되고 발행 본문엔 안 들어간다 — **승인 전에 그 출처로 숫자가
+   맞는지 사람이 한 번 확인할 것.**
+5. 초안을 채팅에 보여주고 **승인 대기** — 임의 게시 금지. 승인되면 `{ postId, author, body }`
+   모양 그대로 `node --env-file=.env.local bots/publish-comment.mjs <draft.json> [--dry-run]`
+   실행.
+
+### 5. 결과 보고
+
+발행된 글/댓글 id와 `/board/<category>/<id>` URL(댓글은 그 글의 URL)을 사용자에게 보고.
 
 **DB**: `0025_supporter_accounts.sql` 마이그레이션(컬럼 `profiles.is_supporter`)이 실제 Supabase
 프로젝트에 적용되어 있어야 함(SQL 에디터에 붙여넣기, 기존 마이그레이션들과 동일한 방식). 적용
