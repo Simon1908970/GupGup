@@ -1,5 +1,39 @@
 {
-  "order": ["vi", "th", "lo", "id", "my", "tl", "mn", "ru"],
-  "nextIndex": 0,
-  "history": []
+  "order": [
+    "vi",
+    "th",
+    "lo",
+    "id",
+    "my",
+    "tl",
+    "mn",
+    "ru"
+  ],
+  "nextIndex": 6,
+  "history": [
+    {
+      "country": "vi",
+      "date": "2026-10-15"
+    },
+    {
+      "country": "th",
+      "date": "2026-10-16"
+    },
+    {
+      "country": "lo",
+      "date": "2026-10-17"
+    },
+    {
+      "country": "id",
+      "date": "2026-10-19"
+    },
+    {
+      "country": "my",
+      "date": "2026-10-22"
+    },
+    {
+      "country": "tl",
+      "date": "2026-10-23"
+    }
+  ]
 }
