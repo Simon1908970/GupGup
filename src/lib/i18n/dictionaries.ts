@@ -235,6 +235,10 @@ const ko = {
   "board.noComments": "작성한 댓글이 없습니다.",
 
   "points.balanceLabel": "보유 포인트",
+  "welcome.greeting": "가입을 환영합니다. 회원들과의 활발한 교류를 부탁드려요.",
+  "welcome.firstPostThanks": "첫 글을 작성해 주셔서 감사합니다.",
+  "welcome.understood": "이해했습니다",
+
   "points.infoTitle": "포인트 안내",
   "points.infoBody": "• 회원가입 시 2,000P가 최초 1회 지급됩니다.\n• 글쓰기(일반 카테고리): +100P\n• 댓글 작성: +50P\n• 룸메이트, 중고거래, 한국 생활 > 식당·병원·한국 핸드폰·서류·행정 카테고리는 글쓰기 시 200P가 차감됩니다. 포인트가 부족하면 해당 카테고리에 글을 쓸 수 없습니다.\n• 글이나 댓글을 삭제하면 지급되었거나 차감되었던 포인트가 그대로 되돌아갑니다.\n• 포인트는 0 미만으로 내려가지 않습니다.",
   "points.premiumNotice": "이 카테고리는 글쓰기 시 200P가 차감됩니다.",
@@ -484,6 +488,10 @@ const en: Dictionary = {
   "board.noComments": "You haven't written any comments yet.",
 
   "points.balanceLabel": "Your points",
+  "welcome.greeting": "Welcome to Gup Gup! We hope you'll connect and chat with other members.",
+  "welcome.firstPostThanks": "Thanks for writing your first post!",
+  "welcome.understood": "Got it",
+
   "points.infoTitle": "About Points",
   "points.infoBody": "• You receive 2,000P once, the first time you set up your profile.\n• Writing a post (normal categories): +100P\n• Writing a comment: +50P\n• Posting in Roommate, Marketplace, or Life > Restaurants/Hospitals/Mobile Phones/Documents & Admin costs 200P. If you don't have enough points, you can't post in that category.\n• Deleting a post or comment reverses whatever points it originally earned or cost.\n• Points never go below 0.",
   "points.premiumNotice": "Posting in this category costs 200P.",
@@ -645,6 +653,10 @@ const vi: Partial<Dictionary> = {
   "board.noComments": "Bạn chưa viết bình luận nào.",
 
   "points.balanceLabel": "Điểm của bạn",
+  "welcome.greeting": "Chào mừng bạn đến với Gup Gup! Mong bạn giao lưu tích cực cùng các thành viên khác.",
+  "welcome.firstPostThanks": "Cảm ơn bạn đã viết bài đầu tiên!",
+  "welcome.understood": "Đã hiểu",
+
   "points.infoTitle": "Giới thiệu về điểm",
   "points.infoBody": "• Bạn nhận 2.000P một lần duy nhất khi tạo hồ sơ lần đầu.\n• Viết bài (danh mục thường): +100P\n• Viết bình luận: +50P\n• Đăng bài trong Bạn cùng phòng, Mua bán đồ cũ, hoặc Đời sống Hàn Quốc > Nhà hàng/Bệnh viện/Điện thoại di động/Giấy tờ & Hành chính sẽ trừ 200P. Nếu không đủ điểm, bạn không thể đăng bài trong danh mục đó.\n• Xóa bài viết hoặc bình luận sẽ hoàn lại đúng số điểm đã cộng hoặc trừ ban đầu.\n• Điểm không bao giờ giảm xuống dưới 0.",
   "points.premiumNotice": "Đăng bài trong danh mục này sẽ trừ 200 điểm.",
@@ -881,6 +893,10 @@ const th: Partial<Dictionary> = {
   "board.noComments": "คุณยังไม่ได้แสดงความคิดเห็น",
 
   "points.balanceLabel": "แต้มของคุณ",
+  "welcome.greeting": "ยินดีต้อนรับสู่ Gup Gup! หวังว่าคุณจะมีปฏิสัมพันธ์ที่ดีกับสมาชิกคนอื่น ๆ",
+  "welcome.firstPostThanks": "ขอบคุณที่เขียนโพสต์แรกของคุณ!",
+  "welcome.understood": "เข้าใจแล้ว",
+
   "points.infoTitle": "เกี่ยวกับแต้ม",
   "points.infoBody": "• คุณจะได้รับ 2,000 แต้มเพียงครั้งเดียวเมื่อสร้างโปรไฟล์ครั้งแรก\n• เขียนโพสต์ (หมวดทั่วไป): +100 แต้ม\n• แสดงความคิดเห็น: +50 แต้ม\n• การโพสต์ในหมวดเพื่อนร่วมห้อง, ซื้อขายมือสอง หรือชีวิตในเกาหลี > ร้านอาหาร/โรงพยาบาล/โทรศัพท์มือถือ/เอกสารและงานราชการ จะหัก 200 แต้ม หากแต้มไม่พอ คุณจะโพสต์ในหมวดนั้นไม่ได้\n• การลบโพสต์หรือความคิดเห็นจะคืนแต้มที่ได้รับหรือถูกหักไปตามเดิม\n• แต้มจะไม่มีวันติดลบ",
   "points.premiumNotice": "การโพสต์ในหมวดนี้จะหักแต้ม 200 แต้ม",
@@ -1119,6 +1135,10 @@ const id: Partial<Dictionary> = {
   "board.noComments": "Anda belum menulis komentar apa pun.",
 
   "points.balanceLabel": "Poin Anda",
+  "welcome.greeting": "Selamat datang di Gup Gup! Semoga Anda dapat berinteraksi secara aktif dengan anggota lain.",
+  "welcome.firstPostThanks": "Terima kasih telah menulis postingan pertama Anda!",
+  "welcome.understood": "Saya mengerti",
+
   "points.infoTitle": "Tentang Poin",
   "points.infoBody": "• Anda mendapat 2.000 poin satu kali saat pertama membuat profil.\n• Menulis postingan (kategori umum): +100 poin\n• Menulis komentar: +50 poin\n• Memposting di Teman Sekamar, Jual Beli, atau Kehidupan di Korea > Restoran/Rumah Sakit/Ponsel/Dokumen & Administrasi akan mengurangi 200 poin. Jika poin tidak cukup, Anda tidak bisa memposting di kategori tersebut.\n• Menghapus postingan atau komentar akan mengembalikan poin yang sebelumnya didapat atau dikurangi.\n• Poin tidak akan pernah kurang dari 0.",
   "points.premiumNotice": "Memposting di kategori ini akan mengurangi 200 poin.",
@@ -1357,6 +1377,10 @@ const tl: Partial<Dictionary> = {
   "board.noComments": "Wala ka pang isinulat na komento.",
 
   "points.balanceLabel": "Iyong mga puntos",
+  "welcome.greeting": "Maligayang pagdating sa Gup Gup! Sana ay makipag-ugnayan ka nang aktibo sa ibang miyembro.",
+  "welcome.firstPostThanks": "Salamat sa pagsulat ng iyong unang post!",
+  "welcome.understood": "Nauunawaan ko",
+
   "points.infoTitle": "Tungkol sa Puntos",
   "points.infoBody": "• Makakatanggap ka ng 2,000 puntos nang isang beses lang, kapag unang gumawa ka ng profile.\n• Pag-post (regular na kategorya): +100 puntos\n• Pag-comment: +50 puntos\n• Ang pag-post sa Roommate, Ikalawang-kamay, o Buhay sa Korea > Mga Restawran/Mga Ospital/Mobile Phone/Dokumento at Administrasyon ay magbabawas ng 200 puntos. Kung kulang ang puntos mo, hindi ka makakapag-post sa kategoryang iyon.\n• Ang pagtanggal ng post o comment ay ibabalik ang puntos na natanggap o nabawas dati.\n• Hindi kailanman bababa sa 0 ang puntos.",
   "points.premiumNotice": "Ang pag-post sa kategoryang ito ay magbabawas ng 200 puntos.",
@@ -1597,6 +1621,10 @@ const lo: Partial<Dictionary> = {
   "board.noComments": "ທ່ານຍັງບໍ່ໄດ້ຂຽນຄວາມຄິດເຫັນ.",
 
   "points.balanceLabel": "ຄະແນນຂອງທ່ານ",
+  "welcome.greeting": "ຍິນດີຕ້ອນຮັບສູ່ Gup Gup! ຫວັງວ່າທ່ານຈະມີປະຕິສຳພັນທີ່ດີກັບສະມາຊິກຄົນອື່ນ.",
+  "welcome.firstPostThanks": "ຂອບໃຈທີ່ຂຽນບົດຄວາມທຳອິດຂອງທ່ານ!",
+  "welcome.understood": "ເຂົ້າໃຈແລ້ວ",
+
   "points.infoTitle": "ກ່ຽວກັບຄະແນນ",
   "points.infoBody": "• ທ່ານຈະໄດ້ຮັບ 2,000 ຄະແນນພຽງຄັ້ງດຽວ ເມື່ອສ້າງໂປຣໄຟລ໌ຄັ້ງທຳອິດ.\n• ຂຽນບົດຄວາມ (ໝວດທົ່ວໄປ): +100 ຄະແນນ\n• ຂຽນຄວາມຄິດເຫັນ: +50 ຄະແນນ\n• ການໂພສໃນໝວດເພື່ອນຮ່ວມຫ້ອງ, ຊື້ຂາຍມືສອງ ຫຼື ຊີວິດຢູ່ເກົາຫຼີ > ຮ້ານອາຫານ/ໂຮງໝໍ/ໂທລະສັບມືຖື/ເອກະສານ & ບໍລິຫານ ຈະຖືກຫັກ 200 ຄະແນນ. ຖ້າຄະແນນບໍ່ພຽງພໍ ທ່ານຈະບໍ່ສາມາດໂພສໃນໝວດນັ້ນໄດ້.\n• ການລຶບບົດຄວາມ ຫຼື ຄວາມຄິດເຫັນຈະຄືນຄະແນນທີ່ໄດ້ຮັບ ຫຼື ຖືກຫັກໄປຄືນເກົ່າ.\n• ຄະແນນຈະບໍ່ຕິດລົບ.",
   "points.premiumNotice": "ການໂພສໃນໝວດໝູ່ນີ້ຈະຖືກຫັກ 200 ຄະແນນ.",
@@ -1835,6 +1863,10 @@ const my: Partial<Dictionary> = {
   "board.noComments": "သင် မှတ်ချက်တစ်ခုမှ မရေးရသေးပါ။",
 
   "points.balanceLabel": "သင့်ပွိုင့်",
+  "welcome.greeting": "Gup Gup မှ ကြိုဆိုပါသည်! အခြားအဖွဲ့ဝင်များနှင့် တက်ကြွစွာ ဆက်သွယ်နိုင်ပါစေ။",
+  "welcome.firstPostThanks": "သင့်ပထမဆုံး ပို့စ်ကို ရေးသားပေးတဲ့အတွက် ကျေးဇူးတင်ပါသည်။",
+  "welcome.understood": "နားလည်ပါပြီ",
+
   "points.infoTitle": "ပွိုင့်အကြောင်း",
   "points.infoBody": "• ပရိုဖိုင်ကို ပထမဆုံးအကြိမ် ဖန်တီးသည့်အခါ ပွိုင့် ၂,၀၀၀ တစ်ကြိမ်တည်း ရရှိပါမည်။\n• ပို့စ်တင်ခြင်း (ပုံမှန်အမျိုးအစားများ): +100 ပွိုင့်\n• မှတ်ချက်ရေးခြင်း: +50 ပွိုင့်\n• အခန်းဖော်၊ ဈေးဝယ်ရောင်း သို့မဟုတ် ကိုရီးယားနေထိုင်မှု > စားသောက်ဆိုင်များ/ဆေးရုံများ/မိုဘိုင်းဖုန်း/စာရွက်စာတမ်း & အုပ်ချုပ်ရေးတွင် ပို့စ်တင်ပါက ပွိုင့် ၂၀၀ နှုတ်ယူပါမည်။ ပွိုင့်မလုံလောက်ပါက ထိုအမျိုးအစားတွင် ပို့စ်တင်၍မရပါ။\n• ပို့စ် သို့မဟုတ် မှတ်ချက်ကို ဖျက်လိုက်ပါက ရရှိခဲ့သော သို့မဟုတ် နှုတ်ယူခဲ့သော ပွိုင့်ကို ပြန်လည်ပေးအပ်ပါမည်။\n• ပွိုင့်သည် ၀ အောက်သို့ ဘယ်တော့မှ မကျဆင်းပါ။",
   "points.premiumNotice": "ဒီအမျိုးအစားမှာ ပို့စ်တင်ရင် ပွိုင့် ၂၀၀ နှုတ်ယူပါမည်။",
@@ -2073,6 +2105,10 @@ const mn: Partial<Dictionary> = {
   "board.noComments": "Та одоогоор сэтгэгдэл бичээгүй байна.",
 
   "points.balanceLabel": "Таны оноо",
+  "welcome.greeting": "Gup Gup-д тавтай морил! Бусад гишүүдтэй идэвхтэй харилцаарай.",
+  "welcome.firstPostThanks": "Эхний нийтлэлээ бичсэнд баярлалаа!",
+  "welcome.understood": "Ойлголоо",
+
   "points.infoTitle": "Онооны тухай",
   "points.infoBody": "• Профайлаа анх удаа үүсгэхэд танд нэг удаа 2,000 оноо олгогдоно.\n• Нийтлэл бичих (энгийн ангилал): +100 оноо\n• Сэтгэгдэл бичих: +50 оноо\n• Өрөө хуваалцагч, Дэлгүүр, эсвэл Солонгост амьдрах > Ресторан/Эмнэлэг/Гар утас/Бичиг баримт & Захиргаа ангилалд нийтлэхэд 200 оноо хасагдана. Оноо хүрэлцэхгүй бол тухайн ангилалд нийтлэх боломжгүй.\n• Нийтлэл эсвэл сэтгэгдлийг устгавал урьд нь өгсөн эсвэл хассан оноо буцаагдана.\n• Оноо хэзээ ч 0-ээс доош орохгүй.",
   "points.premiumNotice": "Энэ ангилалд нийтлэхэд 200 оноо хасагдана.",
@@ -2311,6 +2347,10 @@ const ru: Partial<Dictionary> = {
   "board.noComments": "Вы ещё не оставили ни одного комментария.",
 
   "points.balanceLabel": "Ваши баллы",
+  "welcome.greeting": "Добро пожаловать в Gup Gup! Надеемся, вы будете активно общаться с другими участниками.",
+  "welcome.firstPostThanks": "Спасибо за ваш первый пост!",
+  "welcome.understood": "Понятно",
+
   "points.infoTitle": "О баллах",
   "points.infoBody": "• Вы получаете 2 000 баллов один раз, при первом создании профиля.\n• Публикация поста (обычные категории): +100 баллов\n• Публикация комментария: +50 баллов\n• Публикация в категориях Сосед по комнате, Барахолка или Жизнь в Корее > Рестораны/Больницы/Мобильные телефоны/Документы и администрация списывает 200 баллов. Если баллов не хватает, публиковать в этой категории нельзя.\n• Удаление поста или комментария возвращает баллы, которые были начислены или списаны изначально.\n• Баллы никогда не опускаются ниже 0.",
   "points.premiumNotice": "Публикация в этой категории спишет 200 баллов.",
@@ -2634,6 +2674,10 @@ const km: Partial<Dictionary> = {
   "board.noComments": "អ្នកមិនទាន់បានសរសេរមតិយោបល់ណាមួយនៅឡើយទេ។",
 
   "points.balanceLabel": "ពិន្ទុរបស់អ្នក",
+  "welcome.greeting": "សូមស្វាគមន៍មកកាន់ Gup Gup! សង្ឃឹមថាអ្នកនឹងទាក់ទងយ៉ាងសកម្មជាមួយសមាជិកផ្សេងទៀត។",
+  "welcome.firstPostThanks": "អរគុណសម្រាប់ការសរសេរប្រកាសដំបូងរបស់អ្នក!",
+  "welcome.understood": "យល់ហើយ",
+
   "points.infoTitle": "អំពីពិន្ទុ",
   "points.infoBody": "• អ្នកទទួលបាន 2,000P តែម្តងប៉ុណ្ណោះ នៅពេលរៀបចំប្រវត្តិរូបលើកដំបូង។\n• សរសេរប្រកាស (ប្រភេទធម្មតា): +100P\n• សរសេរមតិយោបល់: +50P\n• ការសរសេរប្រកាសក្នុងប្រភេទអ្នករួមផ្ទះ ទីផ្សារទំនិញប្រើប្រាស់ ឬ ជីវិតនៅកូរ៉េ > ភោជនីយដ្ឋាន/មន្ទីរពេទ្យ/ទូរស័ព្ទចល័ត/ឯកសារនិងរដ្ឋបាល ត្រូវចំណាយ 200P។ ប្រសិនបើពិន្ទុមិនគ្រប់គ្រាន់ អ្នកមិនអាចសរសេរប្រកាសក្នុងប្រភេទនោះបានទេ។\n• ការលុបប្រកាស ឬមតិយោបល់ នឹងសងពិន្ទុវិញតាមចំនួនដែលបានទទួល ឬបានចំណាយ។\n• ពិន្ទុមិនអាចធ្លាក់ទាបជាង 0 បានទេ។",
   "points.premiumNotice": "ការសរសេរប្រកាសក្នុងប្រភេទនេះចំណាយ 200P។",
