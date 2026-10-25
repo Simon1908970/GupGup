@@ -17,6 +17,7 @@ import { NicknamePopup } from "@/components/common/NicknamePopup";
 import { CommentSection } from "@/components/board/CommentSection";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { LikeButton } from "@/components/common/LikeButton";
+import { FirstPostPointsModal } from "@/components/common/FirstPostPointsModal";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -140,6 +141,7 @@ export default function PostDetailPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
+      <FirstPostPointsModal post={post} />
       <div className="mb-3 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
         {config.hasCountryTag && <CountryTag country={post.country} />}
         <span>{formatDate(post.createdAt)}</span>
