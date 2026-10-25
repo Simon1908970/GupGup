@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Eye, MessageCircle } from "lucide-react";
+import { Eye, Lock, MessageCircle } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -144,6 +144,11 @@ export default function PostDetailPage() {
       <FirstPostPointsModal post={post} />
       <div className="mb-3 flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
         {config.hasCountryTag && <CountryTag country={post.country} />}
+        {post.membersOnly && (
+          <span className="flex items-center gap-0.5">
+            <Lock size={12} /> {t("board.membersOnlyLabel")}
+          </span>
+        )}
         <span>{formatDate(post.createdAt)}</span>
         <span className="flex items-center gap-0.5">
           <Eye size={12} /> {formatCount(post.viewCount)}

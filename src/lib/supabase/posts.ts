@@ -29,6 +29,7 @@ interface PostRow {
   business_lat: number | null;
   business_lng: number | null;
   is_notice: boolean;
+  members_only: boolean;
   author: {
     id: string;
     nickname: string;
@@ -47,7 +48,7 @@ interface PostRow {
 // (PostgREST returns HTTP 300 PGRST201 for every query using this select).
 const POST_SELECT =
   "id, category, sub_category, country, title, body, author_id, thumbnail_url, attachments, original_body, original_lang, source_name, source_url, image_credit, view_count, created_at, points_awarded, author:profiles!posts_author_id_fkey(id, nickname, country, avatar_url, is_withdrawn, is_supporter), comments(count), likes:post_likes(count)" +
-  ", show_on_map, business_address, business_detail_address, business_lat, business_lng, is_notice";
+  ", show_on_map, business_address, business_detail_address, business_lat, business_lng, is_notice, members_only";
 
 function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
   return {
@@ -86,6 +87,7 @@ function mapPost(row: PostRow, likedPostIds?: Set<string>): Post {
     businessLat: row.business_lat ?? undefined,
     businessLng: row.business_lng ?? undefined,
     isNotice: row.is_notice ?? false,
+    membersOnly: row.members_only ?? false,
   };
 }
 

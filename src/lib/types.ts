@@ -134,6 +134,7 @@ export interface Post {
   businessLat?: number;
   businessLng?: number;
   isNotice?: boolean;
+  membersOnly?: boolean;
 }
 
 export interface Comment {

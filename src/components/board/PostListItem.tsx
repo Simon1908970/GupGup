@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
 import { DeleteButton } from "@/components/common/DeleteButton";
-import { MessageSquare, Eye, Pin } from "lucide-react";
+import { MessageSquare, Eye, Pin, Lock } from "lucide-react";
 
 export function PostListItem({
   post,
@@ -51,6 +51,13 @@ export function PostListItem({
                 size={14}
                 aria-label={t("board.pinnedLabel")}
                 className="shrink-0 rotate-45 fill-[var(--color-brand-red)] text-[var(--color-brand-red)]"
+              />
+            )}
+            {post.membersOnly && (
+              <Lock
+                size={13}
+                aria-label={t("board.membersOnlyLabel")}
+                className="shrink-0 text-[var(--color-text-muted)]"
               />
             )}
             <p
