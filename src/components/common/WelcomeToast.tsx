@@ -17,10 +17,25 @@ export function WelcomeToast() {
 
   useEffect(() => {
     if (!visible) return;
-    const timer = setTimeout(() => {
-      void dismiss();
-    }, AUTO_DISMISS_MS);
-    return () => clearTimeout(timer);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    function start() {
+      timer = setTimeout(() => void dismiss(), AUTO_DISMISS_MS);
+    }
+    function stop() {
+      if (timer) clearTimeout(timer);
+    }
+    function handleVisibilityChange() {
+      stop();
+      if (!document.hidden) start();
+    }
+
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
@@ -29,11 +44,11 @@ export function WelcomeToast() {
     if (!user) return;
     try {
       const supabase = createClient();
-      await supabase
+      const { error } = await supabase
         .from("profiles")
         .update({ welcomed_at: new Date().toISOString() })
         .eq("id", user.id);
-      await refreshProfile();
+      if (!error) await refreshProfile();
     } catch {
       // 1회성 안내라 실패해도 조용히 무시 — 다음 방문에 다시 뜰 수 있다.
     }
@@ -42,7 +57,11 @@ export function WelcomeToast() {
   if (!visible) return null;
 
   return (
-    <div className="fixed left-1/2 top-20 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-lg border border-[var(--color-border-gray)] bg-white p-4 text-sm shadow-lg">
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed left-1/2 top-[7.5rem] z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-lg border border-[var(--color-border-gray)] bg-white p-4 text-sm shadow-lg"
+    >
       <button
         type="button"
         onClick={() => void dismiss()}
