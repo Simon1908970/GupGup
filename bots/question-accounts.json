@@ -3,162 +3,189 @@
     "nickname": "베트남질문러1",
     "country": "vn",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "abd33dbe-424f-46eb-9321-e68579b3672b"
+    "profileId": "abd33dbe-424f-46eb-9321-e68579b3672b",
+    "avatarUrl": "/avatars/male-3.svg"
   },
   "vn-q2": {
     "nickname": "베트남질문러2",
     "country": "vn",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "8c155f30-4b2a-401e-b060-c5c8776d3e64"
+    "profileId": "8c155f30-4b2a-401e-b060-c5c8776d3e64",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "vn-q3": {
     "nickname": "베트남질문러3",
     "country": "vn",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "bb9d7757-b9e2-4b96-bf87-703035c1e299"
+    "profileId": "bb9d7757-b9e2-4b96-bf87-703035c1e299",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "th-q1": {
     "nickname": "태국질문러1",
     "country": "th",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "3507bd6a-6f41-49fa-abbc-c324a633b2dd"
+    "profileId": "3507bd6a-6f41-49fa-abbc-c324a633b2dd",
+    "avatarUrl": "/avatars/male-1.svg"
   },
   "th-q2": {
     "nickname": "태국질문러2",
     "country": "th",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "dc30eba2-228f-46f8-b935-d9edd15c8ca2"
+    "profileId": "dc30eba2-228f-46f8-b935-d9edd15c8ca2",
+    "avatarUrl": "/avatars/male-1.svg"
   },
   "th-q3": {
     "nickname": "태국질문러3",
     "country": "th",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "3c07f338-6287-4442-ba64-3dac5cce46a6"
+    "profileId": "3c07f338-6287-4442-ba64-3dac5cce46a6",
+    "avatarUrl": "/avatars/male-4.svg"
   },
   "la-q1": {
     "nickname": "라오스질문러1",
     "country": "la",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "d41569c2-023e-42ac-888b-76d2e6bc7eae"
+    "profileId": "d41569c2-023e-42ac-888b-76d2e6bc7eae",
+    "avatarUrl": "/avatars/male-4.svg"
   },
   "la-q2": {
     "nickname": "라오스질문러2",
     "country": "la",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "a4f03557-912c-4f30-a14d-2f3ce1eb52ef"
+    "profileId": "a4f03557-912c-4f30-a14d-2f3ce1eb52ef",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "la-q3": {
     "nickname": "라오스질문러3",
     "country": "la",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "9c652eb0-b569-4fb0-b633-42db5c346561"
+    "profileId": "9c652eb0-b569-4fb0-b633-42db5c346561",
+    "avatarUrl": "/avatars/male-2.svg"
   },
   "id-q1": {
     "nickname": "인도네시아질문러1",
     "country": "id",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "24975d99-57e0-48d2-86e4-5faf5e77cdb9"
+    "profileId": "24975d99-57e0-48d2-86e4-5faf5e77cdb9",
+    "avatarUrl": "/avatars/male-2.svg"
   },
   "id-q2": {
     "nickname": "인도네시아질문러2",
     "country": "id",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "f63752f9-cfab-469f-85a2-9cd1d03eeb5e"
+    "profileId": "f63752f9-cfab-469f-85a2-9cd1d03eeb5e",
+    "avatarUrl": "/avatars/male-3.svg"
   },
   "id-q3": {
     "nickname": "인도네시아질문러3",
     "country": "id",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "12f11b77-8e21-4a41-b975-9f37e45981e5"
+    "profileId": "12f11b77-8e21-4a41-b975-9f37e45981e5",
+    "avatarUrl": "/avatars/male-4.svg"
   },
   "mm-q1": {
     "nickname": "미얀마질문러1",
     "country": "mm",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "56149719-47dd-465d-ae65-57f688bcf8aa"
+    "profileId": "56149719-47dd-465d-ae65-57f688bcf8aa",
+    "avatarUrl": "/avatars/male-4.svg"
   },
   "mm-q2": {
     "nickname": "미얀마질문러2",
     "country": "mm",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "de5c5a90-1617-46f7-abe5-f05e39965633"
+    "profileId": "de5c5a90-1617-46f7-abe5-f05e39965633",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "mm-q3": {
     "nickname": "미얀마질문러3",
     "country": "mm",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "2bb5d671-a3df-437f-bb9e-bec1d2166929"
+    "profileId": "2bb5d671-a3df-437f-bb9e-bec1d2166929",
+    "avatarUrl": "/avatars/male-2.svg"
   },
   "ph-q1": {
     "nickname": "필리핀질문러1",
     "country": "ph",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "dc0f1c64-2e29-4b71-91e9-cc7d202376f1"
+    "profileId": "dc0f1c64-2e29-4b71-91e9-cc7d202376f1",
+    "avatarUrl": "/avatars/male-4.svg"
   },
   "ph-q2": {
     "nickname": "필리핀질문러2",
     "country": "ph",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "c3a62cae-77eb-41da-8420-d7e004d4ce92"
+    "profileId": "c3a62cae-77eb-41da-8420-d7e004d4ce92",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "ph-q3": {
     "nickname": "필리핀질문러3",
     "country": "ph",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "c06351b2-a34f-48ce-ac65-f63054708415"
+    "profileId": "c06351b2-a34f-48ce-ac65-f63054708415",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "mn-q1": {
     "nickname": "몽골질문러1",
     "country": "mn",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "f6ca4162-2b1d-4743-ac28-26b669ef9a2c"
+    "profileId": "f6ca4162-2b1d-4743-ac28-26b669ef9a2c",
+    "avatarUrl": "/avatars/male-2.svg"
   },
   "mn-q2": {
     "nickname": "몽골질문러2",
     "country": "mn",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "3f5ead75-9013-4b9c-bcc4-78180b03e009"
+    "profileId": "3f5ead75-9013-4b9c-bcc4-78180b03e009",
+    "avatarUrl": "/avatars/male-1.svg"
   },
   "mn-q3": {
     "nickname": "몽골질문러3",
     "country": "mn",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "2da90c63-a158-4875-9ee3-bb78a5dfc153"
+    "profileId": "2da90c63-a158-4875-9ee3-bb78a5dfc153",
+    "avatarUrl": "/avatars/male-1.svg"
   },
   "kh-q1": {
     "nickname": "캄보디아질문러1",
     "country": "kh",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "ddc90875-809c-4d8d-b313-fd42b0da4c41"
+    "profileId": "ddc90875-809c-4d8d-b313-fd42b0da4c41",
+    "avatarUrl": "/avatars/male-2.svg"
   },
   "kh-q2": {
     "nickname": "캄보디아질문러2",
     "country": "kh",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "ca4502a4-d009-4302-ac33-c004fa2e6e69"
+    "profileId": "ca4502a4-d009-4302-ac33-c004fa2e6e69",
+    "avatarUrl": "/avatars/male-3.svg"
   },
   "kh-q3": {
     "nickname": "캄보디아질문러3",
     "country": "kh",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "258f0c2a-7983-4ae7-bb9d-236749dba1ca"
+    "profileId": "258f0c2a-7983-4ae7-bb9d-236749dba1ca",
+    "avatarUrl": "/avatars/male-1.svg"
   },
   "etc-q1": {
     "nickname": "기타질문러1",
     "country": "etc",
     "persona": "너의 성격: 한국 온 지 얼마 안 된 조심스러운 신입. 질문 전에 눈치보듯 정중하게 먼저 양해를 구하고, 걱정되는 마음을 담아 조심스럽게 묻는다.",
-    "profileId": "44900497-ed42-4d16-9200-b56f539f681e"
+    "profileId": "44900497-ed42-4d16-9200-b56f539f681e",
+    "avatarUrl": "/avatars/male-5.svg"
   },
   "etc-q2": {
     "nickname": "기타질문러2",
     "country": "etc",
     "persona": "너의 성격: 당당하고 직설적인 스타일. 군더더기 없이 바로 핵심만 짧게 묻는다.",
-    "profileId": "590b19e4-76da-43d8-bb00-ffee98ba9d05"
+    "profileId": "590b19e4-76da-43d8-bb00-ffee98ba9d05",
+    "avatarUrl": "/avatars/male-3.svg"
   },
   "etc-q3": {
     "nickname": "기타질문러3",
     "country": "etc",
     "persona": "너의 성격: 수다스럽고 친근한 스타일. 질문하기 전에 자기 상황이나 최근 있었던 일을 먼저 풀어놓고 나서 질문한다.",
-    "profileId": "efdac0fb-62fb-4ad1-b9d4-6e944080d8b8"
+    "profileId": "efdac0fb-62fb-4ad1-b9d4-6e944080d8b8",
+    "avatarUrl": "/avatars/male-4.svg"
   }
 }
