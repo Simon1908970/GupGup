@@ -15,6 +15,7 @@ import { Avatar } from "@/components/common/Avatar";
 import { CountryTag } from "@/components/common/CountryTag";
 import { NicknamePopup } from "@/components/common/NicknamePopup";
 import { CommentSection } from "@/components/board/CommentSection";
+import { PostBody } from "@/components/board/PostBody";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { LikeButton } from "@/components/common/LikeButton";
 import { FirstPostPointsModal } from "@/components/common/FirstPostPointsModal";
@@ -224,9 +225,10 @@ export default function PostDetailPage() {
           </div>
         </div>
       ) : (
-        <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-          {showTranslated && translated ? translated.body : post.body}
-        </div>
+        <PostBody
+          displayText={showTranslated && translated ? translated.body : post.body}
+          rawBody={post.body}
+        />
       )}
 
       {post.attachments.length > 0 && (

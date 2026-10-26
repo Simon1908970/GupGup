@@ -105,6 +105,8 @@ const ko = {
   "news.originalLabel": "원문",
   "news.summaryLabel": "한국어 요약",
   "news.sourceLabel": "출처",
+  "embed.youtubeTitle": "YouTube 영상",
+  "embed.tiktokTitle": "TikTok 영상",
   "post.withdrawnUser": "탈퇴한 회원입니다",
   "post.blockedSuffix": "님을 차단했습니다",
 
@@ -359,6 +361,8 @@ const en: Dictionary = {
   "news.originalLabel": "Original",
   "news.summaryLabel": "Korean Summary",
   "news.sourceLabel": "Source",
+  "embed.youtubeTitle": "YouTube video",
+  "embed.tiktokTitle": "TikTok video",
   "post.withdrawnUser": "Deleted user",
   "post.blockedSuffix": " blocked",
 
@@ -683,6 +687,8 @@ const vi: Partial<Dictionary> = {
   "news.originalLabel": "Bản gốc",
   "news.summaryLabel": "Tóm tắt tiếng Hàn",
   "news.sourceLabel": "Nguồn",
+  "embed.youtubeTitle": "Video YouTube",
+  "embed.tiktokTitle": "Video TikTok",
   "post.withdrawnUser": "Thành viên đã rời đi",
   "post.blockedSuffix": "đã bị chặn",
 
@@ -926,6 +932,8 @@ const th: Partial<Dictionary> = {
   "news.originalLabel": "ต้นฉบับ",
   "news.summaryLabel": "สรุปภาษาเกาหลี",
   "news.sourceLabel": "ที่มา",
+  "embed.youtubeTitle": "วิดีโอ YouTube",
+  "embed.tiktokTitle": "วิดีโอ TikTok",
   "post.withdrawnUser": "สมาชิกที่ลาออกแล้ว",
   "post.blockedSuffix": "ถูกบล็อกแล้ว",
 
@@ -1169,6 +1177,8 @@ const id: Partial<Dictionary> = {
   "news.originalLabel": "Teks asli",
   "news.summaryLabel": "Ringkasan bahasa Korea",
   "news.sourceLabel": "Sumber",
+  "embed.youtubeTitle": "Video YouTube",
+  "embed.tiktokTitle": "Video TikTok",
   "post.withdrawnUser": "Anggota yang telah keluar",
   "post.blockedSuffix": "telah diblokir",
 
@@ -1412,6 +1422,8 @@ const tl: Partial<Dictionary> = {
   "news.originalLabel": "Orihinal",
   "news.summaryLabel": "Buod sa Korean",
   "news.sourceLabel": "Pinagmulan",
+  "embed.youtubeTitle": "Video ng YouTube",
+  "embed.tiktokTitle": "Video ng TikTok",
   "post.withdrawnUser": "Umalis na miyembro",
   "post.blockedSuffix": "na-block na",
 
@@ -1655,6 +1667,8 @@ const lo: Partial<Dictionary> = {
   "news.originalLabel": "ຕົ້ນສະບັບ",
   "news.summaryLabel": "ສະຫຼຸບພາສາເກົາຫຼີ",
   "news.sourceLabel": "ແຫຼ່ງທີ່ມາ",
+  "embed.youtubeTitle": "ວິດີໂອ YouTube",
+  "embed.tiktokTitle": "ວິດີໂອ TikTok",
   "post.withdrawnUser": "ສະມາຊິກທີ່ອອກໄປແລ້ວ",
   "post.blockedSuffix": "ຖືກບລັອກແລ້ວ",
 
@@ -1898,6 +1912,8 @@ const my: Partial<Dictionary> = {
   "news.originalLabel": "မူရင်း",
   "news.summaryLabel": "ကိုရီးယားဘာသာ အကျဉ်းချုပ်",
   "news.sourceLabel": "အရင်းအမြစ်",
+  "embed.youtubeTitle": "YouTube ဗီဒီယို",
+  "embed.tiktokTitle": "TikTok ဗီဒီယို",
   "post.withdrawnUser": "ထွက်ခွာသွားသောအသင်းဝင်",
   "post.blockedSuffix": "ကို ပိတ်ပင်ထားသည်",
 
@@ -2141,6 +2157,8 @@ const mn: Partial<Dictionary> = {
   "news.originalLabel": "Эх бичвэр",
   "news.summaryLabel": "Солонгос хэлээрх хураангуй",
   "news.sourceLabel": "Эх сурвалж",
+  "embed.youtubeTitle": "YouTube бичлэг",
+  "embed.tiktokTitle": "TikTok бичлэг",
   "post.withdrawnUser": "Гарсан гишүүн",
   "post.blockedSuffix": "-г блоклолоо",
 
@@ -2384,6 +2402,8 @@ const ru: Partial<Dictionary> = {
   "news.originalLabel": "Оригинал",
   "news.summaryLabel": "Краткое содержание на корейском",
   "news.sourceLabel": "Источник",
+  "embed.youtubeTitle": "Видео YouTube",
+  "embed.tiktokTitle": "Видео TikTok",
   "post.withdrawnUser": "Пользователь удалил аккаунт",
   "post.blockedSuffix": "заблокирован(а)",
 
@@ -2554,6 +2574,8 @@ const km: Partial<Dictionary> = {
   "news.originalLabel": "អត្ថបទដើម",
   "news.summaryLabel": "សេចក្តីសង្ខេបជាភាសាកូរ៉េ",
   "news.sourceLabel": "ប្រភព",
+  "embed.youtubeTitle": "វីដេអូ YouTube",
+  "embed.tiktokTitle": "វីដេអូ TikTok",
   "post.withdrawnUser": "សមាជិកដែលបានលុបគណនី",
   "post.blockedSuffix": "ត្រូវបានទប់ស្កាត់",
 

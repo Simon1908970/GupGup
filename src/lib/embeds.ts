@@ -12,5 +12,5 @@ export interface DetectedEmbed {
 }
 
 export const MAX_POST_EMBEDS: number = MAX_POST_EMBEDS_JS;
-export const detectEmbed: (url: string) => DetectedEmbed | null = detectEmbedJs;
-export const extractEmbeds: (body: string) => DetectedEmbed[] = extractEmbedsJs;
+export const detectEmbed = detectEmbedJs as (url: string) => DetectedEmbed | null;
+export const extractEmbeds = extractEmbedsJs as (body: string) => DetectedEmbed[];
