@@ -10,6 +10,7 @@ import type { Attachment, CategorySlug, CountryCode, Post } from "@/lib/types";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { fetchPostById, updatePost } from "@/lib/supabase/posts";
 import { getErrorMessage } from "@/lib/utils";
+import { useProfanityCheck } from "@/lib/moderation/useProfanityCheck";
 import { PostAttachmentInput } from "@/components/board/PostAttachmentInput";
 import { AddressPicker } from "@/components/board/AddressPicker";
 
@@ -35,6 +36,7 @@ export default function EditPostPage() {
   const [showOnMap, setShowOnMap] = useState(false);
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessDetailAddress, setBusinessDetailAddress] = useState("");
+  const hasProfanity = useProfanityCheck(`${title} ${body}`);
 
   useEffect(() => {
     if (!config) return;
@@ -86,7 +88,7 @@ export default function EditPostPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !body.trim() || !user || !post) return;
+    if (!title.trim() || !body.trim() || !user || !post || hasProfanity) return;
     if (showOnMap && !businessAddress.trim()) {
       setError(t("map.addressPlaceholder"));
       return;
@@ -211,6 +213,9 @@ export default function EditPostPage() {
           </div>
         )}
 
+        {hasProfanity && (
+          <p className="text-xs text-[var(--color-brand-red)]">{t("moderation.profanityWarning")}</p>
+        )}
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
 
         <div className="flex justify-end gap-2">
@@ -223,7 +228,7 @@ export default function EditPostPage() {
           </button>
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || hasProfanity}
             className="relative rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
           >
             {t("common.edit")}

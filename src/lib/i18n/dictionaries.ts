@@ -205,6 +205,7 @@ const ko = {
   "write.needProfile": "프로필 설정을 먼저 완료해주세요.",
   "write.pinAsNotice": "📌 목록 상단에 고정 (관리자 전용)",
   "write.goToOnboarding": "온보딩으로 이동",
+  "moderation.profanityWarning": "비속어나 부적절한 표현이 포함되어 있어 등록할 수 없습니다. 내용을 확인해 주세요.",
 
   "resetPassword.title": "새 비밀번호 설정",
   "resetPassword.submit": "비밀번호 변경",
@@ -461,6 +462,7 @@ const en: Dictionary = {
   "write.needProfile": "Please complete your profile setup first.",
   "write.pinAsNotice": "📌 Pin to top of list (admin only)",
   "write.goToOnboarding": "Go to onboarding",
+  "moderation.profanityWarning": "This contains profanity or inappropriate language and can't be posted. Please check your content.",
 
   "resetPassword.title": "Set a new password",
   "resetPassword.submit": "Change password",
@@ -627,6 +629,7 @@ const vi: Partial<Dictionary> = {
 
   "write.needProfile": "Vui lòng hoàn tất thiết lập hồ sơ trước.",
   "write.goToOnboarding": "Đi đến thiết lập hồ sơ",
+  "moderation.profanityWarning": "Nội dung chứa từ ngữ thô tục hoặc không phù hợp nên không thể đăng. Vui lòng kiểm tra lại nội dung.",
 
   "resetPassword.title": "Đặt mật khẩu mới",
   "resetPassword.submit": "Đổi mật khẩu",
@@ -870,6 +873,7 @@ const th: Partial<Dictionary> = {
 
   "write.needProfile": "กรุณาตั้งค่าโปรไฟล์ให้เสร็จก่อน",
   "write.goToOnboarding": "ไปที่การตั้งค่าโปรไฟล์",
+  "moderation.profanityWarning": "เนื้อหามีคำหยาบหรือข้อความที่ไม่เหมาะสม จึงไม่สามารถโพสต์ได้ กรุณาตรวจสอบเนื้อหาอีกครั้ง",
 
   "resetPassword.title": "ตั้งรหัสผ่านใหม่",
   "resetPassword.submit": "เปลี่ยนรหัสผ่าน",
@@ -1115,6 +1119,7 @@ const id: Partial<Dictionary> = {
 
   "write.needProfile": "Silakan lengkapi pengaturan profil terlebih dahulu.",
   "write.goToOnboarding": "Ke pengaturan profil",
+  "moderation.profanityWarning": "Konten mengandung kata kasar atau tidak pantas sehingga tidak dapat diposting. Silakan periksa kembali isinya.",
 
   "resetPassword.title": "Atur kata sandi baru",
   "resetPassword.submit": "Ubah kata sandi",
@@ -1360,6 +1365,7 @@ const tl: Partial<Dictionary> = {
 
   "write.needProfile": "Mangyaring kumpletuhin muna ang setup ng profile.",
   "write.goToOnboarding": "Pumunta sa profile setup",
+  "moderation.profanityWarning": "Hindi maipo-post ang nilalaman dahil may masasakit na salita o hindi angkop na expression. Pakisuri ang iyong sinulat.",
 
   "resetPassword.title": "Magtakda ng bagong password",
   "resetPassword.submit": "Baguhin ang password",
@@ -1607,6 +1613,7 @@ const lo: Partial<Dictionary> = {
 
   "write.needProfile": "ກະລຸນາຕັ້ງໂປຣໄຟລ໌ໃຫ້ສຳເລັດກ່ອນ.",
   "write.goToOnboarding": "ໄປທີ່ການຕັ້ງໂປຣໄຟລ໌",
+  "moderation.profanityWarning": "ເນື້ອຫາມີຄຳຫຍາບ ຫຼື ຂໍ້ຄວາມທີ່ບໍ່ເໝາະສົມ ຈຶ່ງບໍ່ສາມາດລົງປະກາດໄດ້. ກະລຸນາກວດສອບເນື້ອຫາອີກຄັ້ງ.",
 
   "resetPassword.title": "ຕັ້ງລະຫັດຜ່ານໃໝ່",
   "resetPassword.submit": "ປ່ຽນລະຫັດຜ່ານ",
@@ -1852,6 +1859,7 @@ const my: Partial<Dictionary> = {
 
   "write.needProfile": "ကျေးဇူးပြု၍ ပရိုဖိုင်တည်ဆောက်မှုကို ဦးစွာပြီးမြောက်အောင်ပြုလုပ်ပါ။",
   "write.goToOnboarding": "ပရိုဖိုင်တည်ဆောက်ရန်သို့သွားရန်",
+  "moderation.profanityWarning": "အကြောင်းအရာတွင် ရိုင်းစိုင်းသော စကား သို့မဟုတ် မသင့်လျော်သော အသုံးအနှုန်းများ ပါဝင်နေသောကြောင့် တင်ပို့၍ မရပါ။ အကြောင်းအရာကို ပြန်စစ်ဆေးပေးပါ။",
 
   "resetPassword.title": "စကားဝှက်အသစ်သတ်မှတ်ရန်",
   "resetPassword.submit": "စကားဝှက်ပြောင်းရန်",
@@ -2097,6 +2105,7 @@ const mn: Partial<Dictionary> = {
 
   "write.needProfile": "Эхлээд профайл тохиргоогоо дуусгана уу.",
   "write.goToOnboarding": "Профайл тохиргоо руу очих",
+  "moderation.profanityWarning": "Агуулгад доромжлолын үг эсвэл зохисгүй илэрхийлэл орсон тул нийтлэх боломжгүй байна. Агуулгаа шалгаж үзээрэй.",
 
   "resetPassword.title": "Шинэ нууц үг тохируулах",
   "resetPassword.submit": "Нууц үг солих",
@@ -2342,6 +2351,7 @@ const ru: Partial<Dictionary> = {
 
   "write.needProfile": "Пожалуйста, сначала завершите настройку профиля.",
   "write.goToOnboarding": "Перейти к настройке профиля",
+  "moderation.profanityWarning": "Текст содержит ненормативную лексику или неподобающие выражения, поэтому его нельзя опубликовать. Пожалуйста, проверьте содержание.",
 
   "resetPassword.title": "Установите новый пароль",
   "resetPassword.submit": "Сменить пароль",
@@ -2674,6 +2684,7 @@ const km: Partial<Dictionary> = {
   "write.needProfile": "សូមបំពេញការរៀបចំប្រវត្តិរូបជាមុនសិន។",
   "write.pinAsNotice": "📌 ខ្ទាស់លើគេនៅក្នុងបញ្ជី (សម្រាប់អ្នកគ្រប់គ្រងប៉ុណ្ណោះ)",
   "write.goToOnboarding": "ទៅកាន់ការណែនាំដំបូង",
+  "moderation.profanityWarning": "ខ្លឹមសារមានពាក្យអសុរោះ ឬកន្សោមមិនសមរម្យ ដូច្នេះមិនអាចបង្ហោះបានទេ។ សូមពិនិត្យមើលខ្លឹមសាររបស់អ្នកម្តងទៀត។",
 
   "resetPassword.title": "កំណត់ពាក្យសម្ងាត់ថ្មី",
   "resetPassword.submit": "ប្តូរពាក្យសម្ងាត់",

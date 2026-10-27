@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { createPost, InsufficientPointsError } from "@/lib/supabase/posts";
 import { isPremiumPostTarget, PREMIUM_POST_COST } from "@/lib/constants/points";
 import { getErrorMessage } from "@/lib/utils";
+import { useProfanityCheck } from "@/lib/moderation/useProfanityCheck";
 import { PostAttachmentInput } from "@/components/board/PostAttachmentInput";
 import { AddressPicker } from "@/components/board/AddressPicker";
 
@@ -41,6 +42,7 @@ export default function WritePostPage() {
   const [isNotice, setIsNotice] = useState(false);
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessDetailAddress, setBusinessDetailAddress] = useState("");
+  const hasProfanity = useProfanityCheck(`${title} ${body}`);
 
   if (!config || config.slug === "news") {
     return (
@@ -52,7 +54,7 @@ export default function WritePostPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !body.trim() || !user) return;
+    if (!title.trim() || !body.trim() || !user || hasProfanity) return;
     if (insufficientPoints) {
       setError(t("points.insufficientError"));
       return;
@@ -237,6 +239,9 @@ export default function WritePostPage() {
           </div>
         )}
 
+        {hasProfanity && (
+          <p className="text-xs text-[var(--color-brand-red)]">{t("moderation.profanityWarning")}</p>
+        )}
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
 
         <div className="flex justify-end gap-2">
@@ -249,7 +254,7 @@ export default function WritePostPage() {
           </button>
           <button
             type="submit"
-            disabled={submitting || insufficientPoints}
+            disabled={submitting || insufficientPoints || hasProfanity}
             className="relative rounded-md bg-[var(--color-brand-red)] px-5 py-2 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
           >
             {t("common.submit")}

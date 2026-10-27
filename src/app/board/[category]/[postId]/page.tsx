@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { fetchPostById, incrementViewCount } from "@/lib/supabase/posts";
 import { createComment, fetchComments } from "@/lib/supabase/comments";
 import { isHttpUrl } from "@/lib/news/newsInput";
+import { useProfanityCheck } from "@/lib/moderation/useProfanityCheck";
 import type { CategorySlug, Comment, Post } from "@/lib/types";
 import { formatCount, formatDate } from "@/lib/utils";
 import { Avatar } from "@/components/common/Avatar";
@@ -33,6 +34,7 @@ export default function PostDetailPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentDraft, setCommentDraft] = useState("");
   const [posting, setPosting] = useState(false);
+  const hasCommentProfanity = useProfanityCheck(commentDraft);
   const viewCounted = useRef(false);
   const [showTranslation, setShowTranslation] = useState(false);
   const [translated, setTranslated] = useState<{
@@ -127,7 +129,7 @@ export default function PostDetailPage() {
 
   async function handleCommentSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !commentDraft.trim() || !post) return;
+    if (!user || !commentDraft.trim() || !post || hasCommentProfanity) return;
     setPosting(true);
     try {
       await createComment(post.id, user.id, commentDraft.trim());
@@ -277,23 +279,27 @@ export default function PostDetailPage() {
         </h2>
         <CommentSection comments={comments} />
         {user ? (
-          <form
-            onSubmit={handleCommentSubmit}
-            className="mt-3 flex gap-2 border-t border-[var(--color-border-gray-light)] pt-3"
-          >
-            <input
-              value={commentDraft}
-              onChange={(e) => setCommentDraft(e.target.value)}
-              placeholder={t("board.commentPlaceholder")}
-              className="h-9 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
-            />
-            <button
-              disabled={posting}
-              className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
-            >
-              {t("common.submit")}
-            </button>
-          </form>
+          <div className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3">
+            {hasCommentProfanity && (
+              <p className="mb-2 text-xs text-[var(--color-brand-red)]">
+                {t("moderation.profanityWarning")}
+              </p>
+            )}
+            <form onSubmit={handleCommentSubmit} className="flex gap-2">
+              <input
+                value={commentDraft}
+                onChange={(e) => setCommentDraft(e.target.value)}
+                placeholder={t("board.commentPlaceholder")}
+                className="h-9 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
+              />
+              <button
+                disabled={posting || hasCommentProfanity}
+                className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
+              >
+                {t("common.submit")}
+              </button>
+            </form>
+          </div>
         ) : (
           <p className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3 text-center text-xs text-[var(--color-text-muted)]">
             {t("auth.needVerification")}
