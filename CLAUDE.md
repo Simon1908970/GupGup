@@ -162,10 +162,14 @@
 수행할 것 (단순 "K컬처 요약해줘"에는 이 SNS 단계를 포함하지 않음 — 매번 사용자 로그인
 세션으로 실제 브라우징하는 무거운 작업이라 명시적 요청 시에만).
 
-배경: agent-reach 도구(Exa·RSS 등 외부 검색 CLI)로 K-pop·K-drama·한국인과의 연애 후기를 주 1회 모아
-한 페이지로 정리하는 별도 파이프라인. `news-digest/fetch-kculture.mjs`가 Exa/RSS를
-수집해 `news-digest/kculture/raw-kculture-<날짜>.json`을 만들고(`.env.local`
-불필요), 요약 세션이 Reddit·TikTok을 보태 `news-digest/kculture/<날짜>.md`로 정리한다.
+배경: 한국 엔터테인먼트 매체(Soompi·Koreaboo 등)가 아니라, 줍줍이 다루는 9개 국가
+(베트남/태국/라오스/인도네시아/미얀마/필리핀/몽골/캄보디아/기타)의 **현지 언론**이
+한국·K-pop·K-drama를 어떻게 보도하는지 모으는 파이프라인(2026-10-28 전면 개편 — 사용자
+요청. 그 전날 있었던 "한국인과의 연애 후기" 섹션 제거와는 별개의, 더 큰 개편). 예약
+자동 수집 스크립트는 없다 — 국가별 SNS 리서치와 동일하게, 요약 요청을 받을 때마다 이
+세션이 WebSearch/Claude Browser로 그 나라 언어 기사를 직접 찾아 읽고
+`news-digest/kculture/<날짜>.md`로 정리한다. 자세한 절차는
+`news-digest/kculture/README.md` 참고.
 생성물(raw json, 주간 .md)은 **로컬 전용 — git commit/push 하지 않는다.**
 
 ## 뉴스 URL 가져오기 요청 (운영 지침 — Claude용)

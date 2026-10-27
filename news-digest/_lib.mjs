@@ -1,4 +1,4 @@
-// Shared helpers for the news-digest scripts (fetch.mjs, fetch-kculture.mjs).
+// Shared helpers for the news-digest scripts (fetch.mjs, publish-news.mjs).
 
 import { readdirSync, statSync, unlinkSync } from "node:fs";
 import path from "node:path";
