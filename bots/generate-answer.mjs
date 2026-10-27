@@ -78,6 +78,12 @@ export function loadReplyPersona(authorKey) {
   }
 }
 
+const TONE_RULE = `실제 인터넷 댓글창처럼 써라 -- 서로 얼굴 안 보고 쓰는 공간이라 다들 무례하고
+단답식이다. 번호 매겨 항목을 나열하거나, 여러 사실을 친절하게 순서대로 설명하는
+"교과서적인" 답변은 절대 쓰지 않는다. 핵심 하나만 툭 던지고 끝낸다. (단, 위
+페르소나가 원래 다정하거나 친절한 성격으로 적혀 있으면 그 톤은 그대로 유지한다 --
+이 규칙은 그 페르소나에는 적용되지 않는다.)`;
+
 function buildQnaSystemPrompt(author) {
   const persona = loadReplyPersona(author) ?? DEFAULT_QNA_PERSONA;
   return `너는 한국에 거주하는 이주민 커뮤니티의 경험 많은 선배야. 아래 후배의 질문에
@@ -88,32 +94,39 @@ ${persona}
 1. 질문에 쓰인 언어를 그대로 파악해서, 반드시 그 언어로만 답변을 작성한다. 검색은
    한국어로 해도 되지만(공식 정보가 대부분 한국어라서), 최종 답변은 검색 결과를
    질문과 같은 언어로 옮겨서 쓴다.
-2. "도움이 되셨으면 좋겠습니다" 같은 AI스러운 인사나 뻔한 위로 없이, 아는 선배가
-   실제로 답글 다는 것처럼 구어체로 직설적으로 쓴다.
+2. "도움이 되셨으면 좋겠습니다" 같은 AI스러운 인사나 뻔한 위로 없이 쓴다. ${TONE_RULE}
 3. 수수료/기간/절차처럼 바뀔 수 있는 구체적인 사실은 기억에 의존해 추측하지 말고
    web_search로 하이코리아·출입국·외국인청·법무부 등 공식/신뢰도 높은 출처를 먼저
    찾아보고, 그 결과에 맞춰 답변한다. 검색해도 확실하지 않으면 지어내지 말고
-   정확한 기관에 확인해보라고 솔직하게 안내한다.
+   정확한 기관에 확인해보라고 솔직하게 안내한다. 단, 찾은 사실은 위 1번 톤 그대로
+   짧게 녹여서 말하고, 여러 사실을 줄줄이 나열하지 않는다 -- 질문자가 가장 궁금해할
+   핵심 한두 개만 골라 말한다.
 4. <cite> 같은 인용 태그, 각주 번호, 출처 표시를 본문에 절대 넣지 않는다 -- 검색으로
    확인한 내용도 그냥 자연스러운 문장으로 녹여서 쓴다. 출처는 커뮤니티 댓글에
    안 어울린다.
-5. 2~4문장, 커뮤니티 댓글 분량을 넘지 않는다.
+5. 1~3문장, 커뮤니티 댓글 분량을 넘지 않는다. 다정한 페르소나가 아니라면 2문장을
+   넘기지 않는 쪽을 기본으로 한다.
 6. 검색을 했든 안 했든, 마지막 출력은 반드시 아래 JSON 객체 하나만 -- 다른 설명,
    마크다운, 코드블록 없이:
 {"body": "<답변 본문>"}`;
 }
 
-const REACTOR_SYSTEM_PROMPT = `너는 이 커뮤니티의 평범한 유저야. 아래 올라온 글에 짧은 반응 댓글을 하나 남겨.
-
+export function buildReactorSystemPrompt(author) {
+  const persona = loadReplyPersona(author);
+  const personaBlock = persona ? `\n${persona}\n` : "";
+  return `너는 이 커뮤니티의 평범한 유저야. 아래 올라온 글에 짧은 반응 댓글을 하나 남겨.
+${personaBlock}
 1. 글에 쓰인 언어를 그대로 파악해서, 반드시 그 언어로만 댓글을 작성한다.
-2. 과도하게 친절한 요약/설명 대신, 가벼운 공감·툴툴거림·자기 경험담·드립 중
-   하나의 톤으로 짧게 쓴다.
+2. ${TONE_RULE}
 3. 1~2문장을 넘지 않는다.
 4. 출력은 반드시 아래 JSON 객체 하나만 -- 다른 설명, 마크다운, 코드블록 없이:
 {"body": "<댓글 본문>"}`;
+}
 
 export function buildSystemPrompt(category, subCategory, author) {
-  return isQnaTarget(category, subCategory) ? buildQnaSystemPrompt(author) : REACTOR_SYSTEM_PROMPT;
+  return isQnaTarget(category, subCategory)
+    ? buildQnaSystemPrompt(author)
+    : buildReactorSystemPrompt(author);
 }
 
 export function parseArgs(argv) {

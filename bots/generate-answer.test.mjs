@@ -155,12 +155,14 @@ test("buildSystemPrompt: picks the reactor persona otherwise", () => {
   assert.match(buildSystemPrompt("community", "free"), /평범한 유저/);
 });
 
-test("loadReplyPersona: returns each of the 5 reply accounts' distinct persona line", () => {
+test("loadReplyPersona: returns each of the 7 reply accounts' distinct persona line", () => {
   assert.match(loadReplyPersona("r1"), /돌직구/);
   assert.match(loadReplyPersona("r2"), /맏언니\/형/);
-  assert.match(loadReplyPersona("r3"), /유머와 드립/);
-  assert.match(loadReplyPersona("r4"), /정보통 스타일/);
-  assert.match(loadReplyPersona("r5"), /MZ 스타일/);
+  assert.match(loadReplyPersona("r3"), /무시하는/);
+  assert.match(loadReplyPersona("r4"), /의심/);
+  assert.match(loadReplyPersona("r5"), /잔소리/);
+  assert.match(loadReplyPersona("r6"), /시크한/);
+  assert.match(loadReplyPersona("r7"), /의심 많고 잔소리/);
 });
 
 test("loadReplyPersona: returns null for an author with no persona entry", () => {
@@ -170,7 +172,12 @@ test("loadReplyPersona: returns null for an author with no persona entry", () =>
 
 test("buildSystemPrompt: QnA prompt carries the author's own persona line", () => {
   assert.match(buildSystemPrompt("community", "qna", "r1"), /돌직구/);
-  assert.match(buildSystemPrompt("community", "qna", "r3"), /유머와 드립/);
+  assert.match(buildSystemPrompt("community", "qna", "r3"), /무시하는/);
+});
+
+test("buildSystemPrompt: reactor prompt also carries the author's own persona line", () => {
+  assert.match(buildSystemPrompt("news", undefined, "r4"), /의심/);
+  assert.match(buildSystemPrompt("community", "free", "r2"), /맏언니\/형/);
 });
 
 test("buildSystemPrompt: QnA prompt falls back to a generic persona when the author has none", () => {
@@ -179,7 +186,7 @@ test("buildSystemPrompt: QnA prompt falls back to a generic persona when the aut
 });
 
 test("buildSystemPrompt: every QnA variant still requires answering in the question's own language", () => {
-  for (const author of ["r1", "r2", "r3", "r4", "r5", undefined]) {
+  for (const author of ["r1", "r2", "r3", "r4", "r5", "r6", "r7", undefined]) {
     assert.match(buildSystemPrompt("community", "qna", author), /반드시 그 언어로만 답변을 작성한다/);
   }
 });

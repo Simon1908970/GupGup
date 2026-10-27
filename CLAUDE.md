@@ -212,11 +212,19 @@
 | 파일 | 국가당 개수 | 용도 | 트리거 |
 |---|---|---|---|
 | `bots/accounts.json` | 1개 | 일반 글 (문구 가공 없음, 그대로 발행) | "이거 올려줘" |
-| `bots/question-accounts.json` | 3개 (q1~q3) | 질문 글 — 질문자 페르소나 3종 | "질문으로 올려줘" |
-| `bots/reply-accounts.json` | 5개 (r1~r5) | 질문/정보글에 대한 답변 댓글 — 답변자 페르소나 5종 | "답변 만들어줘" |
+| `bots/question-accounts.json` | 5개 (q1~q5, q4/q5는 여성 페르소나) | 질문 글 — 질문자 페르소나 5종 | "질문으로 올려줘" |
+| `bots/reply-accounts.json` | 7개 (r1~r7, r6/r7은 여성 페르소나) | 질문/정보글에 대한 답변 댓글 — 답변자 페르소나 7종 | "답변 만들어줘" |
 
 모든 계정은 `profiles.is_supporter = true`로 표시되고 닉네임 옆에 작게 "서포터" 라벨이 붙어
-일반 회원과 구분된다(완전 비공개 위장 아님 — 사용자와 합의된 타협안).
+일반 회원과 구분된다(완전 비공개 위장 아님 — 사용자와 합의된 타협안). 각 계정은
+`avatarUrl`(public/avatars/male-\*.svg · female-\*.svg)로 성별이 드러나는 아바타를 갖는다
+(남성 5명 + 여성 2명 구성, 성비 편중 지적 반영).
+
+**답변 톤 정책**: 답변 페르소나 7개 중 **r2(다정한 맏언니/형) 딱 하나만** 착하고 예의 바르다.
+나머지 6개(r1/r3/r4/r5/r6/r7)는 비아냥·무시·의심·충고(잔소리) 쪽으로 설계되어 있다 —
+실제 인터넷 댓글창은 서로 얼굴을 안 보기 때문에 훨씬 무례하고 단답식이라는 전제. 번호 매겨
+여러 사실을 나열하는 "교과서적인" AI 말투는 r2를 제외하고 금지(`generate-answer.mjs`의
+`TONE_RULE` 참고) — 핵심 하나만 툭 던지는 1~2문장이 기본.
 
 ### 1. 계정 설정 (최초 1회, 사용자 승인 필요)
 
@@ -242,8 +250,8 @@ marriage-childcare/restaurant/hospital/mobile/admin/law) / `marketplace` / `univ
 
 ### 3. 질문 글 발행 ("질문으로 올려줘" / "질문 올려달라")
 
-- `question-accounts.json`에서 해당 국가의 q1~q3 중 하나를 **매번 무작위로** 골라 쓴다(다양한
-  말투 확보). 사용자가 특정 페르소나를 지정하면 그걸 따른다.
+- `question-accounts.json`에서 해당 국가의 q1~q5(q4/q5는 여성 페르소나) 중 하나를 **매번
+  무작위로** 골라 쓴다(다양한 말투 확보). 사용자가 특정 페르소나를 지정하면 그걸 따른다.
 - `node --env-file=.env.local bots/generate-question.mjs --country <국가> --category <카테고리>
   [--subCategory <서브>] --topic "<주제>" --author <고른 키, 예: vn-q2> [--out <path>]`
 - 반드시 해당 국가 언어로 작성 (vn=베트남어, th=태국어, la=라오어, id=인도네시아어, mm=미얀마어,
@@ -271,15 +279,16 @@ marketplace, meeting 전부)는 `generate-answer.mjs` 자체가 거부한다:
 지목하면 그때 아래 절차를 그 글에 대해 수행한다 (배치 자동 처리 아님 — 한 번에 한 글씩, 매번
 사람이 고름):
 - "답변 만들어줘" → 대상 카테고리 안에서 `reply-accounts.json` 계정이 쓴 댓글이 하나도 없는 글
-- "답변 하나 더 달아줘" → 이미 1~4개 답변이 달려서 아직 페르소나가 남아있는 글(5개 다 찼으면
+- "답변 하나 더 달아줘" → 이미 1~6개 답변이 달려서 아직 페르소나가 남아있는 글(7개 다 찼으면
   후보에서 제외)
 
 **글이 특정되면(목록에서 골랐거나, URL/id를 바로 줬을 때)**:
 1. 그 postId로 `posts` row를 직접 조회해서 title/body/category/subCategory/country를 가져온다
    (사용자가 다시 타이핑할 필요 없음). 카테고리가 허용 목록 밖이면 중단하고 보고.
-2. 그 글에 이미 어떤 `reply-accounts.json` 계정(country가 일치하는 r1~r5)이 댓글을 달았는지
-   조회하고, **아직 안 쓰인 페르소나 중 하나를 무작위로** 고른다. 5개 다 썼으면 "이미 다
-   달렸다"고 보고하고 중단.
+2. 그 글에 이미 어떤 `reply-accounts.json` 계정(country가 일치하는 r1~r7)이 댓글을 달았는지
+   조회하고, **아직 안 쓰인 페르소나 중 하나를 무작위로** 고른다. 7개 다 썼으면 "이미 다
+   달렸다"고 보고하고 중단. 대댓글(다른 답변 계정의 댓글에 답)을 요청받으면 같은 방식으로
+   아직 안 쓰인 페르소나를 골라 그 댓글의 id를 `parentId`로 넘긴다.
 3. `node --env-file=.env.local bots/generate-answer.mjs --postId <uuid> --author <고른 키, 예:
    vn-r3> --category <카테고리> [--subCategory <서브>] --title "<제목>" --body "<본문>"`
 4. QnA 답변은 Anthropic `web_search` 툴로 수수료/기간/절차 같은 사실을 실제 검색해서 확인한 뒤

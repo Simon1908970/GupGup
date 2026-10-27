@@ -64,6 +64,7 @@ async function main() {
       id: created.user.id,
       nickname: account.nickname,
       country: account.country,
+      avatar_url: account.avatarUrl ?? null,
       is_supporter: true,
     });
     if (profileError) {
