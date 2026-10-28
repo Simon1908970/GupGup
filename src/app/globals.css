@@ -307,3 +307,30 @@ body {
   animation: gg-flame-pulse 1.8s ease-in-out infinite;
   transform-origin: center;
 }
+
+/* Category-nav links: label text hops when hovered (desktop) or pressed
+   (mobile, via :active) before the Link navigates. */
+@keyframes gg-nav-jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+}
+
+.gg-nav-label {
+  display: inline-block;
+}
+
+.gg-nav-link:hover .gg-nav-label,
+.gg-nav-link:active .gg-nav-label {
+  animation: gg-nav-jump 0.4s ease;
+}

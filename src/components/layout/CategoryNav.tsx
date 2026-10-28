@@ -13,7 +13,7 @@ export function CategoryNav() {
 
   function linkClass(active: boolean) {
     return cn(
-      "flex h-11 shrink-0 items-center whitespace-nowrap px-3 text-xs font-medium text-white/90 hover:bg-white/10 sm:px-4 sm:text-sm",
+      "gg-nav-link flex h-11 shrink-0 items-center whitespace-nowrap px-3 text-xs font-medium text-white/90 hover:bg-white/10 sm:px-4 sm:text-sm",
       active && "bg-white/15 font-semibold text-white",
     );
   }
@@ -23,7 +23,7 @@ export function CategoryNav() {
       <ul className="mx-auto flex max-w-6xl min-w-max items-stretch px-2">
         <li>
           <Link href="/" className={linkClass(pathname === "/")}>
-            {t("nav.home")}
+            <span className="gg-nav-label">{t("nav.home")}</span>
           </Link>
         </li>
         {CATEGORY_ORDER.map((slug) => {
@@ -31,19 +31,19 @@ export function CategoryNav() {
           return (
             <li key={slug}>
               <Link href={href} className={linkClass(!!pathname?.startsWith(href))}>
-                {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+                <span className="gg-nav-label">{t(CATEGORIES[slug].labelKey as DictionaryKey)}</span>
               </Link>
             </li>
           );
         })}
         <li>
           <Link href="/map" className={linkClass(!!pathname?.startsWith("/map"))}>
-            {t("nav.map")}
+            <span className="gg-nav-label">{t("nav.map")}</span>
           </Link>
         </li>
         <li>
           <Link href="/inquiries" className={linkClass(!!pathname?.startsWith("/inquiries"))}>
-            {t("nav.inquiries")}
+            <span className="gg-nav-label">{t("nav.inquiries")}</span>
           </Link>
         </li>
       </ul>
