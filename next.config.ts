@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-src 'self' https://www.youtube-nocookie.com https://www.tiktok.com;",
+            value:
+              "frame-src 'self' https://www.youtube-nocookie.com https://www.tiktok.com https://postcode.map.kakao.com;",
           },
         ],
       },
