@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import {
   parseArgs,
   validateArgs,
@@ -189,6 +191,55 @@ test("buildSystemPrompt: every QnA variant still requires answering in the quest
   for (const author of ["r1", "r2", "r3", "r4", "r5", "r6", "r7", undefined]) {
     assert.match(buildSystemPrompt("community", "qna", author), /반드시 그 언어로만 답변을 작성한다/);
   }
+});
+
+test("loadReplyPersona: the new youth-coded character accounts resolve, per country", () => {
+  assert.match(loadReplyPersona("r8"), /밈 제조기/);
+  assert.match(loadReplyPersona("r27"), /리뷰하듯 평가/);
+  assert.match(loadReplyPersona("th-r28"), /챌린지·댄스/);
+  assert.match(loadReplyPersona("th-r47"), /리뷰하듯 평가/);
+  assert.match(loadReplyPersona("etc-r27"), /킥보드나 자전거/);
+  assert.equal(loadReplyPersona("etc-r28"), null);
+});
+
+test("loadReplyPersona: vn/th get the full 40-persona roster, other countries a 20 subset", () => {
+  const accounts = JSON.parse(
+    readFileSync(fileURLToPath(new URL("./reply-accounts.json", import.meta.url)), "utf8"),
+  );
+  assert.equal(
+    Object.values(accounts).filter((a) => a.country === "vn").length,
+    47,
+  );
+  assert.equal(
+    Object.values(accounts).filter((a) => a.country === "th").length,
+    47,
+  );
+  for (const code of ["la", "id", "mm", "ph", "mn", "kh", "etc"]) {
+    assert.equal(
+      Object.values(accounts).filter((a) => a.country === code).length,
+      27,
+      `${code} should have 27 (7 original + 20 new)`,
+    );
+  }
+});
+
+test("buildSystemPrompt: a vn reply account gets the Vietnamese tone note, other countries don't", () => {
+  assert.match(buildSystemPrompt("community", "qna", "r1"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.match(buildSystemPrompt("news", undefined, "r1"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.doesNotMatch(buildSystemPrompt("community", "qna", "th-r1"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.doesNotMatch(buildSystemPrompt("community", "qna", "vn"), /베트남어로 쓸 때 추가로 지킬 것/);
+});
+
+test("buildSystemPrompt: every researched country gets its own tone note, keyed off the author's country", () => {
+  assert.match(buildSystemPrompt("community", "qna", "th-r1"), /555.*55555/s);
+  assert.match(buildSystemPrompt("community", "qna", "id-r1"), /skiber/);
+  assert.match(buildSystemPrompt("community", "qna", "ph-r1"), /Taglish/);
+  assert.match(buildSystemPrompt("community", "qna", "mm-r1"), /미얀마어로 쓸 때 참고/);
+  assert.match(buildSystemPrompt("community", "qna", "mn-r1"), /Гоё/);
+  assert.match(buildSystemPrompt("community", "qna", "la-r1"), /라오스어로 쓸 때 참고/);
+  assert.match(buildSystemPrompt("community", "qna", "kh-r1"), /크메르어\(캄보디아\)로 쓸 때 참고/);
+  // "etc" has no researched tone note yet -- falls back to just TONE_RULE.
+  assert.doesNotMatch(buildSystemPrompt("community", "qna", "etc-r1"), /쓸 때 추가로 지킬 것|쓸 때 참고/);
 });
 
 test("parseModelResponse: extracts body from a plain JSON text block", () => {
