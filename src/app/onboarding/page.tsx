@@ -111,7 +111,17 @@ export default function OnboardingPage() {
         points: SIGNUP_BONUS,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
       });
-      if (insertError && insertError.code !== "23505") throw insertError;
+      if (insertError) {
+        if (insertError.code === "23505") {
+          // Someone else took this nickname between the duplicate-check and
+          // this submit -- surface it instead of silently continuing to a
+          // profile-less home redirect.
+          setCheckResult("taken");
+          setError(t("onboarding.nicknameTaken"));
+          return;
+        }
+        throw insertError;
+      }
       if (avatarFile) {
         const formData = new FormData();
         formData.append("file", avatarFile);
