@@ -47,7 +47,9 @@ const COUNTRY_LABEL = {
 const LANGUAGE_BY_COUNTRY = {
   vn: "베트남어 (Tiếng Việt)",
   th: "태국어 (ภาษาไทย)",
-  la: "라오어 (ພາສາລາວ)",
+  // 라오스는 2026-10-31부터 라오어 대신 태국어로 쓴다 -- Claude가 쓰는 라오어 번역
+  // 품질이 떨어진다는 사용자 피드백 때문 (CLAUDE.md "국가별 커뮤니티 봇" 참고).
+  la: "태국어 (ภาษาไทย)",
   id: "인도네시아어 (Bahasa Indonesia)",
   mm: "미얀마어 (မြန်မာဘာသာ)",
   ph: "필리핀어/타갈로그어 (Tagalog)",

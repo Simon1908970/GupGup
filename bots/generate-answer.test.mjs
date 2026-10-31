@@ -236,7 +236,8 @@ test("buildSystemPrompt: every researched country gets its own tone note, keyed 
   assert.match(buildSystemPrompt("community", "qna", "ph-r1"), /Taglish/);
   assert.match(buildSystemPrompt("community", "qna", "mm-r1"), /미얀마어로 쓸 때 참고/);
   assert.match(buildSystemPrompt("community", "qna", "mn-r1"), /Гоё/);
-  assert.match(buildSystemPrompt("community", "qna", "la-r1"), /라오스어로 쓸 때 참고/);
+  // 라오스는 2026-10-31부터 라오어 대신 태국어로 쓰므로(번역 품질 문제), 태국 노트를 재사용한다.
+  assert.match(buildSystemPrompt("community", "qna", "la-r1"), /555.*55555/s);
   assert.match(buildSystemPrompt("community", "qna", "kh-r1"), /크메르어\(캄보디아\)로 쓸 때 참고/);
   // "etc" has no researched tone note yet -- falls back to just TONE_RULE.
   assert.doesNotMatch(buildSystemPrompt("community", "qna", "etc-r1"), /쓸 때 추가로 지킬 것|쓸 때 참고/);
