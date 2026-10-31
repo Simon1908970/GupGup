@@ -6,16 +6,16 @@ export function PostBody({ displayText, rawBody }: { displayText: string; rawBod
 
   return (
     <>
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-        {displayText}
-      </div>
       {embeds.length > 0 && (
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="mb-3 flex flex-col gap-3">
           {embeds.map((embed) => (
             <EmbedFrame key={embed.embedUrl} provider={embed.provider} embedUrl={embed.embedUrl} />
           ))}
         </div>
       )}
+      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
+        {displayText}
+      </div>
     </>
   );
 }
