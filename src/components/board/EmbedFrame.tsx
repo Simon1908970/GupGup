@@ -15,12 +15,6 @@ export function EmbedFrame({ provider, embedUrl }: DetectedEmbed) {
   return (
     <div
       className={`overflow-hidden rounded-lg border border-[var(--color-border-gray-light)] ${ASPECT_CLASS[provider]}`}
-      // Force this clipped box onto its own GPU compositing layer. Without
-      // it, Android Chrome/WebView can fail to repaint the clipped region
-      // when the embedded TikTok player runs its own internal CSS
-      // transform animations (e.g. its photo-slide carousel), leaving a
-      // ghosted/doubled trail of the previous frame behind.
-      style={{ transform: "translateZ(0)" }}
     >
       <iframe
         src={embedUrl}
