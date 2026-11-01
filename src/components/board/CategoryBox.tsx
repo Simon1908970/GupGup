@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CATEGORIES } from "@/lib/constants/categories";
 import type { CategorySlug, Post } from "@/lib/types";
 import { CategoryBadge } from "@/components/common/CategoryBadge";
-import { CountryTag } from "@/components/common/CountryTag";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
 import { formatDate } from "@/lib/utils";
@@ -69,7 +69,7 @@ export function CategoryBox({
               className="flex items-center gap-2 py-2.5 text-sm hover:text-[var(--color-brand-red)]"
             >
               {config.hasCountryTag && (
-                <CountryTag country={post.country} className="shrink-0" />
+                <CountryFlag code={post.country} size={14} className="shrink-0" />
               )}
               <span className="min-w-0 flex-1 truncate">
                 {showTranslation && translatedTitles ? translatedTitles[i] : post.title}

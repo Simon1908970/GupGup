@@ -6,7 +6,7 @@ import type { Post } from "@/lib/types";
 import { formatCount, formatDate } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
-import { CountryTag } from "@/components/common/CountryTag";
+import { CountryFlag } from "@/components/common/CountryFlag";
 import { DeleteButton } from "@/components/common/DeleteButton";
 import { MessageSquare, Eye, Pin, Lock } from "lucide-react";
 
@@ -45,7 +45,7 @@ export function PostListItem({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            {config.hasCountryTag && <CountryTag country={post.country} />}
+            {config.hasCountryTag && <CountryFlag code={post.country} size={14} />}
             {post.isNotice && (
               <Pin
                 size={14}
