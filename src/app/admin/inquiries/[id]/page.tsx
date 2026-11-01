@@ -85,7 +85,7 @@ export default function AdminInquiryThreadPage() {
                       : "rounded-bl-sm bg-[var(--color-border-gray-light)] text-[var(--foreground)]",
                   )}
                 >
-                  {m.body}
+                  <span className="whitespace-pre-wrap break-words">{m.body}</span>
                 </div>
                 <span className="mt-0.5 text-[10px] text-[var(--color-text-muted)]">
                   {formatDate(m.created_at)}

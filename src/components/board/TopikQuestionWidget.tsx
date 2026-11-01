@@ -54,7 +54,7 @@ export function TopikQuestionWidget() {
       </div>
 
       {question.passage && (
-        <p className="mb-2 rounded-md bg-white/70 p-2 text-sm whitespace-pre-wrap">{question.passage}</p>
+        <p className="mb-2 rounded-md bg-white/70 p-2 text-sm whitespace-pre-wrap break-words">{question.passage}</p>
       )}
       <p className="mb-3 text-sm font-medium">{question.question}</p>
 

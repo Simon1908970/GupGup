@@ -101,7 +101,7 @@ export default function InquiryDetailPage() {
               <div className="flex max-w-[75%] flex-col">
                 <div
                   className={cn(
-                    "rounded-2xl px-3.5 py-2 text-sm",
+                    "whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm",
                     mine
                       ? "rounded-br-sm bg-[var(--color-brand-red)] text-white"
                       : "rounded-bl-sm bg-[var(--color-border-gray-light)] text-[var(--foreground)]",

@@ -13,7 +13,7 @@ export function PostBody({ displayText, rawBody }: { displayText: string; rawBod
           ))}
         </div>
       )}
-      <div className="min-h-32 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
+      <div className="min-h-32 whitespace-pre-wrap break-words text-sm leading-relaxed text-gray-700">
         {displayText}
       </div>
     </>

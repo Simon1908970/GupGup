@@ -98,7 +98,7 @@ export default function AdminReportDetailPage() {
         <p>신고자: {report.reporter?.nickname ?? "알 수 없음"}</p>
         <p>일시: {formatDate(report.created_at)}</p>
         <p>상태: {report.status === "pending" ? "대기" : "처리 완료"}</p>
-        {report.detail && <p className="mt-2 whitespace-pre-line">상세: {report.detail}</p>}
+        {report.detail && <p className="mt-2 whitespace-pre-line break-words">상세: {report.detail}</p>}
       </div>
 
       <div className="rounded-lg border border-[var(--color-border-gray)] p-4 text-sm">
@@ -107,8 +107,8 @@ export default function AdminReportDetailPage() {
           <p className="text-[var(--color-text-muted)]">대상을 찾을 수 없습니다 (이미 삭제됨).</p>
         ) : report.target_type === "post" ? (
           <>
-            <p className="font-medium">{(target as PostTarget).title}</p>
-            <p className="mt-1 whitespace-pre-line text-[var(--color-text-muted)]">
+            <p className="break-words font-medium">{(target as PostTarget).title}</p>
+            <p className="mt-1 whitespace-pre-line break-words text-[var(--color-text-muted)]">
               {(target as PostTarget).body}
             </p>
             <p className="mt-2 text-xs text-[var(--color-text-muted)]">
@@ -117,7 +117,7 @@ export default function AdminReportDetailPage() {
           </>
         ) : report.target_type === "comment" ? (
           <>
-            <p className="whitespace-pre-line">{(target as CommentTarget).body}</p>
+            <p className="whitespace-pre-line break-words">{(target as CommentTarget).body}</p>
             <p className="mt-2 text-xs text-[var(--color-text-muted)]">
               작성자: {(target as CommentTarget).author?.nickname ?? "알 수 없음"}
               {(target as CommentTarget).is_deleted && " (이미 삭제됨)"}

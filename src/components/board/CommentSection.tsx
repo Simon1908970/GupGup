@@ -29,7 +29,7 @@ function CommentRow({ comment, depth = 0 }: { comment: Comment; depth?: number }
             </p>
           ) : (
             <>
-              <p className="mt-0.5 whitespace-pre-wrap text-sm">{comment.body}</p>
+              <p className="mt-0.5 whitespace-pre-wrap break-words text-sm">{comment.body}</p>
               <button
                 onClick={() => setReportOpen(true)}
                 className="mt-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-red)]"

@@ -158,7 +158,7 @@ export default function PostDetailPage() {
         </span>
       </div>
 
-      <h1 className="mb-4 text-lg font-bold leading-snug">
+      <h1 className="mb-4 break-words text-lg font-bold leading-snug">
         {showTranslated && translated ? translated.title : post.title}
       </h1>
 
@@ -202,7 +202,7 @@ export default function PostDetailPage() {
           <p className="mb-1 text-xs font-semibold text-[var(--color-text-muted)]">
             {t("news.originalLabel")}
           </p>
-          <div lang={post.originalLang} className="whitespace-pre-wrap">
+          <div lang={post.originalLang} className="whitespace-pre-wrap break-words">
             {post.originalBody}
           </div>
           {post.sourceName && post.sourceUrl && isHttpUrl(post.sourceUrl) && (
@@ -222,7 +222,7 @@ export default function PostDetailPage() {
           <p className="mb-1 text-xs font-semibold text-[var(--color-text-muted)]">
             {t("news.summaryLabel")}
           </p>
-          <div className="whitespace-pre-wrap">
+          <div className="whitespace-pre-wrap break-words">
             {showTranslated && translated ? translated.body : post.body}
           </div>
         </div>
