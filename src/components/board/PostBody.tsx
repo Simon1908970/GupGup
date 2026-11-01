@@ -9,7 +9,12 @@ export function PostBody({ displayText, rawBody }: { displayText: string; rawBod
       {embeds.length > 0 && (
         <div className="mb-3 flex flex-col gap-3">
           {embeds.map((embed) => (
-            <EmbedFrame key={embed.embedUrl} provider={embed.provider} embedUrl={embed.embedUrl} />
+            <EmbedFrame
+              key={embed.embedUrl}
+              provider={embed.provider}
+              embedUrl={embed.embedUrl}
+              sourceUrl={embed.sourceUrl}
+            />
           ))}
         </div>
       )}

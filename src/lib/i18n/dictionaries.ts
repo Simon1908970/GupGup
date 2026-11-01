@@ -108,6 +108,9 @@ const ko = {
   "news.sourceLabel": "출처",
   "embed.youtubeTitle": "YouTube 영상",
   "embed.tiktokTitle": "TikTok 영상",
+  "embed.facebookPostTitle": "Facebook 게시물",
+  "embed.facebookVideoTitle": "Facebook 영상",
+  "embed.facebookViewLink": "페이스북에서 보기",
   "post.withdrawnUser": "탈퇴한 회원입니다",
   "post.blockedSuffix": "님을 차단했습니다",
 
@@ -366,6 +369,9 @@ const en: Dictionary = {
   "news.sourceLabel": "Source",
   "embed.youtubeTitle": "YouTube video",
   "embed.tiktokTitle": "TikTok video",
+  "embed.facebookPostTitle": "Facebook post",
+  "embed.facebookVideoTitle": "Facebook video",
+  "embed.facebookViewLink": "View on Facebook",
   "post.withdrawnUser": "Deleted user",
   "post.blockedSuffix": " blocked",
 
@@ -695,6 +701,9 @@ const vi: Partial<Dictionary> = {
   "news.sourceLabel": "Nguồn",
   "embed.youtubeTitle": "Video YouTube",
   "embed.tiktokTitle": "Video TikTok",
+  "embed.facebookPostTitle": "Bài viết Facebook",
+  "embed.facebookVideoTitle": "Video Facebook",
+  "embed.facebookViewLink": "Xem trên Facebook",
   "post.withdrawnUser": "Thành viên đã rời đi",
   "post.blockedSuffix": "đã bị chặn",
 
@@ -942,6 +951,9 @@ const th: Partial<Dictionary> = {
   "news.sourceLabel": "ที่มา",
   "embed.youtubeTitle": "วิดีโอ YouTube",
   "embed.tiktokTitle": "วิดีโอ TikTok",
+  "embed.facebookPostTitle": "โพสต์ Facebook",
+  "embed.facebookVideoTitle": "วิดีโอ Facebook",
+  "embed.facebookViewLink": "ดูบน Facebook",
   "post.withdrawnUser": "สมาชิกที่ลาออกแล้ว",
   "post.blockedSuffix": "ถูกบล็อกแล้ว",
 
@@ -1189,6 +1201,9 @@ const id: Partial<Dictionary> = {
   "news.sourceLabel": "Sumber",
   "embed.youtubeTitle": "Video YouTube",
   "embed.tiktokTitle": "Video TikTok",
+  "embed.facebookPostTitle": "Postingan Facebook",
+  "embed.facebookVideoTitle": "Video Facebook",
+  "embed.facebookViewLink": "Lihat di Facebook",
   "post.withdrawnUser": "Anggota yang telah keluar",
   "post.blockedSuffix": "telah diblokir",
 
@@ -1436,6 +1451,9 @@ const tl: Partial<Dictionary> = {
   "news.sourceLabel": "Pinagmulan",
   "embed.youtubeTitle": "Video ng YouTube",
   "embed.tiktokTitle": "Video ng TikTok",
+  "embed.facebookPostTitle": "Post sa Facebook",
+  "embed.facebookVideoTitle": "Video ng Facebook",
+  "embed.facebookViewLink": "Tingnan sa Facebook",
   "post.withdrawnUser": "Umalis na miyembro",
   "post.blockedSuffix": "na-block na",
 
@@ -1683,6 +1701,9 @@ const lo: Partial<Dictionary> = {
   "news.sourceLabel": "ແຫຼ່ງທີ່ມາ",
   "embed.youtubeTitle": "ວິດີໂອ YouTube",
   "embed.tiktokTitle": "ວິດີໂອ TikTok",
+  "embed.facebookPostTitle": "ໂພສ Facebook",
+  "embed.facebookVideoTitle": "ວິດີໂອ Facebook",
+  "embed.facebookViewLink": "ເບິ່ງຢູ່ Facebook",
   "post.withdrawnUser": "ສະມາຊິກທີ່ອອກໄປແລ້ວ",
   "post.blockedSuffix": "ຖືກບລັອກແລ້ວ",
 
@@ -1930,6 +1951,9 @@ const my: Partial<Dictionary> = {
   "news.sourceLabel": "အရင်းအမြစ်",
   "embed.youtubeTitle": "YouTube ဗီဒီယို",
   "embed.tiktokTitle": "TikTok ဗီဒီယို",
+  "embed.facebookPostTitle": "Facebook ပို့စ်",
+  "embed.facebookVideoTitle": "Facebook ဗီဒီယို",
+  "embed.facebookViewLink": "Facebook တွင်ကြည့်ရန်",
   "post.withdrawnUser": "ထွက်ခွာသွားသောအသင်းဝင်",
   "post.blockedSuffix": "ကို ပိတ်ပင်ထားသည်",
 
@@ -2177,6 +2201,9 @@ const mn: Partial<Dictionary> = {
   "news.sourceLabel": "Эх сурвалж",
   "embed.youtubeTitle": "YouTube бичлэг",
   "embed.tiktokTitle": "TikTok бичлэг",
+  "embed.facebookPostTitle": "Facebook пост",
+  "embed.facebookVideoTitle": "Facebook бичлэг",
+  "embed.facebookViewLink": "Facebook дээр үзэх",
   "post.withdrawnUser": "Гарсан гишүүн",
   "post.blockedSuffix": "-г блоклолоо",
 
@@ -2424,6 +2451,9 @@ const ru: Partial<Dictionary> = {
   "news.sourceLabel": "Источник",
   "embed.youtubeTitle": "Видео YouTube",
   "embed.tiktokTitle": "Видео TikTok",
+  "embed.facebookPostTitle": "Пост Facebook",
+  "embed.facebookVideoTitle": "Видео Facebook",
+  "embed.facebookViewLink": "Смотреть на Facebook",
   "post.withdrawnUser": "Пользователь удалил аккаунт",
   "post.blockedSuffix": "заблокирован(а)",
 
@@ -2597,6 +2627,9 @@ const km: Partial<Dictionary> = {
   "news.sourceLabel": "ប្រភព",
   "embed.youtubeTitle": "វីដេអូ YouTube",
   "embed.tiktokTitle": "វីដេអូ TikTok",
+  "embed.facebookPostTitle": "ប្រកាស Facebook",
+  "embed.facebookVideoTitle": "វីដេអូ Facebook",
+  "embed.facebookViewLink": "មើលនៅលើ Facebook",
   "post.withdrawnUser": "សមាជិកដែលបានលុបគណនី",
   "post.blockedSuffix": "ត្រូវបានទប់ស្កាត់",
 

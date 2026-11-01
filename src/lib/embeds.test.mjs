@@ -31,7 +31,82 @@ test("detectEmbed: tiktok video URL", () => {
 });
 
 test("detectEmbed: unsupported platform returns null", () => {
-  assert.equal(detectEmbed("https://www.facebook.com/koreanonlinecoursemgl/posts/pfbid02SR"), null);
+  assert.equal(detectEmbed("https://www.instagram.com/p/abc123/"), null);
+});
+
+test("detectEmbed: facebook post URL uses the post plugin", () => {
+  const url = "https://www.facebook.com/koreanonlinecoursemgl/posts/pfbid02SR";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-post",
+    embedUrl: `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: facebook group post URL uses the post plugin", () => {
+  const url = "https://www.facebook.com/groups/123456/posts/789012";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-post",
+    embedUrl: `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: facebook /videos/ URL uses the video plugin", () => {
+  const url = "https://www.facebook.com/koreanonlinecoursemgl/videos/1234567890";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-video",
+    embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: facebook /reel/ URL uses the video plugin", () => {
+  const url = "https://www.facebook.com/reel/1234567890";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-video",
+    embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: facebook watch URL uses the video plugin", () => {
+  const url = "https://www.facebook.com/watch/?v=1234567890";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-video",
+    embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: fb.watch short link uses the video plugin", () => {
+  const url = "https://fb.watch/abc123XYZ/";
+  assert.deepEqual(detectEmbed(url), {
+    provider: "facebook-video",
+    embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  });
+});
+
+test("detectEmbed: facebook m. subdomain is accepted", () => {
+  const url = "https://m.facebook.com/koreanonlinecoursemgl/posts/pfbid02SR";
+  assert.equal(detectEmbed(url)?.provider, "facebook-post");
+});
+
+test("detectEmbed: facebook URL with trailing punctuation is not detected", () => {
+  assert.equal(detectEmbed("https://www.facebook.com/x/posts/1!"), null);
+});
+
+test("detectEmbed: rejects facebook domain spoofing", () => {
+  assert.equal(detectEmbed("https://facebook.com.evil.com/x/posts/1"), null);
+});
+
+test("detectEmbed: rejects facebook userinfo trick", () => {
+  assert.equal(detectEmbed("https://evil@facebook.com/x/posts/1"), null);
+});
+
+test("detectEmbed: rejects fb.watch domain spoofing", () => {
+  assert.equal(detectEmbed("https://fb.watch.evil.com/abc123"), null);
 });
 
 test("detectEmbed: rejects domain spoofing", () => {
@@ -93,8 +168,17 @@ test("extractEmbeds: dedupes the same URL repeated", () => {
 });
 
 test("extractEmbeds: ignores unsupported links mixed with supported ones", () => {
-  const body = "https://www.facebook.com/x/posts/1 그리고 https://youtu.be/dQw4w9WgXcQ";
+  const body = "https://www.instagram.com/p/abc123/ 그리고 https://youtu.be/dQw4w9WgXcQ";
   const result = extractEmbeds(body);
   assert.equal(result.length, 1);
   assert.equal(result[0].provider, "youtube");
+});
+
+test("extractEmbeds: picks up a facebook link alongside a youtube link", () => {
+  const body = "https://www.facebook.com/x/posts/1 그리고 https://youtu.be/dQw4w9WgXcQ";
+  const result = extractEmbeds(body);
+  assert.deepEqual(
+    result.map((e) => e.provider),
+    ["facebook-post", "youtube"],
+  );
 });

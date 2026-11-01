@@ -5,6 +5,27 @@ const YOUTUBE_SHORT = /^https:\/\/youtu\.be\/([\w-]{11})(?:\?.*)?$/;
 const YOUTUBE_SHORTS = /^https:\/\/(?:www\.)?youtube\.com\/shorts\/([\w-]{11})(?:\?.*)?$/;
 const TIKTOK_VIDEO = /^https:\/\/(?:www\.)?tiktok\.com\/@[\w.-]{1,24}\/video\/(\d{5,25})(?:\?.*)?$/;
 
+// Trailing char must not be sentence punctuation, so "...링크다." doesn't pull in the "." as part of the URL.
+const NOT_TRAILING_PUNCT = "[^\\s.,!?;:'\")\\]}]";
+const FACEBOOK_URL = new RegExp(`^https://(?:www\\.|m\\.)?facebook\\.com/\\S*${NOT_TRAILING_PUNCT}$`);
+const FACEBOOK_WATCH_SHORT = new RegExp(`^https://fb\\.watch/\\S*${NOT_TRAILING_PUNCT}$`);
+const FACEBOOK_VIDEO_PATH = /\/(?:videos|reel|reels)\/|\/watch\/?(?:\?|$)/;
+
+function detectFacebookEmbed(url) {
+  const isShortVideoLink = FACEBOOK_WATCH_SHORT.test(url);
+  if (!isShortVideoLink && !FACEBOOK_URL.test(url)) return null;
+
+  const isVideo = isShortVideoLink || FACEBOOK_VIDEO_PATH.test(url);
+  const plugin = isVideo
+    ? "https://www.facebook.com/plugins/video.php?href="
+    : "https://www.facebook.com/plugins/post.php?href=";
+  return {
+    provider: isVideo ? "facebook-video" : "facebook-post",
+    embedUrl: `${plugin}${encodeURIComponent(url)}`,
+    sourceUrl: url,
+  };
+}
+
 export function detectEmbed(url) {
   const youtubeMatch =
     url.match(YOUTUBE_WATCH) ?? url.match(YOUTUBE_SHORT) ?? url.match(YOUTUBE_SHORTS);
@@ -22,6 +43,9 @@ export function detectEmbed(url) {
       embedUrl: `https://www.tiktok.com/player/v1/${tiktokMatch[1]}?autoplay=0&music_info=0&description=0`,
     };
   }
+
+  const facebookMatch = detectFacebookEmbed(url);
+  if (facebookMatch) return facebookMatch;
 
   return null;
 }
