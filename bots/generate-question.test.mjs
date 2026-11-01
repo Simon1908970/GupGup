@@ -186,3 +186,12 @@ test("generateDraft: throws with status and body text on a non-ok response", asy
     /Anthropic API error 429: rate limited/,
   );
 });
+
+test("buildSystemPrompt: female question personas (q4/q5) get the female tone layer", async () => {
+  const { buildSystemPrompt, questionGenderNote } = await import("./generate-question.mjs");
+  assert.match(buildSystemPrompt("vn", "vn-q4"), /여성 말투\(베트남\)/);
+  assert.match(buildSystemPrompt("vn", "vn-q1"), /남성 말투\(베트남\)/);
+  assert.match(buildSystemPrompt("la", "la-q5"), /여성 말투\(태국\)/);
+  assert.equal(questionGenderNote(undefined), "");
+  assert.doesNotMatch(buildSystemPrompt("vn"), /말투\(베트남\)/);
+});

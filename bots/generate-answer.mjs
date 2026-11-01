@@ -39,6 +39,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { genderToneNoteForAccount } from "./gender-tone.mjs";
 
 const MODEL = "claude-opus-5-5";
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -172,9 +173,14 @@ const COUNTRY_TONE_NOTES = {
 기억할 것.`,
 };
 
-function countryToneNote(authorKey) {
-  const country = loadReplyAccount(authorKey)?.country;
-  return country ? (COUNTRY_TONE_NOTES[country] ?? "") : "";
+// 언어별 공통 톤(COUNTRY_TONE_NOTES) 뒤에, 계정 아바타로 판단한 성별 말투(gender-tone.mjs)를
+// 덧붙인다 -- CLAUDE.md "페르소나 말투 가이드 — 언어별 남/여" 참고.
+export function countryToneNote(authorKey) {
+  const account = loadReplyAccount(authorKey);
+  const country = account?.country;
+  const base = country ? (COUNTRY_TONE_NOTES[country] ?? "") : "";
+  const gender = genderToneNoteForAccount(account);
+  return [base, gender].filter(Boolean).join("\n");
 }
 
 const TONE_RULE = `실제 인터넷 댓글창처럼 써라 -- 서로 얼굴 안 보고 쓰는 공간이라 다들 무례하고

@@ -24,6 +24,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { genderToneNoteForAccount } from "./gender-tone.mjs";
 
 const QUESTION_ACCOUNTS_PATH = fileURLToPath(new URL("./question-accounts.json", import.meta.url));
 
@@ -61,24 +62,35 @@ const LANGUAGE_BY_COUNTRY = {
 const DEFAULT_QUESTION_PERSONA =
   "너의 성격: 평범하고 무난한 태도. 과하게 조심스럽거나 과하게 당당하지 않다.";
 
-export function loadQuestionPersona(authorKey) {
+function loadQuestionAccount(authorKey) {
   try {
     const accounts = JSON.parse(readFileSync(QUESTION_ACCOUNTS_PATH, "utf8"));
-    return accounts[authorKey]?.persona ?? null;
+    return accounts[authorKey] ?? null;
   } catch {
     return null;
   }
+}
+
+export function loadQuestionPersona(authorKey) {
+  return loadQuestionAccount(authorKey)?.persona ?? null;
+}
+
+// 계정 아바타(male-*/female-*)로 판단한 성별 말투 -- gender-tone.mjs /
+// CLAUDE.md "페르소나 말투 가이드 — 언어별 남/여" 참고. --author 없으면 빈 문자열.
+export function questionGenderNote(authorKey) {
+  return genderToneNoteForAccount(loadQuestionAccount(authorKey));
 }
 
 export function buildSystemPrompt(country, author) {
   const label = COUNTRY_LABEL[country];
   const lang = LANGUAGE_BY_COUNTRY[country];
   const persona = loadQuestionPersona(author) ?? DEFAULT_QUESTION_PERSONA;
+  const genderNote = questionGenderNote(author);
   return `너는 한국에 거주 중인 ${label} 출신 외국인이고, 커뮤니티 게시판에 궁금한 걸
 질문하는 글을 쓰는 중이야. 실제 그 나라 사람이 쓴 것처럼 자연스러운 현지어(${lang})로
 작성해.
 
-${persona}
+${persona}${genderNote ? `\n\n${genderNote}` : ""}
 
 1. 질문 전에 짧게 자기 상황을 먼저 밝힌다 -- 한국 거주 기간, 하는 일(유학/취업/결혼 등),
    거주 지역 중 1~2개. 2~3문장 정도로 간결하게.

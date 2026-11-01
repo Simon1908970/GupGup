@@ -358,3 +358,14 @@ test("generateAnswer: throws with status and body text on a non-ok response", as
     /Anthropic API error 429: rate limited/,
   );
 });
+
+test("countryToneNote: appends the gender layer from the account avatar", async () => {
+  const { countryToneNote } = await import("./generate-answer.mjs");
+  const accounts = JSON.parse(readFileSync(fileURLToPath(new URL("./reply-accounts.json", import.meta.url)), "utf8"));
+  const female = Object.keys(accounts).find((k) => accounts[k].country === "th" && /female-/.test(accounts[k].avatarUrl));
+  const male = Object.keys(accounts).find((k) => accounts[k].country === "th" && /\/male-/.test(accounts[k].avatarUrl));
+  assert.match(countryToneNote(female), /555/); // base Thai note still there
+  assert.match(countryToneNote(female), /여성 말투\(태국\)/);
+  assert.doesNotMatch(countryToneNote(female), /남성 말투/);
+  assert.match(countryToneNote(male), /남성 말투\(태국\)/);
+});
