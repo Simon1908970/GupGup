@@ -66,13 +66,15 @@ export function CategoryNav() {
       setIndicator(el ? { left: el.offsetLeft, width: el.offsetWidth } : null);
     }
 
-    function measureEdges() {
+    // An arrow function expression (not a nested function declaration) so TS
+    // keeps the non-null narrowing of scrollEl from the guard above.
+    const measureEdges = () => {
       const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
       setEdgeShadow({
         left: scrollEl.scrollLeft > EDGE_THRESHOLD,
         right: scrollEl.scrollLeft < maxScroll - EDGE_THRESHOLD,
       });
-    }
+    };
 
     measureIndicator();
     measureEdges();
