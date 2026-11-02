@@ -77,14 +77,23 @@ test("isAllowedTarget: accepts the agreed reactor/qna targets", () => {
   assert.equal(isAllowedTarget("university", "general"), true);
   assert.equal(isAllowedTarget("community", "qna"), true);
   assert.equal(isAllowedTarget("university", "qna"), true);
+  assert.equal(isAllowedTarget("life", "marriage-childcare"), true);
+  assert.equal(isAllowedTarget("life", "restaurant"), true);
+  assert.equal(isAllowedTarget("life", "hospital"), true);
+  assert.equal(isAllowedTarget("life", "mobile"), true);
+  assert.equal(isAllowedTarget("life", "admin"), true);
+  assert.equal(isAllowedTarget("life", "etc"), true);
 });
 
 test("isAllowedTarget: rejects sensitive/unlisted categories", () => {
-  assert.equal(isAllowedTarget("life", "hospital"), false);
-  assert.equal(isAllowedTarget("life", "admin"), false);
   assert.equal(isAllowedTarget("housing", undefined), false);
   assert.equal(isAllowedTarget("marketplace", undefined), false);
   assert.equal(isAllowedTarget("meeting", undefined), false);
+});
+
+test("isQnaTarget: life/* is reactor-only, never QnA (no web_search grounding)", () => {
+  assert.equal(isQnaTarget("life", "hospital"), false);
+  assert.equal(isQnaTarget("life", "admin"), false);
 });
 
 test("isQnaTarget: true only for the two QnA sub-categories", () => {
@@ -127,8 +136,8 @@ test("validateArgs: rejects an unsupported category/subCategory", () => {
     validateArgs({
       postId: POST_ID,
       author: "vn",
-      category: "life",
-      subCategory: "hospital",
+      category: "housing",
+      subCategory: undefined,
       title: "t",
       body: "b",
     }),

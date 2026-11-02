@@ -24,10 +24,12 @@
 // bots/publish-comment.mjs on the --out file (its shape -- {postId, author,
 // body} -- is already what that script expects).
 //
-// Only the categories below are supported; anything else (housing, life/*,
+// Only the categories below are supported; anything else (housing,
 // marketplace, meeting, ...) is rejected -- see CLAUDE.md's "범용 정보성
 // 질문에 자동으로 댓글을 다는 기능... 비자/법률/병원 등 민감 카테고리에는
-// 절대 자동 댓글을 달지 않는다" caution.
+// 절대 자동 댓글을 달지 않는다" caution. life/* was added 2026-11-02 (user
+// request) but only as REACTOR_TARGETS (short reaction, no web_search fact
+// grounding) -- never QNA_TARGETS.
 //
 // Usage:
 //   node --env-file=.env.local bots/generate-answer.mjs \
@@ -53,6 +55,16 @@ const REACTOR_TARGETS = new Set([
   "community/travel",
   "community/dating",
   "university/general",
+  // 2026-11-02 사용자 요청으로 life/* 추가 -- 가벼운 반응형 댓글만 허용, QnA(web_search로
+  // 사실관계 확인 후 답변)는 아님. life/hospital처럼 민감한 서브카테고리도 포함되므로,
+  // 실제 회원 글이 아니라 self-seed된 글에만 쓰는 운영 원칙(CLAUDE.md "국가별 커뮤니티
+  // 봇" 섹션)을 반드시 지킬 것.
+  "life/marriage-childcare",
+  "life/restaurant",
+  "life/hospital",
+  "life/mobile",
+  "life/admin",
+  "life/etc",
 ]);
 const ALLOWED_TARGETS = new Set([...QNA_TARGETS, ...REACTOR_TARGETS]);
 

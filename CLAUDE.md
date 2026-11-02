@@ -298,11 +298,15 @@ marriage-childcare/restaurant/hospital/mobile/admin/law) / `marketplace` / `univ
 ### 4. 답변 댓글 생성 ("답변 만들어줘" / "답변 하나 더 달아줘")
 
 3번에서 self-seed한 질문 글이나 완결된 정보글에 대한 답변 전용이다 — **실제 회원이 올린 글에는
-자동으로 답변을 달지 않는다.** 대상 카테고리는 아래로 한정 — 그 외(housing, life/\*,
-marketplace, meeting 전부)는 `generate-answer.mjs` 자체가 거부한다:
-- **반응형** (가벼운 반응 댓글): `news`, `community/free`, `community/travel`,
-  `community/dating`, `university/general`
-- **QnA 답변** (경험자 선배 페르소나): `community/qna`, `university/qna`
+자동으로 답변을 달지 않는다.** 대상 카테고리는 아래로 한정 — 그 외(housing, marketplace,
+meeting 전부)는 `generate-answer.mjs` 자체가 거부한다:
+- **반응형** (가벼운 반응 댓글, 사실관계 검색 없음): `news`, `community/free`,
+  `community/travel`, `community/dating`, `university/general`, `life/marriage-childcare`,
+  `life/restaurant`, `life/hospital`, `life/mobile`, `life/admin`, `life/etc`
+  (life/\*는 2026-11-02 사용자 요청으로 추가 — `life/hospital`처럼 민감한 서브카테고리도
+  포함되므로, 실제 회원 글에는 쓰지 않는다는 원칙과 self-seed 전용이라는 점을 더 엄격히 지킬 것)
+- **QnA 답변** (경험자 선배 페르소나, web_search로 사실관계 확인): `community/qna`,
+  `university/qna` — life/\*는 QnA 대상이 아니다(사실관계 확인 없는 가벼운 반응만 허용)
 
 **글을 특정하지 않고 요청하면(예: 그냥 "답변 만들어줘")**: 바로 아무 글이나 골라서 진행하지
 않는다. 먼저 Supabase에서 후보 목록을 조회해서 채팅에 보여주고, 사용자가 그중 하나씩 직접
