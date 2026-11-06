@@ -1,7 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 export type SearchScope = "titleContent" | "title" | "author";
@@ -18,6 +18,14 @@ export function BoardSearchBar({
   const { t } = useLanguage();
   const [localScope, setLocalScope] = useState<SearchScope>(scope);
   const [localQuery, setLocalQuery] = useState(query);
+
+  // 목록 페이지가 정적으로 미리 구워지면서 ?q= 값이 마운트 이후에야(URL을
+  // 직접 읽는 효과로) 채워질 수 있다 -- 그 뒤늦은 query 변경을 입력란에도
+  // 반영해야 해서 effect 안에서 setState가 불가피하다.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLocalQuery(query);
+  }, [query]);
 
   return (
     <form
