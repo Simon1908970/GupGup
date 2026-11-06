@@ -1,94 +1,28 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import {
-  CATEGORIES,
-  CATEGORY_ORDER,
-  GRID_BOX_CATEGORIES,
-  LARGE_BOX_CATEGORIES,
-} from "@/lib/constants/categories";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { fetchLatestPosts, fetchPopularPosts } from "@/lib/supabase/posts";
+import { CATEGORIES, CATEGORY_ORDER } from "@/lib/constants/categories";
+import { fetchLatestPosts } from "@/lib/supabase/posts";
 import type { CategorySlug, Post } from "@/lib/types";
-import { CategoryBox } from "@/components/board/CategoryBox";
-import { PopularPostsWidget } from "@/components/board/PopularPostsWidget";
-import { ExchangeRateTicker } from "@/components/board/ExchangeRateTicker";
-import { TopikQuestionWidget } from "@/components/board/TopikQuestionWidget";
-import { CountryMapWidget } from "@/components/map/CountryMapWidget";
-import { WelcomeToast } from "@/components/common/WelcomeToast";
+import { HomeView } from "@/components/home/HomeView";
 
-export default function Home() {
-  const { t } = useLanguage();
-  const { user, loading: authLoading } = useAuth();
-  const [postsByCategory, setPostsByCategory] = useState<Record<CategorySlug, Post[]>>(
-    {} as Record<CategorySlug, Post[]>,
+// 로그인 여부와 무관하게 모두에게 같은 글 목록을 보여주는 카테고리들이라
+// 빌드/재검증 시점에 서버에서 미리 데이터를 채워 넣는다 -- 그래야 크롤러가
+// 받는 첫 HTML에도 글 목록이 그대로 들어있다. requiresAuth 카테고리("만남")는
+// 로그인한 사람에게만 보여줘야 해서 여기서는 항상 비워 두고, 실제 글 목록은
+// HomeView가 클라이언트에서 로그인 확인 후 채운다.
+export const revalidate = 60;
+
+export default async function Home() {
+  const entries = await Promise.all(
+    CATEGORY_ORDER.map(async (slug) => {
+      if (CATEGORIES[slug].requiresAuth) return [slug, []] as const;
+      try {
+        const posts = await fetchLatestPosts(slug, CATEGORIES[slug].mainCount);
+        return [slug, posts] as const;
+      } catch {
+        return [slug, []] as const;
+      }
+    }),
   );
-  const [popularPosts, setPopularPosts] = useState<Post[]>([]);
+  const postsByCategory = Object.fromEntries(entries) as Record<CategorySlug, Post[]>;
 
-  useEffect(() => {
-    if (authLoading) return;
-    let cancelled = false;
-    Promise.all(
-      CATEGORY_ORDER.map((slug) =>
-        CATEGORIES[slug].requiresAuth && !user
-          ? Promise.resolve([slug, []] as const)
-          : fetchLatestPosts(slug, CATEGORIES[slug].mainCount)
-              .then((posts) => [slug, posts] as const)
-              .catch(() => [slug, []] as const),
-      ),
-    ).then((entries) => {
-      if (cancelled) return;
-      setPostsByCategory(Object.fromEntries(entries) as Record<CategorySlug, Post[]>);
-    });
-    fetchPopularPosts(6, 30)
-      .then((posts) => {
-        if (!cancelled) setPopularPosts(posts);
-      })
-      .catch(() => {
-        if (!cancelled) setPopularPosts([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoading, user]);
-
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <WelcomeToast />
-      <ExchangeRateTicker />
-      <TopikQuestionWidget />
-      <CountryMapWidget compact />
-      <PopularPostsWidget posts={popularPosts} />
-
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {LARGE_BOX_CATEGORIES.map((slug) => (
-          <CategoryBox
-            key={slug}
-            slug={slug}
-            label={t(CATEGORIES[slug].labelKey as DictionaryKey)}
-            moreLabel={t("board.viewMore")}
-            posts={postsByCategory[slug] ?? []}
-            locked={CATEGORIES[slug].requiresAuth && !user}
-            lockedLabel={t("board.loginRequired")}
-          />
-        ))}
-      </section>
-
-      <section className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {GRID_BOX_CATEGORIES.map((slug) => (
-          <CategoryBox
-            key={slug}
-            slug={slug}
-            label={t(CATEGORIES[slug].labelKey as DictionaryKey)}
-            moreLabel={t("board.viewMore")}
-            posts={postsByCategory[slug] ?? []}
-            locked={CATEGORIES[slug].requiresAuth && !user}
-            lockedLabel={t("board.loginRequired")}
-          />
-        ))}
-      </section>
-    </div>
-  );
+  return <HomeView initialPostsByCategory={postsByCategory} />;
 }
