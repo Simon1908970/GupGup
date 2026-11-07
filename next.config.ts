@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "frame-src 'self' https://www.youtube-nocookie.com https://www.tiktok.com https://postcode.map.kakao.com;",
+              "frame-src 'self' https://www.youtube-nocookie.com https://www.tiktok.com https://www.facebook.com https://postcode.map.kakao.com;",
           },
         ],
       },
