@@ -8,7 +8,10 @@ const ASPECT_CLASS: Record<DetectedEmbed["provider"], string> = {
   youtube: "aspect-[16/9] w-full",
   tiktok: "aspect-[9/16] w-full max-w-[325px]",
   "facebook-post": "h-[500px] w-full",
-  "facebook-video": "aspect-[16/9] w-full",
+  // Facebook Reels (the realistic case for /reel/ and fb.watch short-video
+  // links) are vertical like TikTok, not landscape -- a 16:9 box just
+  // crops a 9:16 video down to its horizontal middle slice.
+  "facebook-video": "aspect-[9/16] w-full max-w-[325px]",
 };
 
 const TITLE_KEY: Record<DetectedEmbed["provider"], DictionaryKey> = {
