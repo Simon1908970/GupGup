@@ -24,6 +24,21 @@ export function EmbedFrame({ provider, embedUrl, sourceUrl }: DetectedEmbed) {
 
   return (
     <div className="flex flex-col gap-1">
+      {/* Facebook's plugin iframe silently fails for lots of ordinary posts
+          (personal-profile posts, not just private/group ones), leaving a
+          tall blank box with nothing to click. Showing the fallback link
+          above the iframe -- not just underneath it -- means it's visible
+          immediately instead of requiring a scroll past that empty box. */}
+      {sourceUrl && (
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className="self-start text-xs text-[var(--color-text-muted)] underline hover:text-[var(--color-brand-red)]"
+        >
+          {t("embed.facebookViewLink")}
+        </a>
+      )}
       <div
         className={`overflow-hidden rounded-lg border border-[var(--color-border-gray-light)] ${ASPECT_CLASS[provider]}`}
       >
@@ -37,16 +52,6 @@ export function EmbedFrame({ provider, embedUrl, sourceUrl }: DetectedEmbed) {
           referrerPolicy="strict-origin-when-cross-origin"
         />
       </div>
-      {sourceUrl && (
-        <a
-          href={sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="self-start text-xs text-[var(--color-text-muted)] underline hover:text-[var(--color-brand-red)]"
-        >
-          {t("embed.facebookViewLink")}
-        </a>
-      )}
     </div>
   );
 }
