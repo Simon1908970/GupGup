@@ -274,12 +274,10 @@ export async function fetchPostById(
   return mapPost(row, likedPostIds);
 }
 
-export async function incrementViewCount(id: string, currentViewCount: number) {
+export async function incrementViewCount(id: string) {
   const supabase = createClient();
-  await supabase
-    .from("posts")
-    .update({ view_count: currentViewCount + 1 })
-    .eq("id", id);
+  const { error } = await supabase.rpc("increment_post_view_count", { post_id: id });
+  if (error) console.error("incrementViewCount failed:", error.message);
 }
 
 export interface CreatePostInput {
