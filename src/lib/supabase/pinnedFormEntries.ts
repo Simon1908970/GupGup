@@ -164,22 +164,6 @@ const SALARY_PUBLIC_SELECT =
 const LIVING_COST_PUBLIC_SELECT =
   "id, post_id, comment_id, is_deleted, is_anonymous, user_id, nickname, avatar_url, country, is_withdrawn, is_supporter, region_province, region_city, status, household, housing_type, net_pay, rent, utilities, phone, transport, groceries, eating_out, shopping, other, total_cost, remaining, base_month, created_at";
 
-// 목록 카드의 "128명 참여" 표시용 -- 삭제된 카드는 빼고 센다.
-export async function fetchEntryParticipantCount(
-  postId: string,
-  formType: "salary" | "living_cost",
-): Promise<number> {
-  const supabase = createClient();
-  const view = formType === "salary" ? "salary_entries_public" : "living_cost_entries_public";
-  const { count, error } = await supabase
-    .from(view)
-    .select("id", { count: "exact", head: true })
-    .eq("post_id", postId)
-    .eq("is_deleted", false);
-  if (error) throw error;
-  return count ?? 0;
-}
-
 export async function fetchSalaryEntries(postId: string): Promise<SalaryEntry[]> {
   const supabase = createClient();
   const { data, error } = await supabase
