@@ -83,6 +83,11 @@ export interface Author {
   avatarUrl?: string;
   isWithdrawn?: boolean;
   isSupporter?: boolean;
+  // "내 월급"/"내 생활비" 카드를 익명으로 올린 경우. id는 실제 회원 id가
+  // 아닌 더미 값이라 프로필 보기/쪽지/차단 같은 작성자 기반 동작을 쓸 수
+  // 없으므로, 닉네임 팝업은 이 값일 때 클릭 가능한 팝업 대신 평범한 텍스트를
+  // 보여준다(탈퇴 회원과 같은 방식).
+  isAnonymousCard?: boolean;
 }
 
 export type AttachmentType = "image" | "video";
@@ -135,6 +140,7 @@ export interface Post {
   businessLng?: number;
   isNotice?: boolean;
   membersOnly?: boolean;
+  pinnedFormType?: "salary" | "living_cost";
 }
 
 export interface Comment {
@@ -145,6 +151,59 @@ export interface Comment {
   createdAt: string;
   parentId?: string;
   isDeleted: boolean;
+}
+
+export interface SalaryEntry {
+  id: string;
+  postId: string;
+  commentId: string;
+  isDeleted: boolean;
+  isAnonymous: boolean;
+  author: Author;
+  regionProvince: string;
+  regionCity: string;
+  industryMain: string;
+  industrySub: string;
+  visa: string;
+  weeklyHours: number;
+  monthlyDaysOff: number;
+  nightWork: "none" | "sometimes" | "shift";
+  grossPay: number;
+  overtimeIncluded: boolean;
+  deductHousing: number;
+  deductFood: number;
+  deductTaxInsurance: number;
+  deductOther: number;
+  netPay: number;
+  baseMonth: string;
+  createdAt: string;
+}
+
+export interface LivingCostEntry {
+  id: string;
+  postId: string;
+  commentId: string;
+  isDeleted: boolean;
+  isAnonymous: boolean;
+  author: Author;
+  regionProvince: string;
+  regionCity: string;
+  status: string;
+  household: string;
+  housingType: string;
+  netPay: number;
+  rent: number;
+  utilities: number;
+  phone: number;
+  transport: number;
+  groceries: number;
+  eatingOut: number;
+  shopping: number;
+  other: number;
+  totalCost: number;
+  remaining: number;
+  baseMonth: string;
+  createdAt: string;
 }
 
 export type SortOrder = "latest" | "popular";

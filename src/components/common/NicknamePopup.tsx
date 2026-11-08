@@ -47,6 +47,17 @@ export function NicknamePopup({
     );
   }
 
+  // 익명으로 올린 "내 월급"/"내 생활비" 카드 -- author.id가 실제 회원 id가
+  // 아니라서 프로필 보기/쪽지/차단 중 아무것도 동작할 수 없다. 클릭해도 아무
+  // 일도 일어나지 않는 평범한 텍스트로 보여준다(탈퇴 회원과 같은 처리).
+  if (author.isAnonymousCard) {
+    return (
+      <span className={cn("text-[var(--color-text-muted)]", className)}>
+        {t("pinnedForm.anonymousNickname")}
+      </span>
+    );
+  }
+
   return (
     <div className="relative inline-block" ref={rootRef}>
       <button

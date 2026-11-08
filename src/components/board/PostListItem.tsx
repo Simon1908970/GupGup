@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Avatar } from "@/components/common/Avatar";
 import { CountryFlag } from "@/components/common/CountryFlag";
 import { DeleteButton } from "@/components/common/DeleteButton";
+import { PinnedFormCard } from "@/components/board/PinnedFormCard";
 import { MessageSquare, Eye, Pin, Lock } from "lucide-react";
 
 export function PostListItem({
@@ -21,6 +22,13 @@ export function PostListItem({
 }) {
   const { t } = useLanguage();
   const config = CATEGORIES[post.category];
+
+  // "내 월급"/"내 생활비" 같은 고정 폼 글은 일반 글 줄이 아니라 눈에 띄는
+  // 애니메이션 카드로 보여준다(요청서 2번) -- onDelete(글쓴이 본인 글 목록)
+  // 쪽에서는 쓰이지 않으므로 신경 쓸 필요 없다.
+  if (post.pinnedFormType) {
+    return <PinnedFormCard post={post} />;
+  }
   const thumbnail =
     post.thumbnailUrl ?? post.attachments.find((a) => a.type === "image")?.url;
 

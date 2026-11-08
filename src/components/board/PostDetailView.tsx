@@ -22,6 +22,7 @@ import { PostBody } from "@/components/board/PostBody";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { LikeButton } from "@/components/common/LikeButton";
 import { FirstPostPointsModal } from "@/components/common/FirstPostPointsModal";
+import { PinnedFormSection } from "@/components/board/PinnedFormSection";
 
 function isValidCategory(v: string): v is CategorySlug {
   return v in CATEGORIES;
@@ -76,9 +77,14 @@ export function PostDetailView({
     fetchPostById(config.slug, postId).then((data) => {
       if (cancelled) return;
       setPost(data);
-    });
-    fetchComments(postId).then((data) => {
-      if (!cancelled) setComments(data);
+      // "내 월급"/"내 생활비" 글의 카드는 익명일 수 있어서, 실제 작성자를
+      // 그대로 조인하는 일반 fetchComments()를 이 글에는 아예 호출하지
+      // 않는다(PinnedFormSection이 익명 처리된 뷰로 따로 가져간다) --
+      // 안 그러면 네트워크 응답에 실제 닉네임이 그대로 찍혀 나간다.
+      if (data?.pinnedFormType) return;
+      fetchComments(postId).then((comments) => {
+        if (!cancelled) setComments(comments);
+      });
     });
     return () => {
       cancelled = true;
@@ -190,6 +196,14 @@ export function PostDetailView({
     }
   }
 
+  async function handleReplySubmit(parentId: string, body: string) {
+    if (!user || !post) return;
+    await createComment(post.id, user.id, body, parentId);
+    const updated = await fetchComments(post.id);
+    setComments(updated);
+    await refreshProfile();
+  }
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
       <FirstPostPointsModal post={post} />
@@ -230,7 +244,7 @@ export function PostDetailView({
         />
       </div>
 
-      {config.slug === "news" && post.originalBody ? (
+      {post.pinnedFormType ? null : config.slug === "news" && post.originalBody ? (
         <div className="text-sm leading-relaxed text-gray-700">
           {post.thumbnailUrl && (
             <figure className="mb-4">
@@ -281,7 +295,7 @@ export function PostDetailView({
         />
       )}
 
-      {post.attachments.length > 0 && (
+      {!post.pinnedFormType && post.attachments.length > 0 && (
         <ul className="mt-4 flex flex-col gap-3">
           {post.attachments.map((a) => (
             <li key={a.url}>
@@ -307,16 +321,18 @@ export function PostDetailView({
         </ul>
       )}
 
-      <div className="mt-5">
-        <LikeButton
-          key={`${post.id}-${post.likedByViewer}`}
-          postId={post.id}
-          initialLiked={post.likedByViewer}
-          initialCount={post.likeCount}
-        />
-      </div>
+      {!post.pinnedFormType && (
+        <div className="mt-5">
+          <LikeButton
+            key={`${post.id}-${post.likedByViewer}`}
+            postId={post.id}
+            initialLiked={post.likedByViewer}
+            initialCount={post.likeCount}
+          />
+        </div>
+      )}
 
-      {config.hasMessageButton && (
+      {!post.pinnedFormType && config.hasMessageButton && (
         <button
           onClick={() => router.push(`/messages/${post.author.id}`)}
           className="relative mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-brand-red)] py-2.5 text-sm font-medium text-white gg-glossy-btn"
@@ -326,39 +342,45 @@ export function PostDetailView({
         </button>
       )}
 
-      <div className="mt-8 border-t border-[var(--color-border-gray-light)] pt-2">
-        <h2 className="py-3 text-sm font-semibold">
-          {t("board.comments")} {comments.length}
-        </h2>
-        <CommentSection comments={comments} />
-        {user ? (
-          <div className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3">
-            {hasCommentProfanity && (
-              <p className="mb-2 text-xs text-[var(--color-brand-red)]">
-                {t("moderation.profanityWarning")}
-              </p>
-            )}
-            <form onSubmit={handleCommentSubmit} className="flex gap-2">
-              <input
-                value={commentDraft}
-                onChange={(e) => setCommentDraft(e.target.value)}
-                placeholder={t("board.commentPlaceholder")}
-                className="h-9 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
-              />
-              <button
-                disabled={posting || hasCommentProfanity}
-                className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
-              >
-                {t("common.submit")}
-              </button>
-            </form>
-          </div>
-        ) : (
-          <p className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3 text-center text-xs text-[var(--color-text-muted)]">
-            {t("auth.needVerification")}
-          </p>
-        )}
-      </div>
+      {post.pinnedFormType ? (
+        <div className="mt-6">
+          <PinnedFormSection post={post} />
+        </div>
+      ) : (
+        <div className="mt-8 border-t border-[var(--color-border-gray-light)] pt-2">
+          <h2 className="py-3 text-sm font-semibold">
+            {t("board.comments")} {comments.length}
+          </h2>
+          <CommentSection comments={comments} onReply={handleReplySubmit} />
+          {user ? (
+            <div className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3">
+              {hasCommentProfanity && (
+                <p className="mb-2 text-xs text-[var(--color-brand-red)]">
+                  {t("moderation.profanityWarning")}
+                </p>
+              )}
+              <form onSubmit={handleCommentSubmit} className="flex gap-2">
+                <input
+                  value={commentDraft}
+                  onChange={(e) => setCommentDraft(e.target.value)}
+                  placeholder={t("board.commentPlaceholder")}
+                  className="h-9 flex-1 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
+                />
+                <button
+                  disabled={posting || hasCommentProfanity}
+                  className="relative rounded-md bg-[var(--color-brand-red)] px-4 text-sm font-medium text-white disabled:opacity-50 gg-glossy-btn"
+                >
+                  {t("common.submit")}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <p className="mt-3 border-t border-[var(--color-border-gray-light)] pt-3 text-center text-xs text-[var(--color-text-muted)]">
+              {t("auth.needVerification")}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

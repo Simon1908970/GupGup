@@ -45,7 +45,10 @@ function mapComment(row: CommentRow): Comment {
   };
 }
 
-export async function fetchComments(postId: string): Promise<Comment[]> {
+export async function fetchComments(
+  postId: string,
+  options?: { repliesOnly?: boolean },
+): Promise<Comment[]> {
   const supabase = createClient();
   const {
     data: { user: viewer },
@@ -57,6 +60,13 @@ export async function fetchComments(postId: string): Promise<Comment[]> {
     .select(COMMENT_SELECT)
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
+  // 고정 폼 글(월급/생활비)의 "카드"는 익명일 수 있는 최상위 댓글이라, 그
+  // 작성자 정보가 이 일반 조회(author:profiles 조인)로 새 나가면 안 된다 --
+  // 그런 글에서는 답글만 이 함수로 가져오고, 카드 자체는
+  // lib/supabase/pinnedFormEntries.ts의 익명 처리된 뷰로 따로 가져온다.
+  if (options?.repliesOnly) {
+    query = query.not("parent_id", "is", null);
+  }
   if (blockedIds.length > 0) {
     query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
   }

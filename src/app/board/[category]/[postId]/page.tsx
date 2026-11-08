@@ -32,12 +32,17 @@ export default async function PostDetailPage({
   let initialPost: Post | null | undefined;
   let initialComments: Comment[] | undefined;
   try {
-    const [post, comments] = await Promise.all([
-      fetchPostById(categorySlug, postId),
-      fetchComments(postId),
-    ]);
+    const post = await fetchPostById(categorySlug, postId);
     initialPost = post;
-    initialComments = comments;
+    // "내 월급"/"내 생활비" 같은 고정 폼 글의 최상위 댓글("카드")은 익명일
+    // 수 있는데, 일반 fetchComments()는 댓글마다 실제 작성자 프로필을
+    // 조인해서 가져온다 -- 그 결과를 여기서 정적/ISR HTML에 그대로 구워
+    // 넣으면 "익명"으로 올린 사람의 실제 닉네임이 캐시된 HTML에 영원히
+    // 남는다. 그런 글은 초기 댓글 없이 넘기고, 클라이언트(PinnedFormSection)
+    // 가 익명 처리된 뷰로 따로, 안전하게 가져오게 한다.
+    if (post && !post.pinnedFormType) {
+      initialComments = await fetchComments(postId);
+    }
   } catch {
     // 일시적인 조회 실패를 "존재하지 않는 글"로 오판하면 안 되므로, 이때는
     // 초기 데이터 없이 넘겨 클라이언트가 다시 가져오게 한다.
