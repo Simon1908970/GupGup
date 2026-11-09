@@ -283,7 +283,11 @@ function BoardListViewInner({
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {config.slug === "housing" && (
           <li className="border-b border-[var(--color-border-gray-light)] bg-[var(--color-border-gray-light)]/40 px-1 py-3">
-            <span className="inline-block shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+            {/* globals.css가 .font-bold에 사이트 전역으로 18px 제목용 글꼴을
+                강제로 입히는데, 이 작은 배지는 거기서 빠져야 해서 font-bold
+                대신 숫자로 직접 굵기만 지정한다(글자 크기는 text-[10px] 그대로
+                적용되게). */}
+            <span className="inline-block shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-[700] text-white">
               {t("housing.noticeLabel")}
             </span>
             <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-text-muted)]">
