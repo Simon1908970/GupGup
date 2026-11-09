@@ -88,6 +88,10 @@ export interface Author {
   // 없으므로, 닉네임 팝업은 이 값일 때 클릭 가능한 팝업 대신 평범한 텍스트를
   // 보여준다(탈퇴 회원과 같은 방식).
   isAnonymousCard?: boolean;
+  // "내 월급"/"내 생활비" 카드 전용: 익명 여부와 무관하게 닉네임 옆에 보여줄
+  // 국기(제출 시점 시스템 언어로 추정, profiles.country와는 다른 값).
+  // 다른 화면의 Author에는 없는 필드라 일반 댓글/게시글에는 영향 없다.
+  flagCountry?: CountryCode;
 }
 
 export type AttachmentType = "image" | "video";
@@ -153,6 +157,9 @@ export interface Comment {
   isDeleted: boolean;
 }
 
+// 지역·업종·근무시간 같은 세부 항목은 전부 선택 입력이다 -- 본인의 정확한
+// 세전 월급이나 동네 이름을 모르는 회원도 아는 만큼만 채워서 올릴 수 있게
+// (2026-11-08 결정). null은 "안 적었음"이고, base_month만 항상 값이 있다.
 export interface SalaryEntry {
   id: string;
   postId: string;
@@ -160,23 +167,24 @@ export interface SalaryEntry {
   isDeleted: boolean;
   isAnonymous: boolean;
   author: Author;
-  regionProvince: string;
-  regionCity: string;
-  industryMain: string;
-  industrySub: string;
-  visa: string;
-  weeklyHours: number;
-  monthlyDaysOff: number;
+  regionProvince: string | null;
+  regionCity: string | null;
+  industryMain: string | null;
+  industrySub: string | null;
+  visa: string | null;
+  weeklyHours: number | null;
+  monthlyDaysOff: number | null;
   nightWork: "none" | "sometimes" | "shift";
-  grossPay: number;
+  grossPay: number | null;
   overtimeIncluded: boolean;
-  deductHousing: number;
-  deductFood: number;
-  deductTaxInsurance: number;
-  deductOther: number;
-  netPay: number;
+  deductHousing: number | null;
+  deductFood: number | null;
+  deductTaxInsurance: number | null;
+  deductOther: number | null;
+  netPay: number | null;
   baseMonth: string;
   createdAt: string;
+  authorLocale: string | null;
 }
 
 export interface LivingCostEntry {
@@ -186,24 +194,25 @@ export interface LivingCostEntry {
   isDeleted: boolean;
   isAnonymous: boolean;
   author: Author;
-  regionProvince: string;
-  regionCity: string;
-  status: string;
-  household: string;
-  housingType: string;
-  netPay: number;
-  rent: number;
-  utilities: number;
-  phone: number;
-  transport: number;
-  groceries: number;
-  eatingOut: number;
-  shopping: number;
-  other: number;
-  totalCost: number;
-  remaining: number;
+  regionProvince: string | null;
+  regionCity: string | null;
+  status: string | null;
+  household: string | null;
+  housingType: string | null;
+  netPay: number | null;
+  rent: number | null;
+  utilities: number | null;
+  phone: number | null;
+  transport: number | null;
+  groceries: number | null;
+  eatingOut: number | null;
+  shopping: number | null;
+  other: number | null;
+  totalCost: number | null;
+  remaining: number | null;
   baseMonth: string;
   createdAt: string;
+  authorLocale: string | null;
 }
 
 export type SortOrder = "latest" | "popular";

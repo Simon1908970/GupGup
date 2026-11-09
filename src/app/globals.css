@@ -359,3 +359,25 @@ body {
   }
 }
 
+/* 고정 폼 글 본문의 "댓글 보기" 버튼 -- 양식에 가려서 아래 댓글(카드)을
+   못 보고 지나치는 일이 없게, 아래로 스크롤하라는 화살표를 통통 튀게 한다. */
+@keyframes gg-bounce-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.gg-pinned-form-bounce-down {
+  animation: gg-bounce-down 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gg-pinned-form-bounce-down {
+    animation: none;
+  }
+}
+

@@ -8,7 +8,13 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { blockUser } from "@/lib/supabase/blocks";
 import type { Author } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { COUNTRIES } from "@/lib/constants/countries";
 import { ReportModal } from "@/components/common/ReportModal";
+
+function flagEmoji(code?: Author["flagCountry"]): string | null {
+  if (!code) return null;
+  return COUNTRIES.find((c) => c.code === code)?.flag ?? null;
+}
 
 export function NicknamePopup({
   author,
@@ -53,6 +59,7 @@ export function NicknamePopup({
   if (author.isAnonymousCard) {
     return (
       <span className={cn("text-[var(--color-text-muted)]", className)}>
+        {flagEmoji(author.flagCountry) && <span className="mr-1">{flagEmoji(author.flagCountry)}</span>}
         {t("pinnedForm.anonymousNickname")}
       </span>
     );
@@ -65,6 +72,7 @@ export function NicknamePopup({
         onClick={() => (isSelf ? router.push("/profile") : setOpen((v) => !v))}
         className={cn("font-medium hover:underline", className)}
       >
+        {flagEmoji(author.flagCountry) && <span className="mr-1">{flagEmoji(author.flagCountry)}</span>}
         {children ?? author.nickname}
       </button>
 

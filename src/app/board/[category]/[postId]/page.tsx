@@ -33,7 +33,13 @@ export default async function PostDetailPage({
   let initialComments: Comment[] | undefined;
   try {
     const post = await fetchPostById(categorySlug, postId);
-    initialPost = post;
+    // 이 서버 쪽 조회는 로그인 세션이 없는(사실상 비로그인) 컨텍스트라서,
+    // members_only 글은 RLS에 걸려 실제로 존재해도 null로 돌아온다 -- 그걸
+    // 그대로 "글이 없음"으로 굳혀 버리면 로그인한 회원한테까지 영원히
+    // "게시글을 찾을 수 없습니다"가 뜬다(2026-11-09에 "내 월급"/"내 생활비"를
+    // members_only로 바꾸면서 발견). null이면 undefined로 넘겨서, 클라이언트가
+    // 본인 로그인 세션으로 다시 확인하고 진짜 없는 글인지 판단하게 한다.
+    initialPost = post ?? undefined;
     // "내 월급"/"내 생활비" 같은 고정 폼 글의 최상위 댓글("카드")은 익명일
     // 수 있는데, 일반 fetchComments()는 댓글마다 실제 작성자 프로필을
     // 조인해서 가져온다 -- 그 결과를 여기서 정적/ISR HTML에 그대로 구워

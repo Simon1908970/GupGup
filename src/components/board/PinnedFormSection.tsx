@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { Comment, LivingCostEntry, Post, SalaryEntry } from "@/lib/types";
@@ -212,8 +213,21 @@ export function PinnedFormSection({ post }: { post: Post }) {
     }
   }
 
+  function scrollToComments() {
+    document.getElementById("pinned-form-comments")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div>
+      {comments.length > 0 && (
+        <button
+          onClick={scrollToComments}
+          className="mb-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-brand-red)] bg-[var(--color-brand-red-light)] py-2 text-xs font-semibold text-[var(--color-brand-red)]"
+        >
+          {t("pinnedForm.jumpToComments")} ({comments.length})
+          <ChevronDown size={14} className="gg-pinned-form-bounce-down" aria-hidden />
+        </button>
+      )}
       {!user ? (
         <button
           onClick={() => router.push("/login")}
@@ -254,7 +268,7 @@ export function PinnedFormSection({ post }: { post: Post }) {
         </div>
       )}
 
-      <div className="mt-6 border-t border-[var(--color-border-gray-light)] pt-2">
+      <div id="pinned-form-comments" className="mt-6 scroll-mt-24 border-t border-[var(--color-border-gray-light)] pt-2">
         <h2 className="py-3 text-sm font-semibold">
           {t("board.comments")} {comments.length}
         </h2>

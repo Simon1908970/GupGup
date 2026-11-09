@@ -38,6 +38,9 @@ export function buildInsertPayload(post, authorId) {
     points_awarded: 0,
     is_notice: true,
     pinned_form_type: post.pinned_form_type,
+    // 회원(로그인)만 볼 수 있게 -- 2026-11-09 사용자 요청. 비로그인 방문자는
+    // 목록에도 안 뜨고 상세로 직접 들어가도 못 본다(0029 RLS).
+    members_only: true,
   };
 }
 

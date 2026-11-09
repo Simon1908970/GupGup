@@ -5,18 +5,23 @@ import {
   VISA_OPTIONS,
   HOUSING_TYPE_OPTIONS,
   LIVING_STATUS_OPTIONS,
+  LOCALE_TO_COUNTRY,
   formatBaseMonth,
+  calcNetPay,
+  calcTotalCost,
+  calcRemaining,
   type SelectOption,
 } from "@/lib/constants/pinnedForms";
 import { regionLabel } from "@/lib/constants/regions";
-import { COMMENT_REWARD } from "@/lib/constants/points";
+import { PINNED_FORM_CARD_REWARD } from "@/lib/constants/points";
 import { DICTIONARIES } from "@/lib/i18n/dictionaries";
 
 // 요약 문구는 "댓글"로도 쓰이는 평문 텍스트(예: 내 댓글 목록, 검색)라 항상
 // 한국어로 고정한다 -- "탈퇴한 회원입니다" 같은 다른 고정 운영 문구와 같은
 // 취급이고, 보는 화면에서는 어차피 구조화 카드(PinnedFormEntryCard)가 이
 // 텍스트를 대신 그려서 보여준다.
-function labelFor(options: SelectOption[], value: string): string {
+function labelFor(options: SelectOption[], value: string | null): string | null {
+  if (!value) return null;
   const key = options.find((o) => o.value === value)?.labelKey;
   return key ? DICTIONARIES.ko[key] : value;
 }
@@ -43,10 +48,18 @@ interface EntryPublicRow {
   country: CountryCode | null;
   is_withdrawn: boolean;
   is_supporter: boolean;
-  region_province: string;
-  region_city: string;
+  region_province: string | null;
+  region_city: string | null;
   base_month: string;
   created_at: string;
+  author_locale: string | null;
+}
+
+// 익명 여부와 무관하게 쓸 수 있는 국기 -- profiles.country(실제 신원)가 아닌
+// 제출 시점 시스템 언어로 추정한 값이라 안전하다.
+function flagCountry(row: EntryPublicRow): CountryCode | undefined {
+  const locale = row.author_locale as keyof typeof LOCALE_TO_COUNTRY | null;
+  return locale ? LOCALE_TO_COUNTRY[locale] : undefined;
 }
 
 function mapAuthor(row: EntryPublicRow): Author {
@@ -56,6 +69,7 @@ function mapAuthor(row: EntryPublicRow): Author {
       nickname: "익명",
       country: "etc",
       isAnonymousCard: true,
+      flagCountry: flagCountry(row),
     };
   }
   return {
@@ -65,23 +79,24 @@ function mapAuthor(row: EntryPublicRow): Author {
     avatarUrl: row.avatar_url ?? undefined,
     isWithdrawn: row.is_withdrawn,
     isSupporter: row.is_supporter,
+    flagCountry: flagCountry(row),
   };
 }
 
 interface SalaryEntryRow extends EntryPublicRow {
-  industry_main: string;
-  industry_sub: string;
-  visa: string;
-  weekly_hours: number;
-  monthly_days_off: number;
+  industry_main: string | null;
+  industry_sub: string | null;
+  visa: string | null;
+  weekly_hours: number | null;
+  monthly_days_off: number | null;
   night_work: "none" | "sometimes" | "shift";
-  gross_pay: number;
+  gross_pay: number | null;
   overtime_included: boolean;
-  deduct_housing: number;
-  deduct_food: number;
-  deduct_tax_insurance: number;
-  deduct_other: number;
-  net_pay: number;
+  deduct_housing: number | null;
+  deduct_food: number | null;
+  deduct_tax_insurance: number | null;
+  deduct_other: number | null;
+  net_pay: number | null;
 }
 
 function mapSalaryEntry(row: SalaryEntryRow): SalaryEntry {
@@ -109,24 +124,25 @@ function mapSalaryEntry(row: SalaryEntryRow): SalaryEntry {
     netPay: row.net_pay,
     baseMonth: row.base_month,
     createdAt: row.created_at,
+    authorLocale: row.author_locale,
   };
 }
 
 interface LivingCostEntryRow extends EntryPublicRow {
-  status: string;
-  household: string;
-  housing_type: string;
-  net_pay: number;
-  rent: number;
-  utilities: number;
-  phone: number;
-  transport: number;
-  groceries: number;
-  eating_out: number;
-  shopping: number;
-  other: number;
-  total_cost: number;
-  remaining: number;
+  status: string | null;
+  household: string | null;
+  housing_type: string | null;
+  net_pay: number | null;
+  rent: number | null;
+  utilities: number | null;
+  phone: number | null;
+  transport: number | null;
+  groceries: number | null;
+  eating_out: number | null;
+  shopping: number | null;
+  other: number | null;
+  total_cost: number | null;
+  remaining: number | null;
 }
 
 function mapLivingCostEntry(row: LivingCostEntryRow): LivingCostEntry {
@@ -155,14 +171,15 @@ function mapLivingCostEntry(row: LivingCostEntryRow): LivingCostEntry {
     remaining: row.remaining,
     baseMonth: row.base_month,
     createdAt: row.created_at,
+    authorLocale: row.author_locale,
   };
 }
 
 const SALARY_PUBLIC_SELECT =
-  "id, post_id, comment_id, is_deleted, is_anonymous, user_id, nickname, avatar_url, country, is_withdrawn, is_supporter, region_province, region_city, industry_main, industry_sub, visa, weekly_hours, monthly_days_off, night_work, gross_pay, overtime_included, deduct_housing, deduct_food, deduct_tax_insurance, deduct_other, net_pay, base_month, created_at";
+  "id, post_id, comment_id, is_deleted, is_anonymous, user_id, nickname, avatar_url, country, is_withdrawn, is_supporter, author_locale, region_province, region_city, industry_main, industry_sub, visa, weekly_hours, monthly_days_off, night_work, gross_pay, overtime_included, deduct_housing, deduct_food, deduct_tax_insurance, deduct_other, net_pay, base_month, created_at";
 
 const LIVING_COST_PUBLIC_SELECT =
-  "id, post_id, comment_id, is_deleted, is_anonymous, user_id, nickname, avatar_url, country, is_withdrawn, is_supporter, region_province, region_city, status, household, housing_type, net_pay, rent, utilities, phone, transport, groceries, eating_out, shopping, other, total_cost, remaining, base_month, created_at";
+  "id, post_id, comment_id, is_deleted, is_anonymous, user_id, nickname, avatar_url, country, is_withdrawn, is_supporter, author_locale, region_province, region_city, status, household, housing_type, net_pay, rent, utilities, phone, transport, groceries, eating_out, shopping, other, total_cost, remaining, base_month, created_at";
 
 export async function fetchSalaryEntries(postId: string): Promise<SalaryEntry[]> {
   const supabase = createClient();
@@ -215,6 +232,7 @@ export async function fetchMySalaryEntryForMonth(
     country: null,
     is_withdrawn: false,
     is_supporter: false,
+    author_locale: null,
   } as SalaryEntryRow);
 }
 
@@ -244,6 +262,7 @@ export async function fetchMyLivingCostEntryForMonth(
     country: null,
     is_withdrawn: false,
     is_supporter: false,
+    author_locale: null,
   } as LivingCostEntryRow);
 }
 
@@ -266,101 +285,126 @@ export async function fetchMyEntryCommentIds(
   return new Set((data ?? []).map((r) => r.comment_id as string));
 }
 
+// 선택 입력이라 빈 항목은 문장에서 그냥 뺀다(0으로 지어내지 않는다).
 function summarizeSalary(input: SalaryEntryInput): string {
-  const industryLabel = labelFor(
-    INDUSTRY_SUB_OPTIONS[input.industryMain] ?? [],
-    input.industrySub,
-  );
+  const industryLabel = input.industryMain
+    ? labelFor(INDUSTRY_SUB_OPTIONS[input.industryMain] ?? [], input.industrySub)
+    : null;
   const visaLabel = labelFor(VISA_OPTIONS, input.visa);
   const region = regionLabel(input.regionProvince, input.regionCity);
-  const net = calcNet(input);
-  return (
-    `[${industryLabel}] ${region} / ${visaLabel}\n` +
-    `주 ${input.weeklyHours}시간 · 월 휴무 ${input.monthlyDaysOff}일\n` +
-    `세전 ${input.grossPay}만원${input.overtimeIncluded ? "(잔업 포함)" : ""} → 실수령 ${net}만원 (${formatBaseMonth(input.baseMonth)})`
+  const net = calcNetPay(
+    input.grossPay,
+    input.deductHousing,
+    input.deductFood,
+    input.deductTaxInsurance,
+    input.deductOther,
   );
-}
-
-function calcNet(input: SalaryEntryInput): number {
-  return (
-    input.grossPay -
-    input.deductHousing -
-    input.deductFood -
-    input.deductTaxInsurance -
-    input.deductOther
-  );
+  const headParts = [industryLabel && `[${industryLabel}]`, region, visaLabel && `/ ${visaLabel}`]
+    .filter(Boolean)
+    .join(" ");
+  const hoursParts = [
+    input.weeklyHours !== null && `주 ${input.weeklyHours}시간`,
+    input.monthlyDaysOff !== null && `월 휴무 ${input.monthlyDaysOff}일`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const payLine =
+    input.grossPay !== null
+      ? `세전 ${input.grossPay}만원${input.overtimeIncluded ? "(잔업 포함)" : ""}${
+          net !== null ? ` → 실수령 ${net}만원` : ""
+        }`
+      : net !== null
+        ? `실수령 ${net}만원`
+        : null;
+  return [headParts, hoursParts, [payLine, `(${formatBaseMonth(input.baseMonth)})`].filter(Boolean).join(" ")]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function summarizeLivingCost(input: LivingCostEntryInput): string {
   const statusLabel = labelFor(LIVING_STATUS_OPTIONS, input.status);
   const housingLabel = labelFor(HOUSING_TYPE_OPTIONS, input.housingType);
   const region = regionLabel(input.regionProvince, input.regionCity);
-  const total =
-    input.rent +
-    input.utilities +
-    input.phone +
-    input.transport +
-    input.groceries +
-    input.eatingOut +
-    input.shopping +
-    input.other;
-  const remaining = input.netPay - total;
-  return (
-    `[${statusLabel}] ${region} / ${housingLabel}\n` +
-    `생활비 ${total}만원 · 실수령 ${input.netPay}만원 → 남는 돈 ${remaining}만원 (${formatBaseMonth(input.baseMonth)})`
-  );
+  const total = calcTotalCost({
+    rent: input.rent,
+    utilities: input.utilities,
+    phone: input.phone,
+    transport: input.transport,
+    groceries: input.groceries,
+    eatingOut: input.eatingOut,
+    shopping: input.shopping,
+    other: input.other,
+  });
+  const remaining = calcRemaining(input.netPay, total);
+  const headParts = [statusLabel && `[${statusLabel}]`, region, housingLabel && `/ ${housingLabel}`]
+    .filter(Boolean)
+    .join(" ");
+  const moneyParts = [
+    total !== null && `생활비 ${total}만원`,
+    input.netPay !== null && `실수령 ${input.netPay}만원`,
+    remaining !== null && `→ 남는 돈 ${remaining}만원`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  return [headParts, [moneyParts, `(${formatBaseMonth(input.baseMonth)})`].filter(Boolean).join(" ")]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export interface SalaryEntryInput {
-  regionProvince: string;
-  regionCity: string;
-  industryMain: string;
-  industrySub: string;
-  visa: string;
-  weeklyHours: number;
-  monthlyDaysOff: number;
+  regionProvince: string | null;
+  regionCity: string | null;
+  industryMain: string | null;
+  industrySub: string | null;
+  visa: string | null;
+  weeklyHours: number | null;
+  monthlyDaysOff: number | null;
   nightWork: "none" | "sometimes" | "shift";
-  grossPay: number;
+  grossPay: number | null;
   overtimeIncluded: boolean;
-  deductHousing: number;
-  deductFood: number;
-  deductTaxInsurance: number;
-  deductOther: number;
-  netPay: number;
+  deductHousing: number | null;
+  deductFood: number | null;
+  deductTaxInsurance: number | null;
+  deductOther: number | null;
+  netPay: number | null;
   baseMonth: string;
   isAnonymous: boolean;
+  // 제출 시점의 사이트 UI 언어(useLanguage().locale) -- "익명" 옆 국기
+  // 표시용. profiles.country가 아니라 이 값으로 국기를 정한다.
+  authorLocale: string;
 }
 
 export interface LivingCostEntryInput {
-  regionProvince: string;
-  regionCity: string;
-  status: string;
-  household: string;
-  housingType: string;
-  netPay: number;
-  rent: number;
-  utilities: number;
-  phone: number;
-  transport: number;
-  groceries: number;
-  eatingOut: number;
-  shopping: number;
-  other: number;
-  totalCost: number;
-  remaining: number;
+  regionProvince: string | null;
+  regionCity: string | null;
+  status: string | null;
+  household: string | null;
+  housingType: string | null;
+  netPay: number | null;
+  rent: number | null;
+  utilities: number | null;
+  phone: number | null;
+  transport: number | null;
+  groceries: number | null;
+  eatingOut: number | null;
+  shopping: number | null;
+  other: number | null;
+  totalCost: number | null;
+  remaining: number | null;
   baseMonth: string;
   isAnonymous: boolean;
+  authorLocale: string;
 }
 
 async function insertCardComment(postId: string, userId: string, body: string): Promise<string> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("comments")
-    .insert({ post_id: postId, author_id: userId, body, points_awarded: COMMENT_REWARD })
+    .insert({ post_id: postId, author_id: userId, body, points_awarded: PINNED_FORM_CARD_REWARD })
     .select("id")
     .single();
   if (error) throw error;
-  await supabase.rpc("adjust_points", { delta: COMMENT_REWARD });
+  await supabase.rpc("adjust_points", { delta: PINNED_FORM_CARD_REWARD });
   return data.id;
 }
 
@@ -392,6 +436,7 @@ export async function submitSalaryEntry(
     deduct_other: input.deductOther,
     net_pay: input.netPay,
     base_month: input.baseMonth,
+    author_locale: input.authorLocale,
   });
   if (error) {
     // 댓글은 이미 만들어졌는데 구조화 데이터 insert가 실패한 경우 -- 특히
@@ -431,6 +476,7 @@ export async function submitLivingCostEntry(
     total_cost: input.totalCost,
     remaining: input.remaining,
     base_month: input.baseMonth,
+    author_locale: input.authorLocale,
   });
   if (error) {
     await supabase.from("comments").delete().eq("id", commentId);
@@ -473,6 +519,7 @@ export async function updateSalaryEntry(
       deduct_other: input.deductOther,
       net_pay: input.netPay,
       base_month: input.baseMonth,
+      author_locale: input.authorLocale,
       updated_at: new Date().toISOString(),
     })
     .eq("id", entryId)
@@ -518,6 +565,7 @@ export async function updateLivingCostEntry(
       total_cost: input.totalCost,
       remaining: input.remaining,
       base_month: input.baseMonth,
+      author_locale: input.authorLocale,
       updated_at: new Date().toISOString(),
     })
     .eq("id", entryId)

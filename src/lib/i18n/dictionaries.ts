@@ -383,6 +383,8 @@ const ko = {
   "pinnedForm.housingType.goshiwon": "고시원",
   "pinnedForm.housingType.withFamily": "가족과 함께",
   "pinnedForm.housingType.etc": "기타",
+  "pinnedForm.netPayUnknown": "금액 정보 없음",
+  "pinnedForm.jumpToComments": "댓글 확인하기",
 };
 
 export type DictionaryKey = keyof typeof ko;
@@ -743,6 +745,8 @@ const en: Dictionary = {
   "pinnedForm.housingType.goshiwon": "Goshiwon",
   "pinnedForm.housingType.withFamily": "With family",
   "pinnedForm.housingType.etc": "Other",
+  "pinnedForm.netPayUnknown": "No amount reported",
+  "pinnedForm.jumpToComments": "See the comments",
 };
 
 const vi: Partial<Dictionary> = {
@@ -1092,6 +1096,8 @@ const vi: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "Goshiwon",
   "pinnedForm.housingType.withFamily": "Ở cùng gia đình",
   "pinnedForm.housingType.etc": "Khác",
+  "pinnedForm.netPayUnknown": "Chưa có số liệu",
+  "pinnedForm.jumpToComments": "Xem bình luận",
 };
 
 const th: Partial<Dictionary> = {
@@ -1441,6 +1447,8 @@ const th: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "โกชิวอน",
   "pinnedForm.housingType.withFamily": "อยู่กับครอบครัว",
   "pinnedForm.housingType.etc": "อื่นๆ",
+  "pinnedForm.netPayUnknown": "ไม่มีข้อมูลจำนวนเงิน",
+  "pinnedForm.jumpToComments": "ดูความคิดเห็น",
 };
 
 const id: Partial<Dictionary> = {
@@ -1790,6 +1798,8 @@ const id: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "Goshiwon",
   "pinnedForm.housingType.withFamily": "Bersama keluarga",
   "pinnedForm.housingType.etc": "Lainnya",
+  "pinnedForm.netPayUnknown": "Belum ada data jumlah",
+  "pinnedForm.jumpToComments": "Lihat komentar",
 };
 
 const tl: Partial<Dictionary> = {
@@ -2139,6 +2149,8 @@ const tl: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "Goshiwon",
   "pinnedForm.housingType.withFamily": "Kasama ang pamilya",
   "pinnedForm.housingType.etc": "Iba pa",
+  "pinnedForm.netPayUnknown": "Walang nailagay na halaga",
+  "pinnedForm.jumpToComments": "Tingnan ang mga komento",
 };
 
 const lo: Partial<Dictionary> = {
@@ -2488,6 +2500,8 @@ const lo: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "ໂກຊິວອນ",
   "pinnedForm.housingType.withFamily": "ຢູ່ກັບຄອບຄົວ",
   "pinnedForm.housingType.etc": "ອື່ນໆ",
+  "pinnedForm.netPayUnknown": "ບໍ່ມີຂໍ້ມູນຈຳນວນເງິນ",
+  "pinnedForm.jumpToComments": "ເບິ່ງຄວາມຄິດເຫັນ",
 };
 
 const my: Partial<Dictionary> = {
@@ -2837,6 +2851,8 @@ const my: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "ဂိုရှီဝွန်",
   "pinnedForm.housingType.withFamily": "မိသားစုနှင့်အတူ",
   "pinnedForm.housingType.etc": "အခြား",
+  "pinnedForm.netPayUnknown": "ပမာဏ အချက်အလက် မရှိပါ",
+  "pinnedForm.jumpToComments": "မှတ်ချက်များကြည့်ရန်",
 };
 
 const mn: Partial<Dictionary> = {
@@ -3186,6 +3202,8 @@ const mn: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "Гошивон",
   "pinnedForm.housingType.withFamily": "Гэр бүлтэйгээ хамт",
   "pinnedForm.housingType.etc": "Бусад",
+  "pinnedForm.netPayUnknown": "Дүнгийн мэдээлэл алга",
+  "pinnedForm.jumpToComments": "Сэтгэгдэл харах",
 };
 
 const ru: Partial<Dictionary> = {
@@ -3535,6 +3553,8 @@ const ru: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "Гошивон",
   "pinnedForm.housingType.withFamily": "С семьёй",
   "pinnedForm.housingType.etc": "Другое",
+  "pinnedForm.netPayUnknown": "Сумма не указана",
+  "pinnedForm.jumpToComments": "Посмотреть комментарии",
 };
 
 const km: Partial<Dictionary> = {
@@ -3892,6 +3912,8 @@ const km: Partial<Dictionary> = {
   "pinnedForm.housingType.goshiwon": "ហ្គូស៊ីវន",
   "pinnedForm.housingType.withFamily": "រស់នៅជាមួយគ្រួសារ",
   "pinnedForm.housingType.etc": "ផ្សេងៗ",
+  "pinnedForm.netPayUnknown": "គ្មានព័ត៌មានចំនួនទឹកប្រាក់",
+  "pinnedForm.jumpToComments": "មើលមតិយោបល់",
 };
 
 export const DICTIONARIES: Record<Locale, Dictionary> = {

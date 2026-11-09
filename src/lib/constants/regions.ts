@@ -151,10 +151,16 @@ export function findProvince(code: string): ProvinceOption | undefined {
   return REGIONS.find((p) => p.code === code);
 }
 
-export function regionLabel(provinceCode: string, cityCode: string): string {
-  const province = findProvince(provinceCode);
-  const city = province?.cities.find((c) => c.code === cityCode);
-  if (!province || !city) return [provinceCode, cityCode].filter(Boolean).join(" ");
+// 지역은 선택 입력이라 둘 다, 또는 시·군·구만 비어있을 수 있다(null) --
+// 그런 경우 아는 만큼만("경기도"처럼 시·도만, 또는 빈 문자열)을 돌려준다.
+export function regionLabel(
+  provinceCode: string | null,
+  cityCode: string | null,
+): string {
+  const province = provinceCode ? findProvince(provinceCode) : undefined;
+  const city = province && cityCode ? province.cities.find((c) => c.code === cityCode) : undefined;
+  if (!province) return cityCode ?? "";
+  if (!city) return shortProvinceLabel(province);
   // "경남 김해" 같은 축약 표기 -- 광역시/도 전체 이름 대신 흔히 쓰는 2글자를 쓴다.
   return `${shortProvinceLabel(province)} ${city.label}`;
 }

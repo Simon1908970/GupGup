@@ -23,9 +23,19 @@ import { REGIONS, findProvince } from "@/lib/constants/regions";
 import type { SalaryEntryInput, LivingCostEntryInput } from "@/lib/supabase/pinnedFormEntries";
 import { cn } from "@/lib/utils";
 
-function toInt(v: string): number {
+// 선택 입력이라 빈 칸은 null로 저장한다(0으로 지어내지 않는다).
+function toIntOrNull(v: string): number | null {
+  if (v.trim() === "") return null;
   const n = parseInt(v, 10);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : null;
+}
+
+function numToStr(v: number | null): string {
+  return v === null ? "" : String(v);
+}
+
+function strOrEmpty(v: string | null): string {
+  return v ?? "";
 }
 
 function SelectField({
@@ -44,7 +54,7 @@ function SelectField({
   const { t } = useLanguage();
   return (
     <label className="flex flex-col gap-1 text-xs">
-      <span className="font-medium text-[var(--foreground)]">
+      <span className="block min-h-8 text-[11px] font-medium leading-tight text-[var(--foreground)]">
         {t(labelKey)}
         {required && <span className="text-[var(--color-brand-red)]"> *</span>}
       </span>
@@ -86,7 +96,7 @@ function NumberField({
   const { t } = useLanguage();
   return (
     <label className="flex flex-col gap-1 text-xs">
-      <span className="font-medium text-[var(--foreground)]">
+      <span className="block min-h-8 text-[11px] font-medium leading-tight text-[var(--foreground)]">
         {t(labelKey)}
         {required && <span className="text-[var(--color-brand-red)]"> *</span>}
       </span>
@@ -126,9 +136,8 @@ function RegionFields({
   return (
     <div className="grid grid-cols-2 gap-2">
       <label className="flex flex-col gap-1 text-xs">
-        <span className="font-medium text-[var(--foreground)]">
+        <span className="block min-h-8 text-[11px] font-medium leading-tight text-[var(--foreground)]">
           {t("pinnedForm.regionProvince")}
-          <span className="text-[var(--color-brand-red)]"> *</span>
         </span>
         <select
           value={province}
@@ -149,9 +158,8 @@ function RegionFields({
         </select>
       </label>
       <label className="flex flex-col gap-1 text-xs">
-        <span className="font-medium text-[var(--foreground)]">
+        <span className="block min-h-8 text-[11px] font-medium leading-tight text-[var(--foreground)]">
           {t("pinnedForm.regionCity")}
-          <span className="text-[var(--color-brand-red)]"> *</span>
         </span>
         <select
           value={city}
@@ -258,59 +266,52 @@ function emptySalaryForm(): SalaryFormState {
 
 export function salaryFormFromEntry(entry: SalaryEntry): SalaryFormState {
   return {
-    regionProvince: entry.regionProvince,
-    regionCity: entry.regionCity,
-    industryMain: entry.industryMain,
-    industrySub: entry.industrySub,
-    visa: entry.visa,
-    weeklyHours: String(entry.weeklyHours),
-    monthlyDaysOff: String(entry.monthlyDaysOff),
+    regionProvince: strOrEmpty(entry.regionProvince),
+    regionCity: strOrEmpty(entry.regionCity),
+    industryMain: strOrEmpty(entry.industryMain),
+    industrySub: strOrEmpty(entry.industrySub),
+    visa: strOrEmpty(entry.visa),
+    weeklyHours: numToStr(entry.weeklyHours),
+    monthlyDaysOff: numToStr(entry.monthlyDaysOff),
     nightWork: entry.nightWork,
-    grossPay: String(entry.grossPay),
+    grossPay: numToStr(entry.grossPay),
     overtimeIncluded: entry.overtimeIncluded,
-    deductHousing: String(entry.deductHousing),
-    deductFood: String(entry.deductFood),
-    deductTaxInsurance: String(entry.deductTaxInsurance),
-    deductOther: String(entry.deductOther),
-    netPay: String(entry.netPay),
+    deductHousing: numToStr(entry.deductHousing),
+    deductFood: numToStr(entry.deductFood),
+    deductTaxInsurance: numToStr(entry.deductTaxInsurance),
+    deductOther: numToStr(entry.deductOther),
+    netPay: numToStr(entry.netPay),
     netPayTouched: true,
     baseMonth: entry.baseMonth,
     isAnonymous: entry.isAnonymous,
   };
 }
 
+// 전부 선택 입력이다 -- 기준 월은 항상 기본값이 채워져 있어서 사실상
+// 버튼은 늘 눌려 있다(2026-11-08 결정: 세부사항을 모르는 회원도 올릴 수
+// 있게).
 function salaryFormValid(f: SalaryFormState): boolean {
-  return Boolean(
-    f.regionProvince &&
-      f.regionCity &&
-      f.industryMain &&
-      f.industrySub &&
-      f.visa &&
-      f.weeklyHours &&
-      f.monthlyDaysOff &&
-      f.grossPay &&
-      f.netPay &&
-      f.baseMonth,
-  );
+  return Boolean(f.baseMonth);
 }
 
-export function salaryFormToInput(f: SalaryFormState): SalaryEntryInput {
+export function salaryFormToInput(f: SalaryFormState, locale: string): SalaryEntryInput {
   return {
-    regionProvince: f.regionProvince,
-    regionCity: f.regionCity,
-    industryMain: f.industryMain,
-    industrySub: f.industrySub,
-    visa: f.visa,
-    weeklyHours: toInt(f.weeklyHours),
-    monthlyDaysOff: toInt(f.monthlyDaysOff),
+    authorLocale: locale,
+    regionProvince: f.regionProvince || null,
+    regionCity: f.regionCity || null,
+    industryMain: f.industryMain || null,
+    industrySub: f.industrySub || null,
+    visa: f.visa || null,
+    weeklyHours: toIntOrNull(f.weeklyHours),
+    monthlyDaysOff: toIntOrNull(f.monthlyDaysOff),
     nightWork: f.nightWork,
-    grossPay: toInt(f.grossPay),
+    grossPay: toIntOrNull(f.grossPay),
     overtimeIncluded: f.overtimeIncluded,
-    deductHousing: toInt(f.deductHousing),
-    deductFood: toInt(f.deductFood),
-    deductTaxInsurance: toInt(f.deductTaxInsurance),
-    deductOther: toInt(f.deductOther),
-    netPay: toInt(f.netPay),
+    deductHousing: toIntOrNull(f.deductHousing),
+    deductFood: toIntOrNull(f.deductFood),
+    deductTaxInsurance: toIntOrNull(f.deductTaxInsurance),
+    deductOther: toIntOrNull(f.deductOther),
+    netPay: toIntOrNull(f.netPay),
     baseMonth: f.baseMonth,
     isAnonymous: f.isAnonymous,
   };
@@ -327,7 +328,7 @@ export function SalaryEntryForm({
   onSubmit: (input: SalaryEntryInput) => Promise<void>;
   submitting: boolean;
 }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [form, setForm] = useState<SalaryFormState>(initial ?? emptySalaryForm());
   const subOptions = INDUSTRY_SUB_OPTIONS[form.industryMain] ?? [];
 
@@ -351,13 +352,13 @@ export function SalaryEntryForm({
         return next;
       }
       if (NET_PAY_INPUTS.includes(key) && !prev.netPayTouched) {
-        next.netPay = String(
+        next.netPay = numToStr(
           calcNetPay(
-            toInt(next.grossPay),
-            toInt(next.deductHousing),
-            toInt(next.deductFood),
-            toInt(next.deductTaxInsurance),
-            toInt(next.deductOther),
+            toIntOrNull(next.grossPay),
+            toIntOrNull(next.deductHousing),
+            toIntOrNull(next.deductFood),
+            toIntOrNull(next.deductTaxInsurance),
+            toIntOrNull(next.deductOther),
           ),
         );
       }
@@ -368,7 +369,7 @@ export function SalaryEntryForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!salaryFormValid(form) || submitting) return;
-    await onSubmit(salaryFormToInput(form));
+    await onSubmit(salaryFormToInput(form, locale));
   }
 
   return (
@@ -385,14 +386,12 @@ export function SalaryEntryForm({
           value={form.industryMain}
           onChange={(v) => update("industryMain", v)}
           options={INDUSTRY_MAIN_OPTIONS}
-          required
         />
         <SelectField
           labelKey="pinnedForm.industrySub"
           value={form.industrySub}
           onChange={(v) => update("industrySub", v)}
           options={subOptions}
-          required
         />
       </div>
       <SelectField
@@ -400,7 +399,6 @@ export function SalaryEntryForm({
         value={form.visa}
         onChange={(v) => update("visa", v)}
         options={VISA_OPTIONS}
-        required
       />
       <div className="grid grid-cols-2 gap-2">
         <NumberField
@@ -409,7 +407,6 @@ export function SalaryEntryForm({
           onChange={(v) => update("weeklyHours", v)}
           unitKey="pinnedForm.unitHours"
           max={PINNED_FORM_LIMITS.weeklyHoursMax}
-          required
         />
         <NumberField
           labelKey="pinnedForm.monthlyDaysOff"
@@ -417,7 +414,6 @@ export function SalaryEntryForm({
           onChange={(v) => update("monthlyDaysOff", v)}
           unitKey="pinnedForm.unitDays"
           max={PINNED_FORM_LIMITS.monthlyDaysOffMax}
-          required
         />
       </div>
       <SelectField
@@ -432,7 +428,6 @@ export function SalaryEntryForm({
         onChange={(v) => update("grossPay", v)}
         unitKey="pinnedForm.unitManwon"
         max={PINNED_FORM_LIMITS.amountMax}
-        required
       />
       <label className="flex items-center gap-1.5 text-xs font-medium">
         <input
@@ -474,7 +469,6 @@ export function SalaryEntryForm({
         value={form.netPay}
         onChange={(v) => update("netPay", v)}
         unitKey="pinnedForm.unitManwon"
-        required
       />
       <MonthAndAnonymousFields
         baseMonth={form.baseMonth}
@@ -534,61 +528,62 @@ function emptyLivingCostForm(): LivingCostFormState {
 
 export function livingCostFormFromEntry(entry: LivingCostEntry): LivingCostFormState {
   return {
-    regionProvince: entry.regionProvince,
-    regionCity: entry.regionCity,
-    status: entry.status,
-    household: entry.household,
-    housingType: entry.housingType,
-    netPay: String(entry.netPay),
-    rent: String(entry.rent),
-    utilities: String(entry.utilities),
-    phone: String(entry.phone),
-    transport: String(entry.transport),
-    groceries: String(entry.groceries),
-    eatingOut: String(entry.eatingOut),
-    shopping: String(entry.shopping),
-    other: String(entry.other),
+    regionProvince: strOrEmpty(entry.regionProvince),
+    regionCity: strOrEmpty(entry.regionCity),
+    status: strOrEmpty(entry.status),
+    household: strOrEmpty(entry.household),
+    housingType: strOrEmpty(entry.housingType),
+    netPay: numToStr(entry.netPay),
+    rent: numToStr(entry.rent),
+    utilities: numToStr(entry.utilities),
+    phone: numToStr(entry.phone),
+    transport: numToStr(entry.transport),
+    groceries: numToStr(entry.groceries),
+    eatingOut: numToStr(entry.eatingOut),
+    shopping: numToStr(entry.shopping),
+    other: numToStr(entry.other),
     baseMonth: entry.baseMonth,
     isAnonymous: entry.isAnonymous,
   };
 }
 
+// 전부 선택 입력이다 (2026-11-08 결정).
 function livingCostFormValid(f: LivingCostFormState): boolean {
-  return Boolean(
-    f.regionProvince && f.regionCity && f.status && f.household && f.housingType && f.netPay && f.baseMonth,
-  );
+  return Boolean(f.baseMonth);
 }
 
-export function livingCostFormToInput(f: LivingCostFormState): LivingCostEntryInput {
+export function livingCostFormToInput(f: LivingCostFormState, locale: string): LivingCostEntryInput {
   const totalCost = calcTotalCost({
-    rent: toInt(f.rent),
-    utilities: toInt(f.utilities),
-    phone: toInt(f.phone),
-    transport: toInt(f.transport),
-    groceries: toInt(f.groceries),
-    eatingOut: toInt(f.eatingOut),
-    shopping: toInt(f.shopping),
-    other: toInt(f.other),
+    rent: toIntOrNull(f.rent),
+    utilities: toIntOrNull(f.utilities),
+    phone: toIntOrNull(f.phone),
+    transport: toIntOrNull(f.transport),
+    groceries: toIntOrNull(f.groceries),
+    eatingOut: toIntOrNull(f.eatingOut),
+    shopping: toIntOrNull(f.shopping),
+    other: toIntOrNull(f.other),
   });
+  const netPay = toIntOrNull(f.netPay);
   return {
-    regionProvince: f.regionProvince,
-    regionCity: f.regionCity,
-    status: f.status,
-    household: f.household,
-    housingType: f.housingType,
-    netPay: toInt(f.netPay),
-    rent: toInt(f.rent),
-    utilities: toInt(f.utilities),
-    phone: toInt(f.phone),
-    transport: toInt(f.transport),
-    groceries: toInt(f.groceries),
-    eatingOut: toInt(f.eatingOut),
-    shopping: toInt(f.shopping),
-    other: toInt(f.other),
+    regionProvince: f.regionProvince || null,
+    regionCity: f.regionCity || null,
+    status: f.status || null,
+    household: f.household || null,
+    housingType: f.housingType || null,
+    netPay,
+    rent: toIntOrNull(f.rent),
+    utilities: toIntOrNull(f.utilities),
+    phone: toIntOrNull(f.phone),
+    transport: toIntOrNull(f.transport),
+    groceries: toIntOrNull(f.groceries),
+    eatingOut: toIntOrNull(f.eatingOut),
+    shopping: toIntOrNull(f.shopping),
+    other: toIntOrNull(f.other),
     totalCost,
-    remaining: calcRemaining(toInt(f.netPay), totalCost),
+    remaining: calcRemaining(netPay, totalCost),
     baseMonth: f.baseMonth,
     isAnonymous: f.isAnonymous,
+    authorLocale: locale,
   };
 }
 
@@ -603,7 +598,7 @@ export function LivingCostEntryForm({
   onSubmit: (input: LivingCostEntryInput) => Promise<void>;
   submitting: boolean;
 }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [form, setForm] = useState<LivingCostFormState>(initial ?? emptyLivingCostForm());
 
   function update<K extends keyof LivingCostFormState>(key: K, value: LivingCostFormState[K]) {
@@ -611,21 +606,21 @@ export function LivingCostEntryForm({
   }
 
   const totalCost = calcTotalCost({
-    rent: toInt(form.rent),
-    utilities: toInt(form.utilities),
-    phone: toInt(form.phone),
-    transport: toInt(form.transport),
-    groceries: toInt(form.groceries),
-    eatingOut: toInt(form.eatingOut),
-    shopping: toInt(form.shopping),
-    other: toInt(form.other),
+    rent: toIntOrNull(form.rent),
+    utilities: toIntOrNull(form.utilities),
+    phone: toIntOrNull(form.phone),
+    transport: toIntOrNull(form.transport),
+    groceries: toIntOrNull(form.groceries),
+    eatingOut: toIntOrNull(form.eatingOut),
+    shopping: toIntOrNull(form.shopping),
+    other: toIntOrNull(form.other),
   });
-  const remaining = calcRemaining(toInt(form.netPay), totalCost);
+  const remaining = calcRemaining(toIntOrNull(form.netPay), totalCost);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!livingCostFormValid(form) || submitting) return;
-    await onSubmit(livingCostFormToInput(form));
+    await onSubmit(livingCostFormToInput(form, locale));
   }
 
   return (
@@ -642,14 +637,12 @@ export function LivingCostEntryForm({
           value={form.status}
           onChange={(v) => update("status", v)}
           options={LIVING_STATUS_OPTIONS}
-          required
         />
         <SelectField
           labelKey="pinnedForm.household"
           value={form.household}
           onChange={(v) => update("household", v)}
           options={HOUSEHOLD_OPTIONS}
-          required
         />
       </div>
       <SelectField
@@ -657,7 +650,6 @@ export function LivingCostEntryForm({
         value={form.housingType}
         onChange={(v) => update("housingType", v)}
         options={HOUSING_TYPE_OPTIONS}
-        required
       />
       <NumberField
         labelKey="pinnedForm.netPayInput"
@@ -665,7 +657,6 @@ export function LivingCostEntryForm({
         onChange={(v) => update("netPay", v)}
         unitKey="pinnedForm.unitManwon"
         max={PINNED_FORM_LIMITS.amountMax}
-        required
       />
       <div className="grid grid-cols-2 gap-2">
         <NumberField labelKey="pinnedForm.rent" value={form.rent} onChange={(v) => update("rent", v)} unitKey="pinnedForm.unitManwon" />
@@ -677,8 +668,8 @@ export function LivingCostEntryForm({
         <NumberField labelKey="pinnedForm.shopping" value={form.shopping} onChange={(v) => update("shopping", v)} unitKey="pinnedForm.unitManwon" />
         <NumberField labelKey="pinnedForm.other" value={form.other} onChange={(v) => update("other", v)} unitKey="pinnedForm.unitManwon" />
       </div>
-      <NumberField labelKey="pinnedForm.totalCost" value={String(totalCost)} unitKey="pinnedForm.unitManwon" readOnly />
-      <NumberField labelKey="pinnedForm.remaining" value={String(remaining)} unitKey="pinnedForm.unitManwon" readOnly />
+      <NumberField labelKey="pinnedForm.totalCost" value={numToStr(totalCost)} unitKey="pinnedForm.unitManwon" readOnly />
+      <NumberField labelKey="pinnedForm.remaining" value={numToStr(remaining)} unitKey="pinnedForm.unitManwon" readOnly />
       <MonthAndAnonymousFields
         baseMonth={form.baseMonth}
         onChangeBaseMonth={(v) => update("baseMonth", v)}

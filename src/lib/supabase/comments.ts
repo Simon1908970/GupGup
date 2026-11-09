@@ -100,6 +100,18 @@ export async function deleteComment(
   hasReplies: boolean,
 ) {
   const supabase = createClient();
+  // 보통 댓글은 항상 COMMENT_REWARD만큼 받지만, "내 월급"/"내 생활비" 카드는
+  // 더 많이 받는다(PINNED_FORM_CARD_REWARD) -- 삭제할 때 실제로 그 댓글이
+  // 받았던 만큼 그대로 돌려줘야 해서, 고정값 대신 저장된 points_awarded를
+  // 조회해서 쓴다.
+  const { data: existing } = await supabase
+    .from("comments")
+    .select("points_awarded")
+    .eq("id", commentId)
+    .eq("author_id", authorId)
+    .maybeSingle();
+  const pointsToReclaim = existing?.points_awarded ?? COMMENT_REWARD;
+
   if (hasReplies) {
     const { error } = await supabase
       .from("comments")
@@ -115,7 +127,7 @@ export async function deleteComment(
       .eq("author_id", authorId);
     if (error) throw error;
   }
-  await supabase.rpc("adjust_points", { delta: -COMMENT_REWARD });
+  await supabase.rpc("adjust_points", { delta: -pointsToReclaim });
 }
 
 export interface CommentWithPost extends Comment {

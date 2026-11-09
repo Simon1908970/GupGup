@@ -1,4 +1,5 @@
-import type { DictionaryKey } from "@/lib/i18n/dictionaries";
+import type { DictionaryKey, Locale } from "@/lib/i18n/dictionaries";
+import type { CountryCode } from "@/lib/types";
 
 // "내 월급" / "내 생활비" 고정 글의 입력 양식 설정. 두 양식은 구조가 같아서
 // (지역 + 선택형 항목 몇 개 + 금액 항목 여러 개 + 자동계산 + 기준월 + 익명
@@ -8,9 +9,25 @@ import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 
 export type PinnedFormType = "salary" | "living_cost";
 
-// 작성자의 국가 태그를 카드에 보여줄지 -- 아직 미정이라 기본 off로 두고
-// 설정값만 빼놓는다(요청서 4번). true로 바꾸면 카드에 국가 플래그가 뜬다.
-export const SHOW_AUTHOR_COUNTRY_TAG = false;
+// 작성자의 국적 표시(2026-11-09 결정): 익명 여부와 무관하게 "익명"/닉네임
+// 옆에 국기 이모지를 보여준다. 단 profiles.country(회원가입 때 고른 국가)가
+// 아니라, 제출 시점의 "시스템 언어"(사이트 UI 언어 -- 보통 기기 언어로
+// 자동 감지됨)로 추정한다 -- 신원을 특정하는 값이 아니라서 익명 글에도
+// 안전하게 보여줄 수 있다. 1:1로 안 맞는 언어(한국어·영어·러시아어)는
+// 국가를 특정할 수 없어 "기타" 깃발로 둔다.
+export const LOCALE_TO_COUNTRY: Record<Locale, CountryCode> = {
+  ko: "kr",
+  en: "etc",
+  vi: "vn",
+  th: "th",
+  id: "id",
+  tl: "ph",
+  lo: "la",
+  my: "mm",
+  mn: "mn",
+  km: "kh",
+  ru: "etc",
+};
 
 export const PINNED_FORM_LIMITS = {
   weeklyHoursMax: 100,
@@ -104,40 +121,44 @@ export const HOUSING_TYPE_OPTIONS: SelectOption[] = [
   { value: "etc", labelKey: "pinnedForm.housingType.etc" },
 ];
 
+// 모든 항목이 선택 입력이라, 값을 안 적은(null) 항목은 "0"이 아니라
+// "모름"이다. 세전 월급 자체를 안 적었으면 실수령액도 계산할 수 없으니
+// null을 돌려주고(= 자동계산 안 함), 공제 항목만 비어있으면 0으로 쳐서
+// 계산한다.
 export function calcNetPay(
-  grossPay: number,
-  deductHousing: number,
-  deductFood: number,
-  deductTaxInsurance: number,
-  deductOther: number,
-): number {
-  return grossPay - deductHousing - deductFood - deductTaxInsurance - deductOther;
-}
-
-export function calcTotalCost(expenses: {
-  rent: number;
-  utilities: number;
-  phone: number;
-  transport: number;
-  groceries: number;
-  eatingOut: number;
-  shopping: number;
-  other: number;
-}): number {
+  grossPay: number | null,
+  deductHousing: number | null,
+  deductFood: number | null,
+  deductTaxInsurance: number | null,
+  deductOther: number | null,
+): number | null {
+  if (grossPay === null) return null;
   return (
-    expenses.rent +
-    expenses.utilities +
-    expenses.phone +
-    expenses.transport +
-    expenses.groceries +
-    expenses.eatingOut +
-    expenses.shopping +
-    expenses.other
+    grossPay - (deductHousing ?? 0) - (deductFood ?? 0) - (deductTaxInsurance ?? 0) - (deductOther ?? 0)
   );
 }
 
-export function calcRemaining(netPay: number, totalCost: number): number {
-  return netPay - totalCost;
+// 지출 항목을 하나도 안 적었으면(전부 null) 총 생활비도 "0원"이 아니라
+// "모름"이라 null을 돌려준다. 하나라도 적었으면 안 적은 항목은 0으로 쳐서
+// 합산한다.
+export function calcTotalCost(expenses: {
+  rent: number | null;
+  utilities: number | null;
+  phone: number | null;
+  transport: number | null;
+  groceries: number | null;
+  eatingOut: number | null;
+  shopping: number | null;
+  other: number | null;
+}): number | null {
+  const values = Object.values(expenses);
+  if (values.every((v) => v === null)) return null;
+  return values.reduce<number>((sum, v) => sum + (v ?? 0), 0);
+}
+
+export function calcRemaining(netPay: number | null, totalCost: number | null): number | null {
+  if (netPay === null) return null;
+  return netPay - (totalCost ?? 0);
 }
 
 // "기준 월" 기본값 -- 지난달(현재 로컬 시각 기준).
