@@ -282,11 +282,11 @@ function BoardListViewInner({
 
       <ul className="relative rounded-lg border border-[var(--color-border-gray)] px-3 gg-glossy">
         {config.slug === "housing" && (
-          <li className="flex items-start gap-2 border-b border-[var(--color-border-gray-light)] bg-[var(--color-border-gray-light)]/40 px-1 py-3">
-            <span className="mt-0.5 shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-bold text-white">
+          <li className="border-b border-[var(--color-border-gray-light)] bg-[var(--color-border-gray-light)]/40 px-1 py-3">
+            <span className="inline-block shrink-0 rounded bg-[var(--color-brand-red)] px-1.5 py-0.5 text-[10px] font-bold text-white">
               {t("housing.noticeLabel")}
             </span>
-            <p className="text-xs leading-relaxed text-[var(--color-text-muted)]">
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-text-muted)]">
               {t("housing.noticeText")}
             </p>
           </li>
