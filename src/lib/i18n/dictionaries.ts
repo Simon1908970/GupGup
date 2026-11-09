@@ -222,6 +222,10 @@ const ko = {
   "housing.noticeLabel": "공지사항",
   "housing.noticeText": "본 사이트는 거래 플랫폼이 아니며, 집주인 동의 없는 전대차 거래로 인한 피해는 당사자 책임입니다.",
 
+  "dabang.button": "다방 앱에서 방 찾기 (외국인전용관, 다국어 지원)",
+  "dabang.mobileNotice": "앱을 열고 외국인전용관을 눌러주세요",
+  "dabang.pcNotice": "앱 전용 서비스입니다. 모바일에서 이용해주세요.",
+
   "legal.translateNotice": "이 문서는 한국어 원문이 법적 효력을 가집니다. 영어 버전은 위 버튼으로 전환해 보실 수 있으며, 그 외 언어로 확인하시려면 브라우저의 번역 기능을 이용해주세요.",
 
   "onboarding.agreeAll": "전체 동의",
@@ -584,6 +588,10 @@ const en: Dictionary = {
   "housing.noticeLabel": "Notice",
   "housing.noticeText": "This site is not a transaction platform. Any damage resulting from a sublease arrangement made without the landlord's consent is solely the responsibility of the parties involved.",
 
+  "dabang.button": "Find a room on the Dabang app (Foreigner Zone, multilingual)",
+  "dabang.mobileNotice": "Open the app and tap the Foreigner Zone",
+  "dabang.pcNotice": "App only. Please use your mobile phone.",
+
   "legal.translateNotice": "The Korean original of this document is legally binding. You can switch to the English version using the button above; for other languages, please use your browser's translation feature.",
 
   "onboarding.agreeAll": "Agree to all",
@@ -852,6 +860,10 @@ const vi: Partial<Dictionary> = {
 
   "housing.noticeLabel": "Thông báo",
   "housing.noticeText": "Trang web này không phải là nền tảng giao dịch. Mọi thiệt hại phát sinh từ việc cho thuê lại mà không có sự đồng ý của chủ nhà hoàn toàn thuộc trách nhiệm của các bên liên quan.",
+
+  "dabang.button": "Tìm phòng trên ứng dụng Dabang (Khu dành cho người nước ngoài, đa ngôn ngữ)",
+  "dabang.mobileNotice": "Mở ứng dụng và nhấn vào Khu dành cho người nước ngoài",
+  "dabang.pcNotice": "Chỉ dùng được trên ứng dụng. Vui lòng dùng điện thoại.",
 
   "legal.translateNotice": "Bản gốc tiếng Hàn của tài liệu này có giá trị pháp lý. Để xem bằng ngôn ngữ khác, vui lòng sử dụng tính năng dịch của trình duyệt.",
 
@@ -1201,6 +1213,10 @@ const th: Partial<Dictionary> = {
 
   "housing.noticeLabel": "ประกาศ",
   "housing.noticeText": "เว็บไซต์นี้ไม่ใช่แพลตฟอร์มการซื้อขาย ความเสียหายใดๆ ที่เกิดจากการให้เช่าช่วงโดยไม่ได้รับความยินยอมจากเจ้าของบ้านเป็นความรับผิดชอบของคู่กรณีทั้งหมด",
+
+  "dabang.button": "หาห้องพักในแอป Dabang (โซนชาวต่างชาติ รองรับหลายภาษา)",
+  "dabang.mobileNotice": "เปิดแอปแล้วแตะโซนชาวต่างชาติ",
+  "dabang.pcNotice": "ใช้ได้เฉพาะในแอปเท่านั้น กรุณาใช้งานผ่านมือถือ",
 
   "legal.translateNotice": "เอกสารต้นฉบับภาษาเกาหลีมีผลผูกพันทางกฎหมาย หากต้องการดูในภาษาอื่น กรุณาใช้ฟีเจอร์แปลภาษาของเบราว์เซอร์",
 
@@ -1553,6 +1569,10 @@ const id: Partial<Dictionary> = {
   "housing.noticeLabel": "Pemberitahuan",
   "housing.noticeText": "Situs ini bukan platform transaksi. Segala kerugian yang timbul dari transaksi subsewa tanpa persetujuan pemilik rumah sepenuhnya menjadi tanggung jawab pihak-pihak yang terlibat.",
 
+  "dabang.button": "Cari kamar di aplikasi Dabang (Zona Khusus Orang Asing, multibahasa)",
+  "dabang.mobileNotice": "Buka aplikasi lalu ketuk Zona Khusus Orang Asing",
+  "dabang.pcNotice": "Hanya tersedia di aplikasi. Silakan gunakan ponsel Anda.",
+
   "legal.translateNotice": "Dokumen asli berbahasa Korea ini memiliki kekuatan hukum. Untuk melihatnya dalam bahasa lain, silakan gunakan fitur terjemahan browser Anda.",
 
   "onboarding.agreeAll": "Setujui semua",
@@ -1903,6 +1923,10 @@ const tl: Partial<Dictionary> = {
 
   "housing.noticeLabel": "Paalala",
   "housing.noticeText": "Ang site na ito ay hindi isang transaction platform. Ang anumang pinsalang dulot ng sublease na walang pahintulot ng may-ari ng bahay ay pananagutan lamang ng mga partido na kasangkot.",
+
+  "dabang.button": "Maghanap ng kwarto sa Dabang app (Foreigner Zone, maraming wika)",
+  "dabang.mobileNotice": "Buksan ang app at i-tap ang Foreigner Zone",
+  "dabang.pcNotice": "Para lang sa app. Gamitin ang mobile phone mo.",
 
   "legal.translateNotice": "Ang orihinal na bersyon ng dokumentong ito sa Korean ang may legal na bisa. Para tingnan ito sa ibang wika, gamitin ang translate feature ng iyong browser.",
 
@@ -2257,6 +2281,10 @@ const lo: Partial<Dictionary> = {
   "housing.noticeLabel": "ແຈ້ງການ",
   "housing.noticeText": "ເວັບໄຊທ໌ນີ້ບໍ່ແມ່ນເວທີການຊື້ຂາຍ. ຄວາມເສຍຫາຍໃດໆທີ່ເກີດຈາກການໃຫ້ເຊົ່າຕໍ່ໂດຍບໍ່ໄດ້ຮັບຄວາມຍິນຍອມຈາກເຈົ້າຂອງເຮືອນ ເປັນຄວາມຮັບຜິດຊອບຂອງຄູ່ກໍລະນີທັງໝົດ.",
 
+  "dabang.button": "ຊອກຫາຫ້ອງໃນແອັບ Dabang (ໂຊນຄົນຕ່າງຊາດ, ຮອງຮັບຫຼາຍພາສາ)",
+  "dabang.mobileNotice": "ເປີດແອັບແລ້ວກົດໂຊນຄົນຕ່າງຊາດ",
+  "dabang.pcNotice": "ໃຊ້ໄດ້ສະເພາະໃນແອັບເທົ່ານັ້ນ. ກະລຸນາໃຊ້ຜ່ານມືຖື.",
+
   "legal.translateNotice": "ເອກະສານຕົ້ນສະບັບພາສາເກົາຫຼີສະບັບນີ້ມີຜົນທາງກົດໝາຍ. ເພື່ອເບິ່ງໃນພາສາອື່ນ, ກະລຸນາໃຊ້ຄຸນສົມບັດແປພາສາຂອງບຣາວເຊີ.",
 
   "onboarding.agreeAll": "ຕົກລົງທັງໝົດ",
@@ -2607,6 +2635,10 @@ const my: Partial<Dictionary> = {
 
   "housing.noticeLabel": "အသိပေးစာ",
   "housing.noticeText": "ဤဆိုက်သည် ရောင်းဝယ်ရေးပလက်ဖောင်းတစ်ခု မဟုတ်ပါ။ အိမ်ရှင်၏ သဘောတူညီချက်မရှိဘဲ ငှားရမ်းလွှဲပြောင်းမှုကြောင့် ဖြစ်ပေါ်လာသည့် ပျက်စီးမှုများအတွက် ပတ်သက်သူများ၏ တာဝန်သာဖြစ်သည်။",
+
+  "dabang.button": "Dabang အက်ပ်ထဲမှာ အခန်းရှာပါ (နိုင်ငံခြားသားဇုန်၊ ဘာသာစကားများစွာ)",
+  "dabang.mobileNotice": "အက်ပ်ကိုဖွင့်ပြီး နိုင်ငံခြားသားဇုန်ကို နှိပ်ပါ",
+  "dabang.pcNotice": "အက်ပ်ပေါ်မှာသာ အသုံးပြုနိုင်ပါသည်။ မိုဘိုင်းဖုန်းဖြင့် အသုံးပြုပါ။",
 
   "legal.translateNotice": "ဤစာရွက်စာတမ်း၏ ကိုရီးယားမူရင်းသည် ဥပဒေအရ အာဏာတည်သည်။ အခြားဘာသာစကားဖြင့် ကြည့်ရှုရန် သင့်ဘရောက်ဆာ၏ ဘာသာပြန်ဝန်ဆောင်မှုကို အသုံးပြုပါ။",
 
@@ -2959,6 +2991,10 @@ const mn: Partial<Dictionary> = {
   "housing.noticeLabel": "Мэдэгдэл",
   "housing.noticeText": "Энэ сайт нь наймаа хийх платформ биш юм. Гэрийн эзний зөвшөөрөлгүйгээр хийсэн дэд түрээсийн гэрээнээс үүдэн гарах хохирлын хариуцлагыг оролцогч талууд бүрэн хариуцна.",
 
+  "dabang.button": "Dabang апп дээр өрөө хайх (Гадаадын иргэдийн бүс, олон хэлээр)",
+  "dabang.mobileNotice": "Аппаа нээгээд Гадаадын иргэдийн бүсийг дарна уу",
+  "dabang.pcNotice": "Зөвхөн аппликэйшнд ашиглах боломжтой. Гар утсаараа ашиглана уу.",
+
   "legal.translateNotice": "Энэ баримт бичгийн Солонгос эх нь хууль зүйн хүчинтэй. Өөр хэлээр үзэхийг хүсвэл хөтчийнхөө орчуулгын функцийг ашиглана уу.",
 
   "onboarding.agreeAll": "Бүгдийг зөвшөөрөх",
@@ -3309,6 +3345,10 @@ const ru: Partial<Dictionary> = {
 
   "housing.noticeLabel": "Уведомление",
   "housing.noticeText": "Этот сайт не является торговой платформой. Любой ущерб, возникший в результате субаренды без согласия арендодателя, является исключительной ответственностью сторон сделки.",
+
+  "dabang.button": "Искать комнату в приложении Dabang (зона для иностранцев, на разных языках)",
+  "dabang.mobileNotice": "Откройте приложение и нажмите на зону для иностранцев",
+  "dabang.pcNotice": "Доступно только в приложении. Используйте мобильный телефон.",
 
   "legal.translateNotice": "Юридическую силу имеет оригинал документа на корейском языке. Чтобы просмотреть его на другом языке, используйте функцию перевода вашего браузера.",
 
@@ -3750,6 +3790,10 @@ const km: Partial<Dictionary> = {
 
   "housing.noticeLabel": "សេចក្តីជូនដំណឹង",
   "housing.noticeText": "គេហទំព័រនេះមិនមែនជាវេទិកាប្រតិបត្តិការទេ។ ការខូចខាតណាមួយដែលកើតចេញពីការជួលបន្តដោយគ្មានការយល់ព្រមពីម្ចាស់ផ្ទះ គឺជាទំនួលខុសត្រូវរបស់ភាគីពាក់ព័ន្ធតែប៉ុណ្ណោះ។",
+
+  "dabang.button": "ស្វែងរកបន្ទប់នៅក្នុងកម្មវិធី Dabang (តំបន់ជនបរទេស គាំទ្រច្រើនភាសា)",
+  "dabang.mobileNotice": "បើកកម្មវិធី ហើយចុចតំបន់ជនបរទេស",
+  "dabang.pcNotice": "ប្រើបានតែលើកម្មវិធីប៉ុណ្ណោះ។ សូមប្រើទូរស័ព្ទដៃ។",
 
   "legal.translateNotice": "អត្ថបទដើមជាភាសាកូរ៉េនៃឯកសារនេះមានអានុភាពផ្លូវច្បាប់។ អ្នកអាចប្តូរទៅកំណែភាសាអង់គ្លេសដោយប្រើប៊ូតុងខាងលើ រីឯភាសាផ្សេងទៀត សូមប្រើមុខងារបកប្រែរបស់កម្មវិធីរុករករបស់អ្នក។",
 

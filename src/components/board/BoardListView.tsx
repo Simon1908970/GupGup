@@ -15,6 +15,7 @@ import { PostListItem } from "@/components/board/PostListItem";
 import { Pagination } from "@/components/board/Pagination";
 import { BoardSearchBar, type SearchScope } from "@/components/board/BoardSearchBar";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
+import { DabangAppButton } from "@/components/common/DabangAppButton";
 import { useTitleTranslation } from "@/lib/hooks/useTitleTranslation";
 import { cn } from "@/lib/utils";
 
@@ -252,6 +253,8 @@ function BoardListViewInner({
           />
         </div>
       )}
+
+      {config.slug === "housing" && <DabangAppButton className="mb-4" />}
 
       <div className="mb-2 flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
