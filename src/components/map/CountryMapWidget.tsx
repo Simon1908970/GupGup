@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import type { DictionaryKey, Locale } from "@/lib/i18n/dictionaries";
+import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { fetchBusinesses } from "@/lib/supabase/businesses";
 import { fetchMapPosts } from "@/lib/supabase/posts";
 import type { Business, CountryCode, Post } from "@/lib/types";
@@ -20,16 +20,11 @@ declare global {
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 }; // 서울시청
 const SCRIPT_ID = "gupgup-google-maps-script";
 
-// 우리 로케일 코드는 구글 Maps JS API의 언어 코드와 거의 동일하고(ko/en/vi/th/id/lo/
-// my/mn/km/ru), 필리핀어만 다르다 — 우리는 "tl", 구글은 "fil".
-function toGoogleMapsLanguage(locale: Locale): string {
-  return locale === "tl" ? "fil" : locale;
-}
-
-// 지도 언어는 스크립트 로드 시점에 한 번 고정된다(구글 Maps JS SDK는 로드 후
-// language 파라미터를 바꿀 방법이 없음) — 지구본으로 언어를 바꾸면
-// LanguageProvider가 페이지를 새로고침해서 이 스크립트가 새 언어로 다시 실린다.
-function loadGoogleMapsScript(language: string): Promise<void> {
+// 사이트 UI 언어에 맞춰 지도 언어도 바꿔봤지만, 한국 지역 지도 데이터(region=KR,
+// TMap Mobility 제공)는 한국어/영어 외 언어는 번역을 지원하지 않아 베트남어·태국어
+// 등을 골라도 전부 영어판과 동일하게 나왔다 — 그래서 사이트 언어와 상관없이
+// 지도는 항상 영어로 고정한다.
+function loadGoogleMapsScript(): Promise<void> {
   if (window.google?.maps) return Promise.resolve();
   const existing = document.getElementById(SCRIPT_ID);
   if (existing) {
@@ -38,7 +33,7 @@ function loadGoogleMapsScript(language: string): Promise<void> {
   return new Promise((resolve) => {
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=${language}&region=KR`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=en&region=KR`;
     script.onload = () => resolve();
     document.head.appendChild(script);
   });
@@ -78,7 +73,7 @@ function buildPostInfoContent(p: Post, linkLabel: string): HTMLDivElement {
 }
 
 export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
-  const { t, locale, localeResolved } = useLanguage();
+  const { t } = useLanguage();
   const [country, setCountry] = useState<CountryCode | "all">("all");
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -105,11 +100,8 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
   }, [country]);
 
   useEffect(() => {
-    // locale이 확정되기 전(SSR과 맞춘 임시 "ko") 상태로 스크립트를 먼저 실어버리면
-    // 실제 언어가 뭐든 지도가 "ko"로 굳어버리므로, 확정될 때까지 기다린다.
-    if (!localeResolved) return;
     let cancelled = false;
-    loadGoogleMapsScript(toGoogleMapsLanguage(locale)).then(() => {
+    loadGoogleMapsScript().then(() => {
       if (cancelled || !mapDivRef.current) return;
       setMap(
         new window.google!.maps.Map(mapDivRef.current, {
@@ -121,7 +113,7 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [localeResolved, locale]);
+  }, []);
 
   useEffect(() => {
     if (!map || !window.google) return;
