@@ -7,7 +7,7 @@ import { CATEGORIES } from "@/lib/constants/categories";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import { fetchPosts } from "@/lib/supabase/posts";
+import { fetchPosts, fetchNotices } from "@/lib/supabase/posts";
 import type { CategorySlug, CountryCode, Post, SortOrder } from "@/lib/types";
 import { CategoryBadge } from "@/components/common/CategoryBadge";
 import { CountryFilterChips } from "@/components/board/CountryFilterChips";
@@ -147,6 +147,25 @@ function BoardListViewInner({
       cancelled = true;
     };
   }, [config, gated, user, subCategory, country, sort, searchQuery, searchScope, page, hasServerData]);
+
+  // 고정 글은 서버가 미리 구워준 게 있어도 항상 다시 확인한다 -- 다른
+  // 카테고리에서 클릭으로 들어오면 Next.js가 캐시해 둔 예전 응답을 그대로
+  // 쓸 수 있어서, 막 고정한 글이 "국가 필터를 한 번 건드려야" 보이는
+  // 문제가 있었다(2026-11-09). 위의 본문 목록 효과와 달리 건너뛰지 않는다.
+  useEffect(() => {
+    if (!config || (gated && !user)) return;
+    let cancelled = false;
+    fetchNotices(config.slug, subCategory === "all" ? undefined : subCategory)
+      .then((rows) => {
+        if (!cancelled) setNotices(rows);
+      })
+      .catch(() => {
+        /* 서버가 준 초기값(있다면)을 그대로 둔다 -- 조용히 실패 */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [config, gated, user, subCategory]);
 
   if (!config) {
     return (

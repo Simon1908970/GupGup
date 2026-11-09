@@ -213,6 +213,39 @@ export async function fetchPosts({
   };
 }
 
+// 📌 고정 글만 따로, 항상 최신 데이터로 가져온다. 카테고리 탭을 눌러
+// 클라이언트 쪽에서 이동했을 때 Next.js가 캐시해 둔 이전 RSC 응답을 그대로
+// 보여줘서 "방금 고정한 글이 처음엔 안 보이다가 필터를 건드려야 보인다"는
+// 문제가 있었다(2026-11-09) -- 고정 글은 다른 목록보다 눈에 잘 띄어야 하는
+// 콘텐츠라, 매번 마운트 시점에 이 함수로 다시 확인해서 덮어쓴다.
+export async function fetchNotices(category: CategorySlug, subCategory?: string): Promise<Post[]> {
+  const supabase = createClient();
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const blockedIds = viewer ? await fetchBlockedIds(viewer.id) : [];
+
+  let query = supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("category", category)
+    .eq("is_notice", true)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  if (blockedIds.length > 0) {
+    query = query.not("author_id", "in", `(${blockedIds.join(",")})`);
+  }
+  if (subCategory && subCategory !== "all") {
+    query = query.or(`sub_category.eq.${subCategory},sub_category.is.null`);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as PostRow[];
+  const likedPostIds = viewer ? await fetchLikedPostIds(viewer.id, rows.map((r) => r.id)) : undefined;
+  return rows.map((row) => mapPost(row, likedPostIds));
+}
+
 export async function fetchLatestPosts(
   category: CategorySlug,
   limit: number,
