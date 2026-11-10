@@ -5,11 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
+// getFullYear/getMonth/getDate follow the *runtime's* local timezone, which
+// differs between Vercel's SSR (UTC) and a KST browser -- posts written
+// around UTC 15:00–23:59 (KST 00:00–08:59) rendered a different calendar
+// date on each side and broke hydration (React error #418). Pinning the
+// timezone explicitly keeps server and client output identical everywhere.
+const DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 export function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
+  const parts = DATE_FORMATTER.formatToParts(new Date(iso));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("year")}.${get("month")}.${get("day")}`;
 }
 
 export function formatCount(n: number): string {
