@@ -22,7 +22,6 @@ import { PostBody } from "@/components/board/PostBody";
 import { TranslateToggle } from "@/components/common/TranslateToggle";
 import { LikeButton } from "@/components/common/LikeButton";
 import { FirstPostPointsModal } from "@/components/common/FirstPostPointsModal";
-import { DabangAppButton } from "@/components/common/DabangAppButton";
 import { PinnedFormSection } from "@/components/board/PinnedFormSection";
 
 function isValidCategory(v: string): v is CategorySlug {
@@ -341,10 +340,6 @@ export function PostDetailView({
           <MessageCircle size={16} />
           {t("post.messageButton")}
         </button>
-      )}
-
-      {!post.pinnedFormType && config.slug === "housing" && (
-        <DabangAppButton className="mt-6" />
       )}
 
       {post.pinnedFormType ? (
