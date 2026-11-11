@@ -29,6 +29,7 @@ export default function AdminPostsPage() {
   const [editForm, setEditForm] = useState({ title: "", body: "" });
   const [editError, setEditError] = useState<string | null>(null);
   const [editSubmitting, setEditSubmitting] = useState(false);
+  const [pendingMove, setPendingMove] = useState<Record<string, CategorySlug>>({});
 
   function load() {
     const supabase = createClient();
@@ -82,11 +83,11 @@ export default function AdminPostsPage() {
     }
   }
 
-  async function handleMove(postId: string, targetCategory: CategorySlug) {
+  async function handleMove(postId: string, targetCategory: CategorySlug, subCategory?: string) {
     const res = await fetch(`/api/admin/posts/${postId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category: targetCategory }),
+      body: JSON.stringify({ category: targetCategory, subCategory: subCategory ?? null }),
     });
     const data = await res.json();
     if (data.action === "deleted_insufficient_points") {
@@ -162,28 +163,65 @@ export default function AdminPostsPage() {
             >
               보기
             </a>
-            {p.category !== "news" && (
-              <select
-                defaultValue=""
-                onChange={(e) => {
-                  const target = e.target.value as CategorySlug;
-                  e.target.value = "";
-                  if (target) handleMove(p.id, target);
-                }}
-                className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
-              >
-                <option value="" disabled>
-                  카테고리 이동
-                </option>
-                {CATEGORY_ORDER.filter((slug) => slug !== p.category && slug !== "news").map(
-                  (slug) => (
-                    <option key={slug} value={slug}>
-                      {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+            {p.category !== "news" &&
+              (pendingMove[p.id] ? (
+                <select
+                  key={`sub-${p.id}`}
+                  autoFocus
+                  defaultValue="__placeholder__"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const target = pendingMove[p.id];
+                    setPendingMove((prev) => {
+                      const next = { ...prev };
+                      delete next[p.id];
+                      return next;
+                    });
+                    if (value === "__cancel__" || value === "__placeholder__") return;
+                    handleMove(p.id, target, value || undefined);
+                  }}
+                  className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
+                >
+                  <option value="__placeholder__" disabled>
+                    {t(CATEGORIES[pendingMove[p.id]].labelKey as DictionaryKey)} 세부 카테고리
+                  </option>
+                  <option value="">전체</option>
+                  {CATEGORIES[pendingMove[p.id]].subCategories?.map((sub) => (
+                    <option key={sub.slug} value={sub.slug}>
+                      {t(sub.labelKey as DictionaryKey)}
                     </option>
-                  ),
-                )}
-              </select>
-            )}
+                  ))}
+                  <option value="__cancel__">취소</option>
+                </select>
+              ) : (
+                <select
+                  key={`cat-${p.id}`}
+                  defaultValue=""
+                  onChange={(e) => {
+                    const target = e.target.value as CategorySlug;
+                    e.target.value = "";
+                    if (!target) return;
+                    const subCategories = CATEGORIES[target].subCategories;
+                    if (subCategories && subCategories.length > 0) {
+                      setPendingMove((prev) => ({ ...prev, [p.id]: target }));
+                    } else {
+                      handleMove(p.id, target);
+                    }
+                  }}
+                  className="h-7 shrink-0 rounded border border-[var(--color-border-gray)] text-xs"
+                >
+                  <option value="" disabled>
+                    카테고리 이동
+                  </option>
+                  {CATEGORY_ORDER.filter((slug) => slug !== p.category && slug !== "news").map(
+                    (slug) => (
+                      <option key={slug} value={slug}>
+                        {t(CATEGORIES[slug].labelKey as DictionaryKey)}
+                      </option>
+                    ),
+                  )}
+                </select>
+              ))}
             {p.category !== "news" && (
               <button
                 onClick={() => openEdit(p)}
