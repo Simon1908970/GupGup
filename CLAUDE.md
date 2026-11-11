@@ -12,9 +12,9 @@
 | 대분류 | 하위/메인 노출 | 비고 |
 |---|---|---|
 | 뉴스 | 스크롤형 뉴스, 메인에 최신글 10개(대형 박스) | 작성자 아바타 없음 (운영자 콘텐츠) |
-| 커뮤니티 | 자유게시판 / 한국생활 QnA / 여행·맛집추천, 메인 최신글 10개(대형 박스) | |
+| 커뮤니티 | 자유게시판 / 여행·맛집추천, 메인 최신글 10개(대형 박스) | "한국생활 QnA"는 2026-11-11부터 한국 생활 카테고리로 이동 |
 | 주택 | 하위 항목 미정, 메인 최신글 5개 | TBD |
-| 한국 생활 | 결혼과 육아 / 식당 / 병원 / 한국 핸드폰 / 서류·행정(외국인 증명서, visa guide) / 한국법, 메인 최신글 5개 | 기존 "Living"에서 명칭 변경 |
+| 한국 생활 | 한국생활 QnA / 결혼과 육아 / 식당 / 병원 / 한국 핸드폰 / 서류·행정(외국인 증명서, visa guide) / 기타, 메인 최신글 5개 | 기존 "Living"에서 명칭 변경. QnA는 원래 커뮤니티 소속이었다가 이동(위 비고 참고) |
 | 중고거래 | 메인 최신글 5개 | 상세화면 본문 하단 쪽지 버튼 별도 |
 | 한국 대학교 | 메인 최신글 5개 | |
 | 만남 | 자유 포스팅(동네 친구·소모임 구함, 이성친구 구함 등), 메인 최신글 5개 | 매칭/좋아요 기능 없음. 상세화면 본문 하단 쪽지 버튼 별도 |
@@ -275,8 +275,8 @@ node --env-file=.env.local bots/setup-reply-accounts.mjs [--dry-run]
 사용자가 채팅으로 국가/카테고리(+소분류)/제목/본문(+선택: 이미지 URL)을 주면
 draft JSON `{ country, category, subCategory?, title, body, imageUrl?, membersOnly? }`을
 스크래치패드에 쓰고 `node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]`
-실행. category는 `community`(sub: free/qna/travel/dating) / `housing` / `life`(sub:
-marriage-childcare/restaurant/hospital/mobile/admin/law) / `marketplace` / `university` /
+실행. category는 `community`(sub: free/travel/dating) / `housing` / `life`(sub:
+qna/marriage-childcare/restaurant/hospital/mobile/admin/etc) / `marketplace` / `university` /
 `meeting` 중 하나 — `news`는 운영자 전용 카테고리라 여기서 쓰지 않음. 사용자가 준 제목/본문을
 그대로 쓴다 — 문구 가공 없음. 먼저 `--dry-run`으로 payload 확인 권장.
 
@@ -309,8 +309,10 @@ meeting 전부)는 `generate-answer.mjs` 자체가 거부한다:
   `life/restaurant`, `life/hospital`, `life/mobile`, `life/admin`, `life/etc`
   (life/\*는 2026-11-02 사용자 요청으로 추가 — `life/hospital`처럼 민감한 서브카테고리도
   포함되므로, 실제 회원 글에는 쓰지 않는다는 원칙과 self-seed 전용이라는 점을 더 엄격히 지킬 것)
-- **QnA 답변** (경험자 선배 페르소나, web_search로 사실관계 확인): `community/qna`,
-  `university/qna` — life/\*는 QnA 대상이 아니다(사실관계 확인 없는 가벼운 반응만 허용)
+- **QnA 답변** (경험자 선배 페르소나, web_search로 사실관계 확인): `life/qna`, `university/qna`
+  (`life/qna`는 "한국생활 QnA" — 2026-11-11 `community/qna`에서 카테고리 자체가 이동하면서
+  QnA 취급도 함께 옮겨왔다. `life`의 나머지 서브카테고리는 QnA 대상이 아니다 —
+  사실관계 확인 없는 가벼운 반응만 허용)
 
 **글을 특정하지 않고 요청하면(예: 그냥 "답변 만들어줘")**: 바로 아무 글이나 골라서 진행하지
 않는다. 먼저 Supabase에서 후보 목록을 조회해서 채팅에 보여주고, 사용자가 그중 하나씩 직접

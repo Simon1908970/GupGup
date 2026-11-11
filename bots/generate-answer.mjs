@@ -27,13 +27,16 @@
 // Only the categories below are supported; anything else (housing,
 // marketplace, meeting, ...) is rejected -- see CLAUDE.md's "범용 정보성
 // 질문에 자동으로 댓글을 다는 기능... 비자/법률/병원 등 민감 카테고리에는
-// 절대 자동 댓글을 달지 않는다" caution. life/* was added 2026-11-02 (user
-// request) but only as REACTOR_TARGETS (short reaction, no web_search fact
-// grounding) -- never QNA_TARGETS.
+// 절대 자동 댓글을 달지 않는다" caution. life/* (other than life/qna) was
+// added 2026-11-02 (user request) but only as REACTOR_TARGETS (short
+// reaction, no web_search fact grounding). life/qna is QNA_TARGETS --
+// 2026-11-11 the "한국생활 QnA" sub-category itself moved from
+// community/qna to life/qna (user request), carrying its QnA treatment
+// with it.
 //
 // Usage:
 //   node --env-file=.env.local bots/generate-answer.mjs \
-//     --postId <uuid> --author r1 --category community --subCategory qna \
+//     --postId <uuid> --author r1 --category life --subCategory qna \
 //     --title "질문 제목" --body "질문 본문" \
 //     [--out bots/drafts/answer-1.json] [--dry-run]
 //
@@ -48,7 +51,7 @@ const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const REPLY_ACCOUNTS_PATH = fileURLToPath(new URL("./reply-accounts.json", import.meta.url));
 
-const QNA_TARGETS = new Set(["community/qna", "university/qna"]);
+const QNA_TARGETS = new Set(["life/qna", "university/qna"]);
 const REACTOR_TARGETS = new Set([
   "news",
   "community/free",
@@ -58,7 +61,8 @@ const REACTOR_TARGETS = new Set([
   // 2026-11-02 사용자 요청으로 life/* 추가 -- 가벼운 반응형 댓글만 허용, QnA(web_search로
   // 사실관계 확인 후 답변)는 아님. life/hospital처럼 민감한 서브카테고리도 포함되므로,
   // 실제 회원 글이 아니라 self-seed된 글에만 쓰는 운영 원칙(CLAUDE.md "국가별 커뮤니티
-  // 봇" 섹션)을 반드시 지킬 것.
+  // 봇" 섹션)을 반드시 지킬 것. life/qna는 예외 -- 2026-11-11 community/qna에서
+  // 통째로 옮겨왔으므로 QNA_TARGETS 쪽에 있다 (위 참고).
   "life/marriage-childcare",
   "life/restaurant",
   "life/hospital",
@@ -365,7 +369,7 @@ async function main() {
   const reason = validateArgs(args);
   if (reason) {
     console.error(
-      'usage: node --env-file=.env.local bots/generate-answer.mjs --postId <uuid> --author <accounts.json/reply-accounts.json key> --category <news|community|university> [--subCategory <free|travel|dating|qna|general>] --title "<...>" --body "<...>" [--out <path>] [--dry-run]',
+      'usage: node --env-file=.env.local bots/generate-answer.mjs --postId <uuid> --author <accounts.json/reply-accounts.json key> --category <news|community|life|university> [--subCategory <free|travel|dating|marriage-childcare|restaurant|hospital|mobile|admin|etc|qna|general>] --title "<...>" --body "<...>" [--out <path>] [--dry-run]',
     );
     console.error(reason);
     process.exit(1);

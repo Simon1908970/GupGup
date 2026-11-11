@@ -22,7 +22,6 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     hasNicknamePopup: true,
     subCategories: [
       { slug: "free", labelKey: "sub.community.free" },
-      { slug: "qna", labelKey: "sub.community.qna" },
       { slug: "travel", labelKey: "sub.community.travel" },
       { slug: "dating", labelKey: "sub.community.dating" },
     ],
@@ -47,6 +46,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     hasMessageButton: false,
     hasNicknamePopup: true,
     subCategories: [
+      { slug: "qna", labelKey: "sub.life.qna" },
       { slug: "marriage-childcare", labelKey: "sub.life.marriageChildcare" },
       { slug: "restaurant", labelKey: "sub.life.restaurant" },
       { slug: "hospital", labelKey: "sub.life.hospital" },

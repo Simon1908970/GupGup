@@ -16,7 +16,7 @@
 //
 // Usage:
 //   node --env-file=.env.local bots/generate-question.mjs \
-//     --country vn --category community --subCategory qna \
+//     --country vn --category life --subCategory qna \
 //     --topic "버스카드 환불은 어떻게 받나요" --author vn-q2 \
 //     [--out bots/drafts/question-vn.json] [--dry-run]
 //

@@ -75,7 +75,7 @@ test("isAllowedTarget: accepts the agreed reactor/qna targets", () => {
   assert.equal(isAllowedTarget("community", "travel"), true);
   assert.equal(isAllowedTarget("community", "dating"), true);
   assert.equal(isAllowedTarget("university", "general"), true);
-  assert.equal(isAllowedTarget("community", "qna"), true);
+  assert.equal(isAllowedTarget("life", "qna"), true);
   assert.equal(isAllowedTarget("university", "qna"), true);
   assert.equal(isAllowedTarget("life", "marriage-childcare"), true);
   assert.equal(isAllowedTarget("life", "restaurant"), true);
@@ -91,15 +91,21 @@ test("isAllowedTarget: rejects sensitive/unlisted categories", () => {
   assert.equal(isAllowedTarget("meeting", undefined), false);
 });
 
-test("isQnaTarget: life/* is reactor-only, never QnA (no web_search grounding)", () => {
-  assert.equal(isQnaTarget("life", "hospital"), false);
-  assert.equal(isQnaTarget("life", "admin"), false);
+test("isAllowedTarget: rejects community/qna now that it moved to life/qna", () => {
+  assert.equal(isAllowedTarget("community", "qna"), false);
 });
 
-test("isQnaTarget: true only for the two QnA sub-categories", () => {
-  assert.equal(isQnaTarget("community", "qna"), true);
+test("isQnaTarget: life/* is reactor-only except life/qna itself", () => {
+  assert.equal(isQnaTarget("life", "hospital"), false);
+  assert.equal(isQnaTarget("life", "admin"), false);
+  assert.equal(isQnaTarget("life", "qna"), true);
+});
+
+test("isQnaTarget: true only for the QnA sub-categories (life/qna, university/qna)", () => {
+  assert.equal(isQnaTarget("life", "qna"), true);
   assert.equal(isQnaTarget("university", "qna"), true);
   assert.equal(isQnaTarget("community", "free"), false);
+  assert.equal(isQnaTarget("community", "qna"), false);
   assert.equal(isQnaTarget("news", undefined), false);
 });
 
@@ -108,7 +114,7 @@ test("validateArgs: a complete set is valid", () => {
     validateArgs({
       postId: POST_ID,
       author: "vn",
-      category: "community",
+      category: "life",
       subCategory: "qna",
       title: "t",
       body: "b",
@@ -157,7 +163,7 @@ test("validateArgs: rejects missing title/body", () => {
 });
 
 test("buildSystemPrompt: picks the QnA persona for qna sub-categories", () => {
-  assert.match(buildSystemPrompt("community", "qna"), /경험 많은 선배/);
+  assert.match(buildSystemPrompt("life", "qna"), /경험 많은 선배/);
   assert.match(buildSystemPrompt("university", "qna"), /경험 많은 선배/);
 });
 
@@ -182,8 +188,8 @@ test("loadReplyPersona: returns null for an author with no persona entry", () =>
 });
 
 test("buildSystemPrompt: QnA prompt carries the author's own persona line", () => {
-  assert.match(buildSystemPrompt("community", "qna", "r1"), /돌직구/);
-  assert.match(buildSystemPrompt("community", "qna", "r3"), /무시하는/);
+  assert.match(buildSystemPrompt("life", "qna", "r1"), /돌직구/);
+  assert.match(buildSystemPrompt("life", "qna", "r3"), /무시하는/);
 });
 
 test("buildSystemPrompt: reactor prompt also carries the author's own persona line", () => {
@@ -198,7 +204,7 @@ test("buildSystemPrompt: QnA prompt falls back to a generic persona when the aut
 
 test("buildSystemPrompt: every QnA variant still requires answering in the question's own language", () => {
   for (const author of ["r1", "r2", "r3", "r4", "r5", "r6", "r7", undefined]) {
-    assert.match(buildSystemPrompt("community", "qna", author), /반드시 그 언어로만 답변을 작성한다/);
+    assert.match(buildSystemPrompt("life", "qna", author), /반드시 그 언어로만 답변을 작성한다/);
   }
 });
 
@@ -233,23 +239,23 @@ test("loadReplyPersona: vn/th get the full 40-persona roster, other countries a 
 });
 
 test("buildSystemPrompt: a vn reply account gets the Vietnamese tone note, other countries don't", () => {
-  assert.match(buildSystemPrompt("community", "qna", "r1"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.match(buildSystemPrompt("life", "qna", "r1"), /베트남어로 쓸 때 추가로 지킬 것/);
   assert.match(buildSystemPrompt("news", undefined, "r1"), /베트남어로 쓸 때 추가로 지킬 것/);
-  assert.doesNotMatch(buildSystemPrompt("community", "qna", "th-r1"), /베트남어로 쓸 때 추가로 지킬 것/);
-  assert.doesNotMatch(buildSystemPrompt("community", "qna", "vn"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.doesNotMatch(buildSystemPrompt("life", "qna", "th-r1"), /베트남어로 쓸 때 추가로 지킬 것/);
+  assert.doesNotMatch(buildSystemPrompt("life", "qna", "vn"), /베트남어로 쓸 때 추가로 지킬 것/);
 });
 
 test("buildSystemPrompt: every researched country gets its own tone note, keyed off the author's country", () => {
-  assert.match(buildSystemPrompt("community", "qna", "th-r1"), /555.*55555/s);
-  assert.match(buildSystemPrompt("community", "qna", "id-r1"), /skiber/);
-  assert.match(buildSystemPrompt("community", "qna", "ph-r1"), /Taglish/);
-  assert.match(buildSystemPrompt("community", "qna", "mm-r1"), /미얀마어로 쓸 때 참고/);
-  assert.match(buildSystemPrompt("community", "qna", "mn-r1"), /Гоё/);
+  assert.match(buildSystemPrompt("life", "qna", "th-r1"), /555.*55555/s);
+  assert.match(buildSystemPrompt("life", "qna", "id-r1"), /skiber/);
+  assert.match(buildSystemPrompt("life", "qna", "ph-r1"), /Taglish/);
+  assert.match(buildSystemPrompt("life", "qna", "mm-r1"), /미얀마어로 쓸 때 참고/);
+  assert.match(buildSystemPrompt("life", "qna", "mn-r1"), /Гоё/);
   // 라오스는 2026-10-31부터 라오어 대신 태국어로 쓰므로(번역 품질 문제), 태국 노트를 재사용한다.
-  assert.match(buildSystemPrompt("community", "qna", "la-r1"), /555.*55555/s);
-  assert.match(buildSystemPrompt("community", "qna", "kh-r1"), /크메르어\(캄보디아\)로 쓸 때 참고/);
+  assert.match(buildSystemPrompt("life", "qna", "la-r1"), /555.*55555/s);
+  assert.match(buildSystemPrompt("life", "qna", "kh-r1"), /크메르어\(캄보디아\)로 쓸 때 참고/);
   // "etc" has no researched tone note yet -- falls back to just TONE_RULE.
-  assert.doesNotMatch(buildSystemPrompt("community", "qna", "etc-r1"), /쓸 때 추가로 지킬 것|쓸 때 참고/);
+  assert.doesNotMatch(buildSystemPrompt("life", "qna", "etc-r1"), /쓸 때 추가로 지킬 것|쓸 때 참고/);
 });
 
 test("parseModelResponse: extracts body from a plain JSON text block", () => {
@@ -312,7 +318,7 @@ test("generateAnswer: sends the right model/headers/body and returns the parsed 
   };
 
   const draft = await generateAnswer(
-    { category: "community", subCategory: "qna", author: "r2", title: "질문", body: "본문" },
+    { category: "life", subCategory: "qna", author: "r2", title: "질문", body: "본문" },
     "test-key",
     fakeFetch,
   );
