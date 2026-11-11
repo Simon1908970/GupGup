@@ -93,6 +93,12 @@ test("buildSystemPrompt: falls back to a generic persona when no author is given
   assert.match(buildSystemPrompt("vn", "not-a-real-author"), /평범하고 무난한 태도/);
 });
 
+test("buildSystemPrompt: injects the same COUNTRY_TONE_NOTES research used for answers", () => {
+  assert.match(buildSystemPrompt("vn", "vn-q1"), /gét gô/);
+  assert.match(buildSystemPrompt("th", "th-q1"), /555/);
+  assert.doesNotMatch(buildSystemPrompt("etc", undefined), /gét gô|555/);
+});
+
 test("parseModelResponse: extracts title/body from a plain JSON text block", () => {
   const data = { content: [{ type: "text", text: '{"title": "제목", "body": "본문"}' }] };
   assert.deepEqual(parseModelResponse(data), { title: "제목", body: "본문" });

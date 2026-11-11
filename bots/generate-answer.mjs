@@ -185,12 +185,18 @@ const COUNTRY_TONE_NOTES = {
 기억할 것.`,
 };
 
+// 국가 코드(country)만으로 COUNTRY_TONE_NOTES를 바로 조회 -- reply-accounts.json 계정이
+// 없는 다른 스크립트(예: generate-question.mjs)에서도 같은 SNS 조사 결과를 재사용할 수
+// 있게 분리해둔다.
+export function countryToneNoteForCountry(country) {
+  return country ? (COUNTRY_TONE_NOTES[country] ?? "") : "";
+}
+
 // 언어별 공통 톤(COUNTRY_TONE_NOTES) 뒤에, 계정 아바타로 판단한 성별 말투(gender-tone.mjs)를
 // 덧붙인다 -- CLAUDE.md "페르소나 말투 가이드 — 언어별 남/여" 참고.
 export function countryToneNote(authorKey) {
   const account = loadReplyAccount(authorKey);
-  const country = account?.country;
-  const base = country ? (COUNTRY_TONE_NOTES[country] ?? "") : "";
+  const base = countryToneNoteForCountry(account?.country);
   const gender = genderToneNoteForAccount(account);
   return [base, gender].filter(Boolean).join("\n");
 }

@@ -25,6 +25,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { genderToneNoteForAccount } from "./gender-tone.mjs";
+import { countryToneNoteForCountry } from "./generate-answer.mjs";
 
 const QUESTION_ACCOUNTS_PATH = fileURLToPath(new URL("./question-accounts.json", import.meta.url));
 
@@ -86,6 +87,7 @@ export function buildSystemPrompt(country, author) {
   const lang = LANGUAGE_BY_COUNTRY[country];
   const persona = loadQuestionPersona(author) ?? DEFAULT_QUESTION_PERSONA;
   const genderNote = questionGenderNote(author);
+  const toneNote = countryToneNoteForCountry(country);
   return `너는 한국에 거주 중인 ${label} 출신 외국인이고, 커뮤니티 게시판에 궁금한 걸
 질문하는 글을 쓰는 중이야. 실제 그 나라 사람이 쓴 것처럼 자연스러운 현지어(${lang})로
 작성해.
@@ -101,7 +103,9 @@ ${persona}${genderNote ? `\n\n${genderNote}` : ""}
    짧은 한 마디로 압축한다 -- 성격은 말투/단어 선택으로 드러내고, 문장 수를 늘리는
    방식으로 드러내지 않는다.
 3. 말투는 ${lang}의 편한 구어체/존댓말 섞인 친근한 톤 -- 커뮤니티 게시판에서 흔히 쓰는
-   말투로, 과하게 격식 차리지 않는다.
+   말투로, 과하게 격식 차리지 않는다. "A부터 B까지 얼마나 걸리나요" 식으로 조건을 다
+   풀어서 설명하는 교과서적/격식적 완전한 문장은 쓰지 않는다 -- 실제 그 나라 SNS에서
+   쓰는 캐주얼하고 축약된 질문 관용구를 쓴다(예시가 아래에 있으면 참고).${toneNote ? `\n${toneNote}` : ""}
 4. 질문은 구체적으로 -- 가능하면 숫자/기간/장소/절차 중 하나를 구체적으로 궁금해하는
    형태로 쓴다. 단, 구체적인 것과 길게 쓰는 것은 다르다 -- 짧게 구체적으로 묻는다.
 5. 감정적 맥락(걱정, 답답함, 기대감)은 넣지 않거나, 넣더라도 단어 하나·짧은 감탄사
