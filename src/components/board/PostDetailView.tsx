@@ -262,7 +262,7 @@ export function PostDetailView({
                   src={a.url}
                   controls
                   preload="metadata"
-                  className="max-h-[300px] w-full rounded-lg"
+                  className="max-h-[300px] w-auto max-w-full rounded-lg"
                 />
               )}
             </li>
