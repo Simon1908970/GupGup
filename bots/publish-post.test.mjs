@@ -71,6 +71,21 @@ test("buildInsertPayload: an uploaded image becomes a single attachment", () => 
   ]);
 });
 
+test("validateDraft: rejects a blank videoPath, and imageUrl+videoPath together", () => {
+  assert.equal(validateDraft({ ...VALID, videoPath: "" }), "invalid: videoPath");
+  assert.equal(
+    validateDraft({ ...VALID, imageUrl: "https://example.com/x.jpg", videoPath: "/tmp/x.mp4" }),
+    "invalid: imageUrl and videoPath are mutually exclusive",
+  );
+});
+
+test("buildInsertPayload: an uploaded video becomes a single video attachment", () => {
+  const payload = buildInsertPayload(VALID, "author-id", "https://example.com/x.mp4", "video");
+  assert.deepEqual(payload.attachments, [
+    { url: "https://example.com/x.mp4", type: "video" },
+  ]);
+});
+
 test("buildInsertPayload: subCategory is optional", () => {
   const draft = { country: "vn", category: "community", title: "제목", body: "본문 내용." };
   const payload = buildInsertPayload(draft, "author-id", null);

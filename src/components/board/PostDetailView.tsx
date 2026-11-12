@@ -244,6 +244,32 @@ export function PostDetailView({
         />
       </div>
 
+      {!post.pinnedFormType && post.attachments.length > 0 && (
+        <ul className="mb-4 flex flex-col gap-3">
+          {post.attachments.map((a) => (
+            <li key={a.url}>
+              {a.type === "image" ? (
+                <a href={a.url} target="_blank" rel="noopener noreferrer">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={a.url}
+                    alt=""
+                    className="max-h-[300px] w-auto max-w-full cursor-zoom-in rounded-lg border border-[var(--color-border-gray-light)] transition hover:opacity-90"
+                  />
+                </a>
+              ) : (
+                <video
+                  src={a.url}
+                  controls
+                  preload="metadata"
+                  className="max-h-[300px] w-full rounded-lg"
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
       {post.pinnedFormType ? null : config.slug === "news" && post.originalBody ? (
         <div className="text-sm leading-relaxed text-gray-700">
           {post.thumbnailUrl && (
@@ -293,32 +319,6 @@ export function PostDetailView({
           displayText={showTranslated && translated ? translated.body : post.body}
           rawBody={post.body}
         />
-      )}
-
-      {!post.pinnedFormType && post.attachments.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-3">
-          {post.attachments.map((a) => (
-            <li key={a.url}>
-              {a.type === "image" ? (
-                <a href={a.url} target="_blank" rel="noopener noreferrer">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={a.url}
-                    alt=""
-                    className="max-h-[300px] w-auto max-w-full cursor-zoom-in rounded-lg border border-[var(--color-border-gray-light)] transition hover:opacity-90"
-                  />
-                </a>
-              ) : (
-                <video
-                  src={a.url}
-                  controls
-                  preload="metadata"
-                  className="max-h-[300px] w-full rounded-lg"
-                />
-              )}
-            </li>
-          ))}
-        </ul>
       )}
 
       {!post.pinnedFormType && (
