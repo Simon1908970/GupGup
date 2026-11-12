@@ -42,7 +42,7 @@ test("validateDraft: rejects news (operator-only) or an unknown category", () =>
 });
 
 test("buildInsertPayload: maps fields and defaults attachments/membersOnly", () => {
-  assert.deepEqual(buildInsertPayload(VALID, "author-id", null), {
+  assert.deepEqual(buildInsertPayload(VALID, "author-id", []), {
     category: "community",
     sub_category: "qna",
     country: "vn",
@@ -56,7 +56,7 @@ test("buildInsertPayload: maps fields and defaults attachments/membersOnly", () 
 });
 
 test("buildInsertPayload: membersOnly true is passed through as members_only", () => {
-  const payload = buildInsertPayload({ ...VALID, membersOnly: true }, "author-id", null);
+  const payload = buildInsertPayload({ ...VALID, membersOnly: true }, "author-id", []);
   assert.equal(payload.members_only, true);
 });
 
@@ -65,7 +65,9 @@ test("validateDraft: rejects a non-boolean membersOnly", () => {
 });
 
 test("buildInsertPayload: an uploaded image becomes a single attachment", () => {
-  const payload = buildInsertPayload(VALID, "author-id", "https://example.com/x.jpg");
+  const payload = buildInsertPayload(VALID, "author-id", [
+    { url: "https://example.com/x.jpg", type: "image" },
+  ]);
   assert.deepEqual(payload.attachments, [
     { url: "https://example.com/x.jpg", type: "image" },
   ]);
@@ -75,20 +77,50 @@ test("validateDraft: rejects a blank videoPath, and imageUrl+videoPath together"
   assert.equal(validateDraft({ ...VALID, videoPath: "" }), "invalid: videoPath");
   assert.equal(
     validateDraft({ ...VALID, imageUrl: "https://example.com/x.jpg", videoPath: "/tmp/x.mp4" }),
-    "invalid: imageUrl and videoPath are mutually exclusive",
+    "invalid: imageUrl, videoPath and imagePaths are mutually exclusive",
   );
 });
 
 test("buildInsertPayload: an uploaded video becomes a single video attachment", () => {
-  const payload = buildInsertPayload(VALID, "author-id", "https://example.com/x.mp4", "video");
+  const payload = buildInsertPayload(VALID, "author-id", [
+    { url: "https://example.com/x.mp4", type: "video" },
+  ]);
   assert.deepEqual(payload.attachments, [
     { url: "https://example.com/x.mp4", type: "video" },
   ]);
 });
 
+test("validateDraft: rejects an empty or oversized imagePaths array, or a non-string entry", () => {
+  assert.match(validateDraft({ ...VALID, imagePaths: [] }).toString(), /invalid: imagePaths/);
+  assert.match(
+    validateDraft({ ...VALID, imagePaths: Array(6).fill("/tmp/a.png") }).toString(),
+    /invalid: imagePaths/,
+  );
+  assert.match(validateDraft({ ...VALID, imagePaths: ["/tmp/a.png", ""] }).toString(), /invalid: imagePaths/);
+});
+
+test("validateDraft: accepts imagePaths, and rejects it combined with videoPath", () => {
+  assert.equal(validateDraft({ ...VALID, imagePaths: ["/tmp/a.png", "/tmp/b.png"] }), null);
+  assert.equal(
+    validateDraft({ ...VALID, videoPath: "/tmp/x.mp4", imagePaths: ["/tmp/a.png"] }),
+    "invalid: imageUrl, videoPath and imagePaths are mutually exclusive",
+  );
+});
+
+test("buildInsertPayload: multiple uploaded images become multiple attachments, in order", () => {
+  const payload = buildInsertPayload(VALID, "author-id", [
+    { url: "https://example.com/a.png", type: "image" },
+    { url: "https://example.com/b.png", type: "image" },
+  ]);
+  assert.deepEqual(payload.attachments, [
+    { url: "https://example.com/a.png", type: "image" },
+    { url: "https://example.com/b.png", type: "image" },
+  ]);
+});
+
 test("buildInsertPayload: subCategory is optional", () => {
   const draft = { country: "vn", category: "community", title: "제목", body: "본문 내용." };
-  const payload = buildInsertPayload(draft, "author-id", null);
+  const payload = buildInsertPayload(draft, "author-id", []);
   assert.equal(payload.sub_category, null);
 });
 

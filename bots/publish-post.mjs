@@ -7,7 +7,7 @@
 //   node --env-file=.env.local bots/publish-post.mjs <draft.json> [--dry-run]
 //
 // draft.json:
-//   { country, category, subCategory?, title, body, imageUrl?, videoPath?, membersOnly?, author? }
+//   { country, category, subCategory?, title, body, imageUrl?, videoPath?, imagePaths?, membersOnly?, author? }
 //   - country: one of vn/th/la/id/mm/ph/mn/kh/etc (must have a profileId set
 //     in accounts.json -- run setup-accounts.mjs first)
 //   - category: community/housing/life/marketplace/university/meeting
@@ -15,9 +15,12 @@
 //   - imageUrl: a remote URL fetched and re-uploaded to the post-media bucket
 //     as a single image attachment.
 //   - videoPath: a LOCAL file path (already downloaded) uploaded as a single
-//     video attachment instead. Mutually exclusive with imageUrl -- only one
-//     attachment is supported per post. Max 50MB (migration 0014's bucket
-//     ceiling).
+//     video attachment instead.
+//   - imagePaths: 1-5 LOCAL image file paths (already on disk, e.g. rendered
+//     from a PDF page) uploaded as multiple image attachments, in order.
+//   - imageUrl / videoPath / imagePaths are mutually exclusive -- a post has
+//     either one attachment or a small gallery of images, never a mix. Max
+//     50MB per video, 5MB per image (migration 0014's bucket ceiling).
 //   - membersOnly: true hides the post from logged-out visitors (RLS-enforced,
 //     see migration 0029). Use for sensitive topics flagged in CLAUDE.md's
 //     country-bot section (illegal stay, etc).
@@ -39,11 +42,19 @@ const CATEGORIES = ["community", "housing", "life", "marketplace", "university",
 const REQUIRED = ["country", "category", "title", "body"];
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+const MAX_IMAGE_PATHS = 5;
 const IMAGE_EXT = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
   "image/gif": "gif",
+};
+const IMAGE_FILE_EXT = {
+  ".jpg": { ext: "jpg", contentType: "image/jpeg" },
+  ".jpeg": { ext: "jpeg", contentType: "image/jpeg" },
+  ".png": { ext: "png", contentType: "image/png" },
+  ".webp": { ext: "webp", contentType: "image/webp" },
+  ".gif": { ext: "gif", contentType: "image/gif" },
 };
 const VIDEO_EXT = {
   ".mp4": { ext: "mp4", contentType: "video/mp4" },
@@ -76,8 +87,18 @@ export function validateDraft(d) {
   if (d.videoPath != null && (typeof d.videoPath !== "string" || !d.videoPath.trim())) {
     return "invalid: videoPath";
   }
-  if (d.imageUrl && d.videoPath) {
-    return "invalid: imageUrl and videoPath are mutually exclusive";
+  if (d.imagePaths != null) {
+    if (
+      !Array.isArray(d.imagePaths) ||
+      d.imagePaths.length < 1 ||
+      d.imagePaths.length > MAX_IMAGE_PATHS ||
+      d.imagePaths.some((p) => typeof p !== "string" || !p.trim())
+    ) {
+      return `invalid: imagePaths (must be 1-${MAX_IMAGE_PATHS} non-empty paths)`;
+    }
+  }
+  if ([d.imageUrl, d.videoPath, d.imagePaths].filter((v) => v != null).length > 1) {
+    return "invalid: imageUrl, videoPath and imagePaths are mutually exclusive";
   }
   if (d.membersOnly != null && typeof d.membersOnly !== "boolean") {
     return "invalid: membersOnly";
@@ -106,7 +127,7 @@ export function resolveAuthorAccount(d, accounts, questionAccounts) {
   return { profileId: account.profileId };
 }
 
-export function buildInsertPayload(d, authorId, attachmentUrl, attachmentType = "image") {
+export function buildInsertPayload(d, authorId, attachments = []) {
   return {
     category: d.category,
     sub_category: d.subCategory?.trim() || null,
@@ -115,7 +136,7 @@ export function buildInsertPayload(d, authorId, attachmentUrl, attachmentType = 
     points_awarded: 0,
     title: d.title.trim(),
     body: d.body.trim(),
-    attachments: attachmentUrl ? [{ url: attachmentUrl, type: attachmentType }] : [],
+    attachments,
     members_only: d.membersOnly === true,
   };
 }
@@ -128,6 +149,23 @@ async function uploadVideo(supabase, videoPath) {
   const size = statSync(videoPath).size;
   if (size > MAX_VIDEO_BYTES) throw new Error("video too large (>50MB)");
   const bytes = readFileSync(videoPath);
+  const name = `${randomUUID()}.${meta.ext}`;
+  const { error } = await supabase.storage
+    .from("post-media")
+    .upload(name, bytes, { contentType: meta.contentType });
+  if (error) throw error;
+  const publicUrl = supabase.storage.from("post-media").getPublicUrl(name).data.publicUrl;
+  return { publicUrl, name };
+}
+
+async function uploadLocalImage(supabase, imagePath) {
+  const dotIndex = imagePath.lastIndexOf(".");
+  const suffix = dotIndex >= 0 ? imagePath.slice(dotIndex).toLowerCase() : "";
+  const meta = IMAGE_FILE_EXT[suffix];
+  if (!meta) throw new Error(`unsupported image extension: ${suffix || "(none)"}`);
+  const size = statSync(imagePath).size;
+  if (size > MAX_IMAGE_BYTES) throw new Error(`image too large (>5MB): ${imagePath}`);
+  const bytes = readFileSync(imagePath);
   const name = `${randomUUID()}.${meta.ext}`;
   const { error } = await supabase.storage
     .from("post-media")
@@ -186,18 +224,14 @@ async function main() {
   }
 
   if (dryRun) {
-    const placeholder = draft.imageUrl
-      ? { url: "<uploaded-on-publish>", type: "image" }
+    const attachments = draft.imageUrl
+      ? [{ url: "<uploaded-on-publish>", type: "image" }]
       : draft.videoPath
-        ? { url: "<uploaded-on-publish>", type: "video" }
-        : null;
-    console.log(
-      JSON.stringify(
-        buildInsertPayload(draft, authorId, placeholder?.url ?? null, placeholder?.type),
-        null,
-        2,
-      ),
-    );
+        ? [{ url: "<uploaded-on-publish>", type: "video" }]
+        : draft.imagePaths
+          ? draft.imagePaths.map(() => ({ url: "<uploaded-on-publish>", type: "image" }))
+          : [];
+    console.log(JSON.stringify(buildInsertPayload(draft, authorId, attachments), null, 2));
     return;
   }
 
@@ -209,28 +243,32 @@ async function main() {
   }
   const supabase = createClient(url, key, { auth: { persistSession: false } });
 
-  let attachmentUrl = null;
-  let attachmentType = "image";
-  let uploadedName = null;
+  const attachments = [];
+  const uploadedNames = [];
   if (draft.imageUrl) {
     const up = await uploadImage(supabase, draft.imageUrl);
-    attachmentUrl = up.publicUrl;
-    uploadedName = up.name;
+    attachments.push({ url: up.publicUrl, type: "image" });
+    uploadedNames.push(up.name);
   } else if (draft.videoPath) {
     const up = await uploadVideo(supabase, draft.videoPath);
-    attachmentUrl = up.publicUrl;
-    attachmentType = "video";
-    uploadedName = up.name;
+    attachments.push({ url: up.publicUrl, type: "video" });
+    uploadedNames.push(up.name);
+  } else if (draft.imagePaths) {
+    for (const imagePath of draft.imagePaths) {
+      const up = await uploadLocalImage(supabase, imagePath);
+      attachments.push({ url: up.publicUrl, type: "image" });
+      uploadedNames.push(up.name);
+    }
   }
 
   const { data, error } = await supabase
     .from("posts")
-    .insert(buildInsertPayload(draft, authorId, attachmentUrl, attachmentType))
+    .insert(buildInsertPayload(draft, authorId, attachments))
     .select("id")
     .single();
   if (error) {
-    if (uploadedName) {
-      await supabase.storage.from("post-media").remove([uploadedName]).catch(() => {});
+    if (uploadedNames.length) {
+      await supabase.storage.from("post-media").remove(uploadedNames).catch(() => {});
     }
     console.error(`insert failed: ${error.message}`);
     process.exit(1);
