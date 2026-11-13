@@ -247,7 +247,7 @@ test("buildSystemPrompt: a vn reply account gets the Vietnamese tone note, other
 
 test("buildSystemPrompt: every researched country gets its own tone note, keyed off the author's country", () => {
   assert.match(buildSystemPrompt("life", "qna", "th-r1"), /555.*55555/s);
-  assert.match(buildSystemPrompt("life", "qna", "id-r1"), /skiber/);
+  assert.match(buildSystemPrompt("life", "qna", "id-r1"), /rata2/);
   assert.match(buildSystemPrompt("life", "qna", "ph-r1"), /Taglish/);
   assert.match(buildSystemPrompt("life", "qna", "mm-r1"), /미얀마어로 쓸 때 참고/);
   assert.match(buildSystemPrompt("life", "qna", "mn-r1"), /Гоё/);
