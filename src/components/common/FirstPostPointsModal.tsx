@@ -49,7 +49,7 @@ export function FirstPostPointsModal({ post }: { post: Post }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={TITLE_ID}
-        className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-lg bg-white p-5 shadow-xl"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-lg bg-white p-5 shadow-md"
       >
         <h2 id={TITLE_ID} className="mb-1 text-sm font-bold">
           {t("welcome.firstPostThanks")}

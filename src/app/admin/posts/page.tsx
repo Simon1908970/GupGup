@@ -250,7 +250,7 @@ export default function AdminPostsPage() {
 
       {editTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="flex w-full max-w-lg flex-col gap-3 rounded-lg bg-white p-5 shadow-xl">
+          <div className="flex w-full max-w-lg flex-col gap-3 rounded-lg bg-white p-5 shadow-md">
             <h2 className="text-sm font-bold">게시글 수정</h2>
             <input
               className="h-10 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"

@@ -68,9 +68,7 @@ export function SalaryEntryCard({
 
   // 전부 선택 입력이라, 입력 안 한 항목은 줄에서 통째로 빠진다 -- "0"으로
   // 지어내서 보여주지 않는다.
-  const headLine = [industryLabel && `🏭 ${industryLabel}`, region && `📍${region}`, visaLabel && `🪪 ${visaLabel}`]
-    .filter(Boolean)
-    .join(" · ");
+  const headLine = [industryLabel, region, visaLabel].filter(Boolean).join(" · ");
 
   const hoursLine = [
     entry.weeklyHours !== null && `${t("pinnedForm.weeklyHoursWeekPrefix")}${entry.weeklyHours}${t("pinnedForm.unitHours")}`,
@@ -98,7 +96,7 @@ export function SalaryEntryCard({
         }`
       : null;
 
-  const netLine = entry.netPay !== null ? `💰 ${t("pinnedForm.netPay")} ${entry.netPay}${t("pinnedForm.unitManwon")}` : null;
+  const netLine = entry.netPay !== null ? `${t("pinnedForm.netPay")} ${entry.netPay}${t("pinnedForm.unitManwon")}` : null;
 
   return (
     <div className="mt-1 rounded-lg border border-[var(--color-border-gray)] bg-[var(--color-border-gray-light)]/40 p-3 text-sm">
@@ -131,9 +129,7 @@ export function LivingCostEntryCard({
   const housingLabel = label(HOUSING_TYPE_OPTIONS, entry.housingType);
   const region = regionLabel(entry.regionProvince, entry.regionCity);
 
-  const headLine = [region && `📍${region}`, statusLabel && `🪪 ${statusLabel}`, housingLabel && `🏠 ${housingLabel}`]
-    .filter(Boolean)
-    .join(" · ");
+  const headLine = [region, statusLabel, housingLabel].filter(Boolean).join(" · ");
 
   const allExpenses: { labelKey: DictionaryKey; value: number | null }[] = [
     { labelKey: "pinnedForm.rent", value: entry.rent },
@@ -148,8 +144,8 @@ export function LivingCostEntryCard({
   const expenses = allExpenses.filter((e): e is { labelKey: DictionaryKey; value: number } => Boolean(e.value));
 
   const moneyLine = [
-    entry.totalCost !== null && `🧾 ${t("pinnedForm.totalCost")} ${entry.totalCost}${t("pinnedForm.unitManwon")}`,
-    entry.netPay !== null && `💰 ${t("pinnedForm.netPayInput")} ${entry.netPay}${t("pinnedForm.unitManwon")}`,
+    entry.totalCost !== null && `${t("pinnedForm.totalCost")} ${entry.totalCost}${t("pinnedForm.unitManwon")}`,
+    entry.netPay !== null && `${t("pinnedForm.netPayInput")} ${entry.netPay}${t("pinnedForm.unitManwon")}`,
     entry.remaining !== null && `→ ${t("pinnedForm.remaining")} ${entry.remaining}${t("pinnedForm.unitManwon")}`,
   ]
     .filter(Boolean)

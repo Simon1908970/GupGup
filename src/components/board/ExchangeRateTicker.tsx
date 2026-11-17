@@ -77,7 +77,7 @@ export function ExchangeRateTicker() {
     <>
       <div
         onClick={() => setModalOpen(true)}
-        className="relative mb-4 flex h-9 w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--color-brand-red)]/40 px-4 text-sm gg-glossy-interactive gg-decorative-card gg-no-sheen"
+        className="relative mb-4 flex h-9 w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--color-brand-red)]/40 bg-white px-4 text-sm gg-glossy-interactive"
       >
         <span key={current.code} className="gg-slide-in flex items-center gap-1.5">
           {countryOption && <CountryFlag code={countryOption.code} size={14} />}

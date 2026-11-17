@@ -27,7 +27,7 @@ export function PointsInfo({ align = "left" }: { align?: "left" | "right" }) {
       </span>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-sm rounded-lg bg-white p-5 shadow-xl">
+          <div className="w-full max-w-sm rounded-lg bg-white p-5 shadow-md">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-sm font-bold">{t("points.infoTitle")}</h2>
               <button onClick={() => setOpen(false)} aria-label={t("common.close")}>

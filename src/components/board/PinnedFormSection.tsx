@@ -225,7 +225,7 @@ export function PinnedFormSection({ post }: { post: Post }) {
           className="mb-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-brand-red)] bg-[var(--color-brand-red-light)] py-2 text-xs font-semibold text-[var(--color-brand-red)]"
         >
           {t("pinnedForm.jumpToComments")} ({comments.length})
-          <ChevronDown size={14} className="gg-pinned-form-bounce-down" aria-hidden />
+          <ChevronDown size={14} aria-hidden />
         </button>
       )}
       {!user ? (

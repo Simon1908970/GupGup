@@ -122,68 +122,22 @@ body {
   font-size: 13px;
 }
 
-/* Laminated / glossy card treatment (boxes, list panels, dropdowns) */
+/* Quiet card surface (boxes, list panels, dropdowns): a soft neutral
+   shadow and a hairline border do the work instead of a glossy highlight. */
 .gg-glossy,
 .gg-glossy-interactive {
   box-shadow:
-    0 1px 2px rgba(17, 17, 17, 0.05),
-    0 10px 24px -14px rgba(17, 17, 17, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-.gg-glossy::before,
-.gg-glossy-interactive::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  border-radius: inherit;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.38) 0%,
-    rgba(255, 255, 255, 0.12) 55%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
+    0 1px 2px rgba(17, 17, 17, 0.04),
+    0 6px 16px -12px rgba(17, 17, 17, 0.16);
 }
 
 .gg-glossy-interactive {
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
-.gg-glossy-interactive:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 2px 4px rgba(17, 17, 17, 0.06),
-    0 16px 32px -14px rgba(17, 17, 17, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-/* Glossy CTA buttons (solid brand-red) */
+/* CTA buttons (solid brand-red): flat, with a small brightness/press cue */
 .gg-glossy-btn {
-  box-shadow:
-    0 1px 2px rgba(17, 17, 17, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
-  transition:
-    filter 0.15s ease,
-    transform 0.05s ease;
-}
-
-.gg-glossy-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
+  transition: filter 0.15s ease;
 }
 
 .gg-glossy-btn:hover {
@@ -191,8 +145,7 @@ body {
 }
 
 .gg-glossy-btn:active {
-  transform: translateY(1px);
-  filter: brightness(0.97);
+  filter: brightness(0.95);
 }
 
 /* Inset "pressed laminate" badge */
@@ -200,20 +153,9 @@ body {
   box-shadow: inset 0 1px 2px rgba(17, 17, 17, 0.1);
 }
 
-/* Sheen for full-width solid-color bars (no hover/press motion) */
+/* Full-width solid-color bars (category nav) */
 .gg-glossy-bar {
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-}
-
-.gg-glossy-bar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
 }
 
 /* Cross-fade between rotating slides (e.g. the exchange-rate ticker) */
@@ -247,137 +189,8 @@ body {
   animation: gg-slide-in 0.35s ease;
 }
 
-/* Decorative gradient + moving sheen for the homepage's exchange-rate and
-   popular-posts cards, so they read as "special" widgets rather than the
-   plain white category boxes. Needs the element to also have
-   position:relative and overflow:hidden (set via className). */
-.gg-decorative-card {
-  background: linear-gradient(135deg, #ffffff 0%, var(--color-brand-red-light) 100%);
-}
-
-.gg-decorative-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
-  background-size: 250% 100%;
-  animation: gg-sheen-sweep 6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes gg-sheen-sweep {
-  0% {
-    background-position: 200% 0;
-  }
-  35%,
-  100% {
-    background-position: -60% 0;
-  }
-}
-
-/* Opt out of the moving sheen on specific gg-decorative-card instances
-   (e.g. widgets with text the user needs to read) while keeping the
-   gradient background underneath it. */
-.gg-decorative-card.gg-no-sheen::after {
-  display: none;
-}
-
-/* Dark mode is mobile-only sitewide (see the media query above) -- scope this
-   override the same way so it doesn't leak into desktop widths. */
-@media (max-width: 639.98px) {
-  :root.gg-dark .gg-decorative-card {
-    background: linear-gradient(135deg, #1c1c1f 0%, var(--color-brand-red-light) 100%);
-  }
-}
-
-/* Gentle pulse for the 🔥 icon in the popular-posts header */
-@keyframes gg-flame-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 0.75;
-  }
-}
-
-.gg-flame-pulse {
-  animation: gg-flame-pulse 1.8s ease-in-out infinite;
-  transform-origin: center;
-}
-
-/* "내 월급" / "내 생활비" 고정 카드 (한국생활 목록 맨 위) -- 이모지가 살짝
-   통통 튀고, 테두리를 따라 은은한 빛이 지나간다. prefers-reduced-motion일
-   때는 둘 다 끈다(요청서 2번). */
-@keyframes gg-pinned-form-bounce {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-3px) rotate(-6deg);
-  }
-}
-
-.gg-pinned-form-emoji {
-  display: inline-block;
-  animation: gg-pinned-form-bounce 1.6s ease-in-out infinite;
-}
-
-@keyframes gg-pinned-form-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(225, 29, 46, 0.25);
-  }
-  50% {
-    box-shadow: 0 0 10px 1px rgba(225, 29, 46, 0.35);
-  }
-}
-
-.gg-pinned-form-card {
-  overflow: hidden;
-  animation: gg-pinned-form-glow 2.4s ease-in-out infinite;
-}
-
-.gg-pinned-form-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 40%, rgba(225, 29, 46, 0.14) 50%, transparent 60%);
-  background-size: 250% 100%;
-  animation: gg-sheen-sweep 5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gg-pinned-form-emoji,
-  .gg-pinned-form-card,
-  .gg-pinned-form-card::after {
-    animation: none;
-  }
-}
-
-/* 고정 폼 글 본문의 "댓글 보기" 버튼 -- 양식에 가려서 아래 댓글(카드)을
-   못 보고 지나치는 일이 없게, 아래로 스크롤하라는 화살표를 통통 튀게 한다. */
-@keyframes gg-bounce-down {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(3px);
-  }
-}
-
-.gg-pinned-form-bounce-down {
-  animation: gg-bounce-down 1.2s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gg-pinned-form-bounce-down {
-    animation: none;
-  }
-}
+/* The homepage exchange-rate and popular-posts widgets, and the pinned
+   salary/living-cost cards, used to carry a moving gradient "sheen", a
+   pulsing flame emoji and a bouncing emoji/arrow. Removed: quiet chrome,
+   same plain white surface as the other category boxes. */
 

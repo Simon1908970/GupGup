@@ -15,10 +15,10 @@ export function PopularPostsWidget({ posts }: { posts: Post[] }) {
   if (posts.length === 0) return null;
 
   return (
-    <div className="relative mb-4 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 gg-glossy-interactive gg-decorative-card">
+    <div className="relative mb-4 overflow-hidden rounded-lg border border-[var(--color-brand-red)]/20 bg-white gg-glossy-interactive">
       <div className="flex items-center justify-between border-b border-[var(--color-border-gray-light)] px-4 py-3">
         <span className="flex items-center gap-1.5 text-sm font-bold">
-          <Flame size={16} className="gg-flame-pulse text-[var(--color-brand-red)]" />
+          <Flame size={16} className="text-[var(--color-brand-red)]" />
           {t("popular.title")}
         </span>
         <span className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">

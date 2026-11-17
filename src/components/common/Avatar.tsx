@@ -1,8 +1,21 @@
 import { cn } from "@/lib/utils";
 
-const DEFAULT_AVATARS = ["🧑", "👩", "🧑‍🦱", "👨‍🦰", "👩‍🦳", "🧔"];
+// 무료 라이선스(Avataaars) 기본 캐릭터 일러스트 -- 닉네임 해시로 고정 배정해
+// 같은 사람은 항상 같은 기본 이미지를 받는다.
+const DEFAULT_AVATARS = [
+  "/avatars/male-1.svg",
+  "/avatars/female-1.svg",
+  "/avatars/male-2.svg",
+  "/avatars/female-2.svg",
+  "/avatars/male-3.svg",
+  "/avatars/female-3.svg",
+  "/avatars/male-4.svg",
+  "/avatars/female-4.svg",
+  "/avatars/male-5.svg",
+  "/avatars/female-5.svg",
+];
 
-function fallbackEmoji(seed: string) {
+function fallbackAvatarSrc(seed: string) {
   let hash = 0;
   for (const ch of seed) hash = (hash * 31 + ch.charCodeAt(0)) % 1000;
   return DEFAULT_AVATARS[hash % DEFAULT_AVATARS.length];
@@ -25,20 +38,16 @@ export function Avatar({
         "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--color-border-gray-light)] text-center",
         className,
       )}
-      style={{ width: size, height: size, fontSize: size * 0.55 }}
+      style={{ width: size, height: size }}
     >
-      {avatarUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={avatarUrl}
-          alt={nickname}
-          width={size}
-          height={size}
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        fallbackEmoji(nickname)
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={avatarUrl || fallbackAvatarSrc(nickname)}
+        alt={nickname}
+        width={size}
+        height={size}
+        className="h-full w-full object-cover"
+      />
     </span>
   );
 }

@@ -202,8 +202,14 @@ export function CountryMapWidget({ compact = false }: { compact?: boolean }) {
       />
       <div className="flex items-center justify-between text-xs text-[var(--color-text-muted)]">
         <div className="flex gap-3">
-          <span>🔴 {t("map.legendBusiness")}</span>
-          <span>🔵 {t("map.legendPost")}</span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
+            {t("map.legendBusiness")}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />
+            {t("map.legendPost")}
+          </span>
         </div>
         {compact && (
           <Link href="/map" className="font-medium text-[var(--color-brand-red)]">

@@ -53,7 +53,7 @@ export function ReportModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-lg bg-white p-5 shadow-xl"
+        className="w-full max-w-sm rounded-lg bg-white p-5 shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
         {submitted ? (

@@ -1,22 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { Pin } from "lucide-react";
+import { Pin, Receipt, Wallet } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import type { Post } from "@/lib/types";
 
 const COPY: Record<
   "salary" | "living_cost",
-  { emoji: string; titleKey: DictionaryKey; descriptionKey: DictionaryKey }
+  { icon: typeof Wallet; titleKey: DictionaryKey; descriptionKey: DictionaryKey }
 > = {
   salary: {
-    emoji: "💰",
+    icon: Wallet,
     titleKey: "pinnedForm.salaryTitle",
     descriptionKey: "pinnedForm.salaryDescription",
   },
   living_cost: {
-    emoji: "🧾",
+    icon: Receipt,
     titleKey: "pinnedForm.livingCostTitle",
     descriptionKey: "pinnedForm.livingCostDescription",
   },
@@ -28,15 +28,16 @@ export function PinnedFormCard({ post }: { post: Post }) {
 
   if (!formType) return null;
   const copy = COPY[formType];
+  const Icon = copy.icon;
 
   return (
     <li className="border-b border-[var(--color-border-gray-light)] px-1 py-1.5 last:border-b-0">
       <Link
         href={`/board/${post.category}/${post.id}`}
-        className="gg-pinned-form-card relative flex items-center gap-2.5 rounded-lg border-2 border-[var(--color-brand-red)] bg-white px-3 py-2"
+        className="relative flex items-center gap-2.5 rounded-lg border-2 border-[var(--color-brand-red)] bg-white px-3 py-2"
       >
-        <span className="gg-pinned-form-emoji shrink-0 text-xl" aria-hidden>
-          {copy.emoji}
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-red-light)]">
+          <Icon size={16} className="text-[var(--color-brand-red)]" aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">

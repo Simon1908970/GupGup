@@ -242,7 +242,7 @@ function ProfileHeader({
       </form>
       {completion && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-sm rounded-lg bg-white p-5 shadow-xl">
+          <div className="w-full max-w-sm rounded-lg bg-white p-5 shadow-md">
             <div className="flex flex-col items-center gap-4 py-4 text-center">
               <p className="text-sm font-medium">{completion.message}</p>
               <button

@@ -26,7 +26,7 @@ export function ExchangeRateModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-lg bg-white p-5 shadow-xl"
+        className="w-full max-w-sm rounded-lg bg-white p-5 shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
