@@ -6,8 +6,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
 import { formatDate } from "@/lib/utils";
 import { CountryFlag } from "@/components/common/CountryFlag";
-import type { RateItem } from "@/components/board/ExchangeRateTicker";
-import { displayUnit } from "@/components/board/ExchangeRateTicker";
+import { type RateItem, displayUnit } from "@/lib/exchangeRate";
 
 export function ExchangeRateModal({
   rates,

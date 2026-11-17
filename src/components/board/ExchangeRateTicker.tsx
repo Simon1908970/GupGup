@@ -5,28 +5,11 @@ import { ChevronDown, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { DictionaryKey } from "@/lib/i18n/dictionaries";
-import type { CountryCode } from "@/lib/types";
+import { type RateItem, displayUnit } from "@/lib/exchangeRate";
 import { CountryFlag } from "@/components/common/CountryFlag";
 import { ExchangeRateModal } from "@/components/board/ExchangeRateModal";
 
-export interface RateItem {
-  country: CountryCode;
-  code: string;
-  rate: number;
-  trend?: "up" | "down" | "flat" | null;
-}
-
 const ROTATE_MS = 3500;
-
-// Some target currencies (THB, PHP) are worth close to or more than 1 KRW,
-// so "1 ₩ = 0.02 THB" reads as basically zero. Scale the KRW side up to the
-// smallest power of 10 that keeps the converted amount readable (>= ~1).
-export function displayUnit(rate: number): number {
-  if (rate >= 1) return 1;
-  if (rate >= 0.1) return 10;
-  if (rate >= 0.01) return 100;
-  return 1000;
-}
 
 function TrendIcon({ trend }: { trend: RateItem["trend"] }) {
   if (trend === "up") return <TrendingUp size={14} className="text-green-600" />;
