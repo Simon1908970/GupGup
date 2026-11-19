@@ -49,7 +49,13 @@ export function EmbedFrame({ provider, embedUrl, sourceUrl }: DetectedEmbed) {
           src={embedUrl}
           title={title}
           className="h-full w-full"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+          // allow-storage-access-by-user-activation: without it, a sandboxed iframe
+          // can't call the Storage Access API, so TikTok's/Facebook's player script
+          // can't ask for its own first-party cookies on browsers that block
+          // third-party cookies by default (Safari ITP, Chrome's rollout) -- it then
+          // shows "Unable to load player" or a dead related-content carousel instead
+          // of the actual video.
+          sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-storage-access-by-user-activation"
           allow="encrypted-media; picture-in-picture; fullscreen"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
