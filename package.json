@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test": "node --test \"news-digest/**/*.test.mjs\" \"src/**/*.test.mjs\" \"map-data/**/*.test.mjs\" \"bots/**/*.test.mjs\""
