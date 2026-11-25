@@ -15,11 +15,13 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setAlreadyRegistered(false);
     if (password !== confirm) {
       setError(t("signup.passwordMismatch"));
       return;
@@ -27,7 +29,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         // The confirmation link comes back with a PKCE ?code that only the
@@ -36,6 +38,14 @@ export default function SignupPage() {
         options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
       });
       if (signUpError) throw signUpError;
+      // When the email already belongs to a confirmed account, Supabase does
+      // not return an error (to avoid leaking which emails exist) and sends no
+      // email. It signals this by returning a user with an empty identities
+      // list -- show a clear notice instead of "verification sent".
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        setAlreadyRegistered(true);
+        return;
+      }
       setDone(true);
     } catch (err) {
       setError(getErrorMessage(err));
@@ -49,6 +59,9 @@ export default function SignupPage() {
       <div className="mx-auto max-w-sm px-4 py-16 text-center">
         <p className="text-sm">
           {t("signup.verificationSent")}
+        </p>
+        <p className="mt-2 text-xs text-gray-500">
+          {t("signup.checkSpam")}
         </p>
         <Link
           href="/login"
@@ -88,6 +101,19 @@ export default function SignupPage() {
           className="h-11 rounded-md border border-[var(--color-border-gray)] px-3 text-sm outline-none focus:border-[var(--color-brand-red)]"
         />
         {error && <p className="text-xs text-[var(--color-brand-red)]">{error}</p>}
+        {alreadyRegistered && (
+          <div className="rounded-md border border-[var(--color-brand-red)] bg-red-50 p-3 text-xs">
+            <p className="text-[var(--color-brand-red)]">{t("signup.alreadyRegistered")}</p>
+            <div className="mt-2 flex gap-4 font-medium">
+              <Link href="/login" className="underline">
+                {t("auth.login")}
+              </Link>
+              <Link href="/forgot-password" className="underline">
+                {t("auth.forgotPassword")}
+              </Link>
+            </div>
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading}

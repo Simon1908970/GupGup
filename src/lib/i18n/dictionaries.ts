@@ -204,6 +204,8 @@ const ko = {
   "signup.passwordMismatch": "비밀번호가 일치하지 않습니다.",
   "signup.verificationSent": "인증 메일을 보냈습니다. 메일함을 확인해 이메일 인증을 완료해주세요.",
   "signup.passwordConfirmPlaceholder": "비밀번호 확인",
+  "signup.checkSpam": "메일이 보이지 않으면 스팸(정크) 메일함도 확인해 주세요.",
+  "signup.alreadyRegistered": "이미 가입된 이메일입니다. 로그인해 주세요. 비밀번호가 기억나지 않으면 비밀번호를 재설정할 수 있습니다.",
 
   "inquiries.contentPlaceholder": "문의 내용을 입력하세요",
 
@@ -564,6 +566,8 @@ const en: Dictionary = {
   "signup.passwordMismatch": "Passwords do not match.",
   "signup.verificationSent": "We've sent a verification email. Please check your inbox to complete verification.",
   "signup.passwordConfirmPlaceholder": "Confirm password",
+  "signup.checkSpam": "Can't find the email? Please check your spam (junk) folder too.",
+  "signup.alreadyRegistered": "This email is already registered. Please log in, or reset your password if you've forgotten it.",
 
   "inquiries.contentPlaceholder": "Enter your inquiry",
 
@@ -832,6 +836,8 @@ const vi: Partial<Dictionary> = {
   "signup.passwordMismatch": "Mật khẩu không khớp.",
   "signup.verificationSent": "Chúng tôi đã gửi email xác minh. Vui lòng kiểm tra hộp thư để hoàn tất xác minh.",
   "signup.passwordConfirmPlaceholder": "Xác nhận mật khẩu",
+  "signup.checkSpam": "Không thấy email? Vui lòng kiểm tra cả thư mục Spam (thư rác).",
+  "signup.alreadyRegistered": "Email này đã được đăng ký. Vui lòng đăng nhập, hoặc đặt lại mật khẩu nếu bạn quên mật khẩu.",
 
   "inquiries.contentPlaceholder": "Nhập nội dung yêu cầu hỗ trợ",
 
@@ -1179,6 +1185,8 @@ const th: Partial<Dictionary> = {
   "signup.passwordMismatch": "รหัสผ่านไม่ตรงกัน",
   "signup.verificationSent": "เราได้ส่งอีเมลยืนยันแล้ว กรุณาตรวจสอบอีเมลเพื่อยืนยันตัวตน",
   "signup.passwordConfirmPlaceholder": "ยืนยันรหัสผ่าน",
+  "signup.checkSpam": "ไม่พบอีเมลใช่ไหม? กรุณาตรวจสอบในโฟลเดอร์สแปม (จดหมายขยะ) ด้วย",
+  "signup.alreadyRegistered": "อีเมลนี้ลงทะเบียนแล้ว กรุณาเข้าสู่ระบบ หรือรีเซ็ตรหัสผ่านหากคุณลืมรหัสผ่าน",
 
   "inquiries.contentPlaceholder": "กรอกรายละเอียดคำถาม",
 
@@ -1528,6 +1536,8 @@ const id: Partial<Dictionary> = {
   "signup.passwordMismatch": "Kata sandi tidak cocok.",
   "signup.verificationSent": "Kami telah mengirim email verifikasi. Silakan periksa kotak masuk Anda untuk menyelesaikan verifikasi.",
   "signup.passwordConfirmPlaceholder": "Konfirmasi kata sandi",
+  "signup.checkSpam": "Tidak menemukan email? Silakan periksa juga folder Spam.",
+  "signup.alreadyRegistered": "Email ini sudah terdaftar. Silakan masuk, atau atur ulang kata sandi jika Anda lupa.",
 
   "inquiries.contentPlaceholder": "Masukkan isi pertanyaan",
 
@@ -1877,6 +1887,8 @@ const tl: Partial<Dictionary> = {
   "signup.passwordMismatch": "Hindi tugma ang mga password.",
   "signup.verificationSent": "Nagpadala kami ng verification email. Pakisuri ang inbox mo para tapusin ang verification.",
   "signup.passwordConfirmPlaceholder": "Kumpirmahin ang password",
+  "signup.checkSpam": "Hindi mo makita ang email? Pakisuri rin ang Spam folder mo.",
+  "signup.alreadyRegistered": "Naka-register na ang email na ito. Mag-log in na lang, o i-reset ang password mo kung nakalimutan mo ito.",
 
   "inquiries.contentPlaceholder": "Ilagay ang detalye ng inquiry",
 
@@ -2228,6 +2240,8 @@ const lo: Partial<Dictionary> = {
   "signup.passwordMismatch": "ລະຫັດຜ່ານບໍ່ກົງກັນ.",
   "signup.verificationSent": "ພວກເຮົາໄດ້ສົ່ງອີເມວຢືນຢັນແລ້ວ. ກະລຸນາກວດສອບອີເມວເພື່ອຢືນຢັນ.",
   "signup.passwordConfirmPlaceholder": "ຢືນຢັນລະຫັດຜ່ານ",
+  "signup.checkSpam": "ບໍ່ເຫັນອີເມວບໍ? ກະລຸນາກວດສອບໃນໂຟນເດີ Spam (ອີເມວຂີ້ເຫຍື້ອ) ນຳ.",
+  "signup.alreadyRegistered": "ອີເມວນີ້ໄດ້ລົງທະບຽນແລ້ວ. ກະລຸນາເຂົ້າສູ່ລະບົບ ຫຼື ຕັ້ງລະຫັດຜ່ານໃໝ່ ຖ້າທ່ານລືມລະຫັດຜ່ານ.",
 
   "inquiries.contentPlaceholder": "ໃສ່ລາຍລະອຽດຄຳຖາມ",
 
@@ -2577,6 +2591,8 @@ const my: Partial<Dictionary> = {
   "signup.passwordMismatch": "စကားဝှက်များ မတူညီပါ။",
   "signup.verificationSent": "အတည်ပြုအီးမေးလ်ကို ပို့ပြီးပါပြီ။ အတည်ပြုရန် သင့်စာပုံးကို စစ်ဆေးပါ။",
   "signup.passwordConfirmPlaceholder": "စကားဝှက်အတည်ပြုပါ",
+  "signup.checkSpam": "အီးမေးလ် မတွေ့ဘူးလား။ Spam ဖိုင်တွဲကိုလည်း စစ်ဆေးပါ။",
+  "signup.alreadyRegistered": "ဤအီးမေးလ်ဖြင့် စာရင်းသွင်းပြီးသားဖြစ်ပါသည်။ လော့ဂ်အင်ဝင်ပါ၊ သို့မဟုတ် စကားဝှက်မေ့နေပါက စကားဝှက်ကို ပြန်လည်သတ်မှတ်ပါ။",
 
   "inquiries.contentPlaceholder": "မေးမြန်းလိုသည့်အကြောင်းအရာထည့်ပါ",
 
@@ -2926,6 +2942,8 @@ const mn: Partial<Dictionary> = {
   "signup.passwordMismatch": "Нууц үг таарахгүй байна.",
   "signup.verificationSent": "Баталгаажуулах имэйл илгээлээ. Баталгаажуулахын тулд имэйлээ шалгана уу.",
   "signup.passwordConfirmPlaceholder": "Нууц үгээ баталгаажуулна уу",
+  "signup.checkSpam": "Имэйл харагдахгүй байна уу? Спам (Spam) хавтсаа бас шалгана уу.",
+  "signup.alreadyRegistered": "Энэ имэйл бүртгэлтэй байна. Нэвтэрнэ үү, эсвэл нууц үгээ мартсан бол шинээр тохируулна уу.",
 
   "inquiries.contentPlaceholder": "Асуултын дэлгэрэнгүйг оруулна уу",
 
@@ -3275,6 +3293,8 @@ const ru: Partial<Dictionary> = {
   "signup.passwordMismatch": "Пароли не совпадают.",
   "signup.verificationSent": "Мы отправили письмо для подтверждения. Проверьте почту, чтобы завершить подтверждение.",
   "signup.passwordConfirmPlaceholder": "Подтвердите пароль",
+  "signup.checkSpam": "Не видите письмо? Проверьте также папку «Спам».",
+  "signup.alreadyRegistered": "Этот email уже зарегистрирован. Войдите в аккаунт или сбросьте пароль, если забыли его.",
 
   "inquiries.contentPlaceholder": "Введите текст обращения",
 
@@ -3713,6 +3733,8 @@ const km: Partial<Dictionary> = {
   "signup.passwordMismatch": "ពាក្យសម្ងាត់មិនត្រូវគ្នាទេ។",
   "signup.verificationSent": "យើងបានផ្ញើអ៊ីមែលផ្ទៀងផ្ទាត់។ សូមពិនិត្យប្រអប់សំបុត្ររបស់អ្នកដើម្បីបញ្ចប់ការផ្ទៀងផ្ទាត់។",
   "signup.passwordConfirmPlaceholder": "បញ្ជាក់ពាក្យសម្ងាត់",
+  "signup.checkSpam": "រកមិនឃើញអ៊ីមែលទេ? សូមពិនិត្យមើលថត Spam ផងដែរ។",
+  "signup.alreadyRegistered": "អ៊ីមែលនេះបានចុះឈ្មោះរួចហើយ។ សូមចូលគណនី ឬកំណត់ពាក្យសម្ងាត់ឡើងវិញ ប្រសិនបើអ្នកភ្លេចពាក្យសម្ងាត់។",
 
   "inquiries.contentPlaceholder": "បញ្ចូលមាតិកាសំណួររបស់អ្នក",
 
