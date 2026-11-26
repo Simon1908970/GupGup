@@ -35,7 +35,9 @@ export function PopularPostsWidget({ posts }: { posts: Post[] }) {
           return (
             <li key={post.id} className="w-32 shrink-0 snap-start">
               <Link href={`/board/${post.category}/${post.id}`} className="block">
-                <div className="relative h-20 w-32 overflow-hidden rounded-md bg-[var(--color-border-gray-light)]">
+                <div
+                  className={`relative h-20 w-32 overflow-hidden rounded-md ${thumbnail ? "bg-[var(--color-border-gray-light)]" : ""}`}
+                >
                   {thumbnail ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={thumbnail} alt="" className="h-full w-full object-cover" />
