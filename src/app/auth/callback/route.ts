@@ -15,14 +15,34 @@ function isEmailOtpType(v: string | null): v is EmailOtpType {
   return v !== null && (EMAIL_OTP_TYPES as string[]).includes(v);
 }
 
+// Behind a reverse proxy (e.g. Hostinger), request.url carries the internal
+// address the Node server listens on (http://0.0.0.0:3000), not the public
+// domain. Rebuild the public origin from the forwarded headers instead.
+function publicOrigin(request: Request, fallback: string): string {
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = forwardedHost || request.headers.get("host");
+  if (!host || host.startsWith("0.0.0.0") || host.startsWith("127.0.0.1")) {
+    return fallback;
+  }
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const proto = forwardedProto || (host.startsWith("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams, origin: requestOrigin } = new URL(request.url);
+  const origin = publicOrigin(request, requestOrigin);
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type");
   const explicitNext = searchParams.get("next");
 
-  let next = explicitNext ?? "/onboarding";
+  // Only allow same-site relative paths (blocks "//evil.com" style redirects).
+  const safeNext =
+    explicitNext && explicitNext.startsWith("/") && !explicitNext.startsWith("//")
+      ? explicitNext
+      : null;
+  let next = safeNext ?? "/onboarding";
 
   const supabase = await createClient();
   let userId: string | null = null;
@@ -42,7 +62,7 @@ export async function GET(request: Request) {
     if (!error) userId = data.user?.id ?? null;
   }
 
-  if (!explicitNext && userId) {
+  if (!safeNext && userId) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("id")
