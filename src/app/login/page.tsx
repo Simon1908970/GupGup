@@ -11,6 +11,10 @@ import { FacebookIcon } from "@/components/auth/FacebookIcon";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { getErrorMessage } from "@/lib/utils";
 
+// Facebook login is hidden until the Meta app can be published (Meta requires
+// business verification for that). Set to true to show the button again.
+const SHOW_FACEBOOK_LOGIN = false;
+
 export default function LoginPage() {
   return (
     <Suspense fallback={null}>
@@ -78,6 +82,7 @@ function LoginPageInner() {
         </span>
         <span>{t("auth.google")}</span>
       </button>
+      {SHOW_FACEBOOK_LOGIN && (
       <button
         onClick={() => handleOAuth("facebook")}
         className="relative flex h-11 items-center justify-center rounded-md border border-[var(--color-border-gray)] text-sm font-medium"
@@ -87,6 +92,7 @@ function LoginPageInner() {
         </span>
         <span>{t("auth.facebook")}</span>
       </button>
+      )}
 
       <div className="my-1 flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
         <div className="h-px flex-1 bg-[var(--color-border-gray-light)]" />
