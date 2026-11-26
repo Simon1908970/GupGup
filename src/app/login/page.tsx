@@ -32,7 +32,10 @@ function LoginPageInner() {
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      // OAuth finishes in the browser (/auth/complete), not the /auth/callback
+      // route: the session cookies are too large to send back as response
+      // headers through Hostinger's proxy (it answers HTTP 500).
+      options: { redirectTo: `${window.location.origin}/auth/complete` },
     });
   }
 
